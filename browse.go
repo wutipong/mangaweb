@@ -44,7 +44,7 @@ func createItems(files []string) []item {
 		var thumbURL string
 
 		url = "/view/" + f
-		thumbURL = "/get_image/" + f + "?i=0"
+		thumbURL = "/get_image/" + f + "?i=0;width=200"
 
 		output[i] = item{
 			Name:     f,
