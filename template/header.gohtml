@@ -1,0 +1,26 @@
+{{define "html-head"}}
+
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" href="/static/css/bootstrap.min.css" >
+<link rel="stylesheet" href="/static/css/open-iconic.min.css" >
+<link rel="stylesheet" href="/static/css/open-iconic-bootstrap.min.css" >
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans|Noto+Sans+JP|Noto+Sans+KR|Noto+Sans+SC|Noto+Sans+TC|Sarabun&display=swap">
+<link rel="stylesheet" href="/static/css/custom.css" >
+
+<script src="/static/js/jquery-3.4.1.min.js"></script>
+<script src="/static/js/jquery.lazy.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/popper.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+
+<title>{{.Title}}</title>
+</head>
+
+<script>
+$(function() {
+    $('.lazy').Lazy();
+});
+</script>
+
+{{end}}

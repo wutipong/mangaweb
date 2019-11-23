@@ -1,0 +1,62 @@
+{{template "html-head" .}}
+
+ <div class="fullscreen" style="padding-top:60px;">
+    <div class="carousel slide w-100 h-100" id="carouselControl">
+        <div class="carousel-inner w-100 h-100" id="carousel" style="width:100%; height:100%;">
+            {{range .ImageURLs}}
+                <div class="carousel-item w-100 h-100"> 
+                    <div class="w-100 h-100 d-flex flex-col">
+                        <img class="lazy ml-auto mr-auto" src ="/static/img/loading.gif" data-src="{{.}}&width=1600&height=1600" style="object-fit:contain;">
+                    </div>
+                </div>
+            {{end}}
+        </div>
+        <a class="carousel-control-prev" href="#carouselControl" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselControl" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+    <script>
+    $(function() {
+        $('.lazy').Lazy();
+        $('.carousel').carousel({
+            interval: false
+        })
+        
+        let imgUrls = [{{range .ImageURLs}}
+            "{{.}}",
+        {{end}}]
+
+        $('#carouselControl').on('slide.bs.carousel', function (e) {
+            $('#download-btn').attr("href", imgUrls[e.to -1])
+            var url = window.location.origin + window.location.pathname + "#" + (e.to +1);
+            history.pushState(null, '', url);
+        })
+
+        let indexStr = window.location.hash.substr(1);
+        let index = parseInt(indexStr)
+        if(!index || index < 1){
+            index = 1
+        }
+        let sel = '.carousel-item:nth-child(' + index + ')'
+
+        $(sel).addClass('active');
+        $('#download-btn').attr("href", imgUrls[{{.StartIndex}} -1])
+    });
+    </script>
+</div>
+
+<nav class="navbar fixed-top navbar-expand-lg">
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+            <a class="nav-link" href="{{.BrowseURL}}"> Back</a>
+        </li>
+    </ul>
+    <div class="my-2 my-lg-0">
+    <a id="download-btn" class="btn my-2 my-sm-0 btn-primary" download>Download</a>
+    </div>
+</nav>
