@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -63,6 +64,8 @@ func browse(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	sort.Strings(files)
 	data := browseData{
 		Title: fmt.Sprintf("Manga - Browsing"),
 		Items: createItems(files),
