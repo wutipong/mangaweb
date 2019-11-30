@@ -26,7 +26,7 @@ func init() {
 	}
 }
 
-var broseTemplate *template.Template = nil
+var broseTemplate *template.Template
 
 type browseData struct {
 	Title string
@@ -38,10 +38,12 @@ type item struct {
 	Name     string
 	LinkURL  string
 	ThumbURL string
+	Rating   int
 }
 
 func createItems(files []string) []item {
 	output := make([]item, len(files))
+	//ratings := readRating(files)
 	for i, f := range files {
 		var url string
 		var thumbURL string
@@ -58,6 +60,7 @@ func createItems(files []string) []item {
 			Name:     f,
 			LinkURL:  url,
 			ThumbURL: thumbURL,
+			//Rating:   ratings[i].Rating,
 		}
 	}
 	return output

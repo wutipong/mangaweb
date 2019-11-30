@@ -69,6 +69,11 @@ body {
     max-height: 200px;
 }
 
+.file-details {
+    display: flex;
+    flex-direction: column;
+}
+
 #carouselControl {
     height: 90vh;
     max-height: 100%;

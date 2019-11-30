@@ -8,7 +8,10 @@
             <a href="{{.LinkURL}}">
                 <div class="file-border">
                     <img class="file-thumb lazy" src ="/static/img/loading.gif" data-src="{{.ThumbURL}}" alt="{{.Name}}">
-                    <span class="file-thumb-name"><span class="oi oi-file"></span>{{.Name}}</span>
+                    <div class="file-details">
+                        <span class="file-thumb-name"><span class="oi oi-file"></span>{{.Name}}</span>
+                        <span><span class="oi oi-star"></span>{{.Rating}}</span>
+                    </div>
                 </div>
             </a>
         </div>

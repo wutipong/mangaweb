@@ -26,7 +26,7 @@ func init() {
 	}
 }
 
-var viewTemplate *template.Template = nil
+var viewTemplate *template.Template
 
 type viewData struct {
 	Title      string
