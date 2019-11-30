@@ -3,7 +3,7 @@
 <div class="container">
     <div class="row">
     {{range .Items}}
-        <div class="col">
+        <div class="col" id="{{.ID}}">
             <a href="{{.LinkURL}}">
                 <div class="file-border">
                     <img class="file-thumb lazy" src ="/static/img/loading.gif" data-src="{{.ThumbURL}}" alt="{{.Name}}">

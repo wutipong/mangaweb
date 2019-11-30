@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"hash/fnv"
 	"log"
 	"net/http"
 	"net/url"
@@ -48,9 +49,13 @@ func view(c echo.Context) error {
 		return err
 	}
 
+	hash := fnv.New64()
+	hash.Write([]byte(p))
+	id := hash.Sum64()
+
 	data := viewData{
 		Title:     fmt.Sprintf("Manga - Viewing [%s]", p),
-		BrowseURL: "/browse",
+		BrowseURL: fmt.Sprintf("/browse#%v", id),
 		ImageURLs: createImageURLs(p, pages),
 	}
 	err = viewTemplate.Execute(&builder, data)

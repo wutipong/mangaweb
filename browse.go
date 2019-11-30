@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"hash/fnv"
 	"html/template"
 	"log"
 	"net/http"
@@ -33,6 +34,7 @@ type browseData struct {
 }
 
 type item struct {
+	ID       uint64
 	Name     string
 	LinkURL  string
 	ThumbURL string
@@ -47,7 +49,12 @@ func createItems(files []string) []item {
 		url = "/view/" + f
 		thumbURL = "/get_image/" + f + "?i=0;width=200"
 
+		hash := fnv.New64()
+		hash.Write([]byte(f))
+		id := hash.Sum64()
+
 		output[i] = item{
+			ID:       id,
 			Name:     f,
 			LinkURL:  url,
 			ThumbURL: thumbURL,
