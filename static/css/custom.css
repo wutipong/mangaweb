@@ -42,13 +42,13 @@ body {
 
 .file-border {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    width: 220px;
+    width: auto;
     height: 250px;
-    margin: 20px;
+    margin: 4px;
     background: black;
-    padding: 2px;
+    padding: 4px;
     border-style: solid;
     border-color: gray;
     border-radius: 2px;
@@ -56,17 +56,17 @@ body {
 }
 
 .file-thumb-name {
-    margin-top: auto;
+    max-width: 20em;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    width: 100%;
     z-index: 1;
-    text-align: center;
 }
 
 .file-thumb {
-    margin: auto;
+    margin: 4px;
+    max-width: 200px;
+    max-height: 200px;
 }
 
 #carouselControl {
