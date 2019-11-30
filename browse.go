@@ -30,7 +30,7 @@ var broseTemplate *template.Template = nil
 
 type browseData struct {
 	Title string
-	Items []item
+	Rows  [][]item
 }
 
 type item struct {
@@ -63,6 +63,21 @@ func createItems(files []string) []item {
 	return output
 }
 
+func makeRows(items []item, col int) [][]item {
+	var rows [][]item
+
+	for i, it := range items {
+		if i%col == 0 {
+			rows = append(rows, make([]item, 0))
+		}
+
+		r := i / col
+		rows[r] = append(rows[r], it)
+	}
+
+	return rows
+}
+
 // Handler
 func browse(c echo.Context) error {
 	builder := strings.Builder{}
@@ -73,9 +88,10 @@ func browse(c echo.Context) error {
 	}
 
 	sort.Strings(files)
+	items := createItems(files)
 	data := browseData{
 		Title: fmt.Sprintf("Manga - Browsing"),
-		Items: createItems(files),
+		Rows:  makeRows(items, 2),
 	}
 	err = broseTemplate.Execute(&builder, data)
 	if err != nil {

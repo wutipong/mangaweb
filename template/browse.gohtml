@@ -1,8 +1,9 @@
 {{template "html-head" .}}
 
 <div class="container">
+    {{range .Rows}}
     <div class="row">
-    {{range .Items}}
+        {{range .}}
         <div class="col" id="{{.ID}}">
             <a href="{{.LinkURL}}">
                 <div class="file-border">
@@ -11,6 +12,7 @@
                 </div>
             </a>
         </div>
-    {{end}}
+        {{end}}
     </div>
+    {{end}}
 </div>
