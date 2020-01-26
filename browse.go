@@ -9,6 +9,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -34,16 +35,22 @@ type browseData struct {
 }
 
 type item struct {
-	ID       uint64
-	Name     string
-	LinkURL  string
-	ThumbURL string
-	Rating   int
+	ID         uint64
+	Name       string
+	LinkURL    string
+	ThumbURL   string
+	CreateTime time.Time
+	Favorite   bool
+}
+
+type itemMeta struct {
+	Name       string    `json:"name"`
+	CreateTime time.Time `json:"create_time"`
+	Favorite   bool      `json:"favorite"`
 }
 
 func createItems(files []string) []item {
 	output := make([]item, len(files))
-	//ratings := readRating(files)
 	for i, f := range files {
 		var url string
 		var thumbURL string
@@ -60,8 +67,10 @@ func createItems(files []string) []item {
 			Name:     f,
 			LinkURL:  url,
 			ThumbURL: thumbURL,
-			//Rating:   ratings[i].Rating,
 		}
+		meta, _ := ReadMeta(output[i])
+		output[i].CreateTime = meta.CreateTime
+		output[i].Favorite = meta.Favorite
 	}
 	return output
 }
