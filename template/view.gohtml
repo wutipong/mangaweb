@@ -46,6 +46,14 @@
 
         $(sel).addClass('active');
         $('#download-btn').attr("href", imgUrls[{{.StartIndex}} -1])
+        
+        {{if .Favorite}}
+            $('#favorite-btn').addClass('active')
+            $('#favorite-btn').attr("href", window.location.href + "?favorite=false")
+        {{end}}
+        {{if not .Favorite}}
+            $('#favorite-btn').attr("href", window.location.href + "?favorite=true")
+        {{end}}
     });
     </script>
 </div>
@@ -57,19 +65,16 @@
         </li>
     </ul>
     <div class="my-2 my-lg-0">
-        <div class="btn-group">
-            <button type="button" 
-                class="btn btn-secondary dropdown-toggle" 
-                data-toggle="dropdown" href="#" role="button" 
-                aria-haspopup="true" aria-expanded="false">Rating</button>
-
-            <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item active" href="#">Unrated</a>
-                <a class="dropdown-item" href="#">1 Star</a>
-                <a class="dropdown-item" href="#">2 Star</a>
-                <a class="dropdown-item" href="#">3 Star</a>
-            </div>
-        </div>
+        
+        {{if .Favorite}}
+            <a id="favorite-btn" class="btn btn-secondary active">
+                <span><span class="oi oi-star"></span>
+                Favorite
+            </a>
+        {{end}}
+         {{if not .Favorite}}
+            <a id="favorite-btn" class="btn btn-secondary">Favorite</a>
+        {{end}}
         <a id="download-btn" class="btn my-2 my-sm-0 btn-primary" download>Download</a>
     </div>
 </nav>

@@ -9,10 +9,11 @@
                 <div class="file-border">
                     <img class="file-thumb lazy" src ="/static/img/loading.gif" data-src="{{.ThumbURL}}" alt="{{.Name}}">
                     <div class="file-details">
-                        <span class="file-thumb-name"><span class="oi oi-file"></span>{{.Name}}</span>
-                        {{if .Favorite}}
-                            <span><span class="oi oi-star"></span>
-                        {{end}}}
+                        <span class="file-thumb-name">
+                            {{if .Favorite}}
+                                <span><span class="oi oi-star"></span>
+                            {{end}}
+                        {{.Name}}</span>
                     </div>
                 </div>
             </a>

@@ -33,6 +33,7 @@ type viewData struct {
 	BrowseURL  string
 	ImageURLs  []string
 	StartIndex int64
+	Favorite   bool
 }
 
 func view(c echo.Context) error {
@@ -57,6 +58,7 @@ func view(c echo.Context) error {
 		Title:     fmt.Sprintf("Manga - Viewing [%s]", p),
 		BrowseURL: fmt.Sprintf("/browse#%v", id),
 		ImageURLs: createImageURLs(p, pages),
+		Favorite:  true,
 	}
 	err = viewTemplate.Execute(&builder, data)
 	if err != nil {
