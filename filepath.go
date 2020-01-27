@@ -1,12 +1,9 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 //BaseDirectory the data directory
@@ -56,37 +53,5 @@ func ListDir() (files []string, err error) {
 			files = append(files, f.Name())
 		}
 	}
-	return
-}
-
-func ReadMeta(i item) (meta itemMeta, err error) {
-	metaFile := filepath.Join(BaseDirectory, i.Name+".meta")
-	f, err := os.OpenFile(metaFile, os.O_RDWR|os.O_CREATE, 0777)
-	if err != nil {
-		return
-	}
-
-	defer f.Close()
-
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		return
-	}
-	if len(b) == 0 {
-		meta = itemMeta{
-			CreateTime: time.Now(),
-			Favorite:   false,
-			Name:       i.Name,
-		}
-
-		b, err = json.Marshal(meta)
-		if err != nil {
-			return
-		}
-		defer f.Write(b)
-	} else {
-		err = json.Unmarshal(b, &meta)
-	}
-
 	return
 }

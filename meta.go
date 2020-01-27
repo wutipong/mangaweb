@@ -1,0 +1,73 @@
+package main
+
+import (
+	"encoding/json"
+	"errors"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"time"
+)
+
+type itemMeta struct {
+	Name       string    `json:"name"`
+	CreateTime time.Time `json:"create_time"`
+	Favorite   bool      `json:"favorite"`
+}
+
+func generateMetaFileName(name string) string {
+	return filepath.Join(BaseDirectory, name+".meta")
+}
+
+func (m itemMeta) Write() error {
+	metaFile := generateMetaFileName(m.Name)
+	b, err := json.Marshal(m)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.Create(metaFile)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+	f.Write(b)
+
+	return nil
+}
+
+func NewMeta(name string) itemMeta {
+	return itemMeta{
+		Name:       name,
+		CreateTime: time.Now(),
+		Favorite:   false,
+	}
+}
+
+func (m *itemMeta) Read(name string) error {
+	metaFile := generateMetaFileName(name)
+	f, err := os.Open(metaFile)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(b, &m)
+}
+
+func ReadMeta(name string) (meta itemMeta, err error) {
+	err = meta.Read(name)
+	if errors.Is(err, os.ErrNotExist) {
+		meta = NewMeta(name)
+		err = meta.Write()
+	}
+
+	return
+}

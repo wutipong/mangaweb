@@ -43,12 +43,6 @@ type item struct {
 	Favorite   bool
 }
 
-type itemMeta struct {
-	Name       string    `json:"name"`
-	CreateTime time.Time `json:"create_time"`
-	Favorite   bool      `json:"favorite"`
-}
-
 func createItems(files []string) []item {
 	output := make([]item, len(files))
 	for i, f := range files {
@@ -62,15 +56,15 @@ func createItems(files []string) []item {
 		hash.Write([]byte(f))
 		id := hash.Sum64()
 
+		meta, _ := ReadMeta(f)
 		output[i] = item{
-			ID:       id,
-			Name:     f,
-			LinkURL:  url,
-			ThumbURL: thumbURL,
+			ID:         id,
+			Name:       f,
+			LinkURL:    url,
+			ThumbURL:   thumbURL,
+			CreateTime: meta.CreateTime,
+			Favorite:   meta.Favorite,
 		}
-		meta, _ := ReadMeta(output[i])
-		output[i].CreateTime = meta.CreateTime
-		output[i].Favorite = meta.Favorite
 	}
 	return output
 }

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -54,11 +55,20 @@ func view(c echo.Context) error {
 	hash.Write([]byte(p))
 	id := hash.Sum64()
 
+	var meta itemMeta
+	meta.Read(p)
+	if fav, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
+		if fav != meta.Favorite {
+			meta.Favorite = fav
+			meta.Write()
+		}
+	}
+
 	data := viewData{
 		Title:     fmt.Sprintf("Manga - Viewing [%s]", p),
 		BrowseURL: fmt.Sprintf("/browse#%v", id),
 		ImageURLs: createImageURLs(p, pages),
-		Favorite:  true,
+		Favorite:  meta.Favorite,
 	}
 	err = viewTemplate.Execute(&builder, data)
 	if err != nil {
