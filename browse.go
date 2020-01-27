@@ -50,7 +50,7 @@ func createItems(files []string) []item {
 		var thumbURL string
 
 		url = "/view/" + f
-		thumbURL = "/get_image/" + f + "?i=0;width=200"
+		thumbURL = "/thumbnail/" + f
 
 		hash := fnv.New64()
 		hash.Write([]byte(f))

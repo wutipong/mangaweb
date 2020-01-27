@@ -14,6 +14,7 @@ type itemMeta struct {
 	Name       string    `json:"name"`
 	CreateTime time.Time `json:"create_time"`
 	Favorite   bool      `json:"favorite"`
+	Thumbnail  []byte    `json:"thumbnail"`
 	mutex      sync.Mutex
 }
 
@@ -78,4 +79,24 @@ func ReadMeta(name string) (meta itemMeta, err error) {
 	}
 
 	return
+}
+
+func (m *itemMeta) GenerateThumbnail() error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	reader, _, err := OpenZipEntry(m.Name, 0)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+
+	thumbnail, err := CreateResized(reader, 200, 200)
+	if err != nil {
+		return err
+	}
+
+	m.Thumbnail = thumbnail
+
+	return nil
 }

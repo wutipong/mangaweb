@@ -47,6 +47,8 @@ func main() {
 
 	e.GET("/get_image/*", GetImage)
 
+	e.GET("/thumbnail/*", thumbnail)
+
 	e.GET("/view", view)
 	e.GET("/view/*", view)
 

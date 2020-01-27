@@ -7,6 +7,7 @@ import (
 	"image"
 	"image/jpeg"
 	_ "image/png"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -25,7 +26,6 @@ func GetImage(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	fullpath := BaseDirectory + string(os.PathSeparator) + p
 
 	var width, height int64 = 0, 0
 	if w, e := strconv.ParseInt(c.QueryParam("width"), 10, 64); e == nil {
@@ -42,23 +42,7 @@ func GetImage(c echo.Context) error {
 		index = i
 	}
 
-	r, err := zip.OpenReader(fullpath)
-	if err != nil {
-		return err
-	}
-	defer r.Close()
-
-	if index < 0 || index > len(r.File) {
-		return fmt.Errorf("index out of range : %v", index)
-	}
-
-	f := r.File[index]
-
-	if !filter(f.Name) {
-		return fmt.Errorf("invalid format : %v", f.Name)
-	}
-
-	reader, err := f.Open()
+	reader, f, err := OpenZipEntry(p, index)
 	if err != nil {
 		return nil
 	}
@@ -72,25 +56,57 @@ func GetImage(c echo.Context) error {
 		}
 
 		var mimetype string
-		switch filepath.Ext(strings.ToLower(f.Name)) {
+		switch filepath.Ext(strings.ToLower(f)) {
 		case ".jpg", ".jpeg":
 			mimetype = "image/jpeg"
 		case ".png":
 			mimetype = "image/png"
 		}
 
-		c.Blob(http.StatusOK, mimetype, data)
+		return c.Blob(http.StatusOK, mimetype, data)
 	}
-
-	img, _, err := image.Decode(reader)
-
+	output, err := CreateResized(reader, uint(width), uint(height))
 	if err != nil {
 		return err
 	}
 
-	resized := resize.Thumbnail(uint(width), uint(height), img, resize.MitchellNetravali)
+	return c.Blob(http.StatusOK, "image/jpeg", output)
+}
+
+func OpenZipEntry(name string, index int) (reader io.ReadCloser, filename string, err error) {
+	fullpath := BaseDirectory + string(os.PathSeparator) + name
+	r, err := zip.OpenReader(fullpath)
+	if err != nil {
+		return
+	}
+	if index < 0 || index > len(r.File) {
+		err = fmt.Errorf("index out of range : %v", index)
+		return
+	}
+	f := r.File[index]
+	if !filter(f.Name) {
+		err = fmt.Errorf("invalid format : %v", f.Name)
+		return
+	}
+
+	filename = f.Name
+	reader, err = f.Open()
+	return
+}
+
+func CreateResized(reader io.Reader, width uint, height uint) (output []byte, err error) {
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		return
+	}
+
+	resized := resize.Thumbnail(width, height, img, resize.MitchellNetravali)
 	buffer := bytes.Buffer{}
 
-	jpeg.Encode(&buffer, resized, nil)
-	return c.Blob(http.StatusOK, "image/jpeg", buffer.Bytes())
+	err = jpeg.Encode(&buffer, resized, nil)
+	if err != nil {
+		return
+	}
+	output = buffer.Bytes()
+	return
 }
