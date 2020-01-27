@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
@@ -13,13 +14,17 @@ type itemMeta struct {
 	Name       string    `json:"name"`
 	CreateTime time.Time `json:"create_time"`
 	Favorite   bool      `json:"favorite"`
+	mutex      sync.Mutex
 }
 
 func generateMetaFileName(name string) string {
 	return filepath.Join(BaseDirectory, name+".meta")
 }
 
-func (m itemMeta) Write() error {
+func (m *itemMeta) Write() error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
 	metaFile := generateMetaFileName(m.Name)
 	b, err := json.Marshal(m)
 	if err != nil {
@@ -46,6 +51,9 @@ func NewMeta(name string) itemMeta {
 }
 
 func (m *itemMeta) Read(name string) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
 	metaFile := generateMetaFileName(name)
 	f, err := os.Open(metaFile)
 	if err != nil {
