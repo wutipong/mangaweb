@@ -1,5 +1,28 @@
 {{template "html-head" .}}
 
+<nav class="navbar fixed-top navbar-expand-lg">
+   <span class="navbar-brand mr-auto text-truncate h1">Manga Browse</span>
+    <div class="my-2 my-lg-0">
+        <form class="form-inline">
+            <label for="sort-by">Sort By</label>
+            <select id="sort-by" class="form-control">
+                <option selected>Name</option>
+                <option>Added Date</option>
+            </select>
+        </form>
+        {{/*if .Favorite}}
+            <a id="favorite-btn" class="btn btn-warning active">
+                <span><span class="oi oi-star"></span>
+                Favorite
+            </a>
+        {{end*/}}
+        {{/*if not .Favorite*/}}
+            <a id="favorite-btn" class="btn btn-secondary">Favorite Only</a>
+        {{/*end*/}}
+    </div>
+</nav>
+
+
 <div class="container">
     {{range .Rows}}
     <div class="row">
