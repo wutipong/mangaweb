@@ -59,14 +59,15 @@
 </div>
 
 <nav class="navbar fixed-top navbar-expand-lg">
+   <span class="navbar-brand mr-auto h1">View</span>
     <div class="my-2 my-lg-0">
         {{if .Favorite}}
-            <a id="favorite-btn" class="btn btn-secondary active">
+            <a id="favorite-btn" class="btn btn-warning active">
                 <span><span class="oi oi-star"></span>
                 Favorite
             </a>
         {{end}}
-         {{if not .Favorite}}
+        {{if not .Favorite}}
             <a id="favorite-btn" class="btn btn-secondary">Favorite</a>
         {{end}}
         <a id="download-btn" class="btn btn-primary" download>Download</a>
