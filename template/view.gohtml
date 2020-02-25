@@ -59,13 +59,7 @@
 </div>
 
 <nav class="navbar fixed-top navbar-expand-lg">
-    <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-            <a class="nav-link" href="{{.BrowseURL}}"> Back</a>
-        </li>
-    </ul>
     <div class="my-2 my-lg-0">
-        
         {{if .Favorite}}
             <a id="favorite-btn" class="btn btn-secondary active">
                 <span><span class="oi oi-star"></span>
@@ -75,6 +69,7 @@
          {{if not .Favorite}}
             <a id="favorite-btn" class="btn btn-secondary">Favorite</a>
         {{end}}
-        <a id="download-btn" class="btn my-2 my-sm-0 btn-primary" download>Download</a>
+        <a id="download-btn" class="btn btn-primary" download>Download</a>
+        <a id="close-btn" class="btn btn-danger" href="{{.BrowseURL}}"> Close</a>
     </div>
 </nav>
