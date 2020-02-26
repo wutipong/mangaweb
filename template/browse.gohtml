@@ -12,13 +12,13 @@
         </form>       
     </div>
     {{if .FavoriteOnly}}
-        <a id="favorite-btn" class="btn btn-warning active" href="/browse?favorite=true">
+        <a id="favorite-btn" class="btn btn-warning active" href="/browse">
             <span><span class="oi oi-star"></span>
             Favorite Only
         </a>
     {{end}}
     {{if not .FavoriteOnly}}
-        <a id="favorite-btn" class="btn btn-secondary" href="/browse">Favorite Only</a>
+        <a id="favorite-btn" class="btn btn-secondary" href="/browse?favorite=true">Favorite Only</a>
     {{end}}
 </nav>
 
