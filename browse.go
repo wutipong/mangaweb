@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -30,8 +31,9 @@ func init() {
 var broseTemplate *template.Template
 
 type browseData struct {
-	Title string
-	Rows  [][]item
+	Title        string
+	FavoriteOnly bool
+	Rows         [][]item
 }
 
 type item struct {
@@ -93,11 +95,26 @@ func browse(c echo.Context) error {
 		return err
 	}
 
+	fav := false
+	if f, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
+		fav = f
+	}
+
 	sort.Strings(files)
 	items := createItems(files)
+	if fav == true {
+		var tempItems []item
+		for _, item := range items {
+			if item.Favorite == true {
+				tempItems = append(tempItems, item)
+			}
+		}
+		items = tempItems
+	}
 	data := browseData{
-		Title: fmt.Sprintf("Manga - Browsing"),
-		Rows:  makeRows(items, 2),
+		Title:        fmt.Sprintf("Manga - Browsing"),
+		FavoriteOnly: fav,
+		Rows:         makeRows(items, 2),
 	}
 	err = broseTemplate.Execute(&builder, data)
 	if err != nil {
