@@ -11,15 +11,15 @@
             </select>
         </form>       
     </div>
-    {{/*if .Favorite}}
-        <a id="favorite-btn" class="btn btn-warning active">
+    {{if .FavoriteOnly}}
+        <a id="favorite-btn" class="btn btn-warning active" href="/browse?favorite=true">
             <span><span class="oi oi-star"></span>
-            Favorite
+            Favorite Only
         </a>
-    {{end*/}}
-    {{/*if not .Favorite*/}}
-        <a id="favorite-btn" class="btn btn-secondary">Favorite Only</a>
-    {{/*end*/}}
+    {{end}}
+    {{if not .FavoriteOnly}}
+        <a id="favorite-btn" class="btn btn-secondary" href="/browse">Favorite Only</a>
+    {{end}}
 </nav>
 
 <div class="container" style="padding-top:80px;">
