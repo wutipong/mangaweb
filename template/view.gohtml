@@ -32,7 +32,7 @@
         {{end}}]
 
         $('#carouselControl').on('slide.bs.carousel', function (e) {
-            $('#download-btn').attr("href", imgUrls[e.to -1])
+            $('#download-btn').attr("href", imgUrls[e.to])
             var url = window.location.origin + window.location.pathname + "#" + (e.to +1);
             history.pushState(null, '', url);
         })
