@@ -45,7 +45,7 @@
         let sel = '.carousel-item:nth-child(' + index + ')'
         $(sel).addClass('active');
 
-        $('#download-btn').attr("href", imgUrls[index])
+        $('#download-btn').attr("href", imgUrls[index-1])
 
         //$('#download-btn').attr("href", imgUrls[{{.StartIndex}} -1])
         
