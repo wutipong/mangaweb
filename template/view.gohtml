@@ -43,9 +43,11 @@
             index = 1
         }
         let sel = '.carousel-item:nth-child(' + index + ')'
-
         $(sel).addClass('active');
-        $('#download-btn').attr("href", imgUrls[{{.StartIndex}} -1])
+
+        $('#download-btn').attr("href", imgUrls[index])
+
+        //$('#download-btn').attr("href", imgUrls[{{.StartIndex}} -1])
         
         {{if .Favorite}}
             $('#favorite-btn').addClass('active')
