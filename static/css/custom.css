@@ -52,6 +52,14 @@ body {
     flex-direction: column;
 }
 
+.favorite-banner {
+    position: absolute;
+    background-color: yellow;
+    width:100px;
+    color: #343a40;
+    bottom: 80px;
+}
+
 #carouselControl {
     height: 90vh;
     max-height: 100%;

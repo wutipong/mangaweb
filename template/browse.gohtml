@@ -29,15 +29,18 @@
         <div class="col" id="{{.ID}}">
             <a href="{{.LinkURL}}">
                 <div class="file-border">
-                    <div class="thumb-border">
-                        <img class="file-thumb lazy" src ="/static/img/loading.gif" data-src="{{.ThumbURL}}" alt="{{.Name}}">
+                    <div class ="file-thumb-border">
+                        <div class="thumb-border">
+                            <img class="file-thumb lazy" src ="/static/img/loading.gif" data-src="{{.ThumbURL}}" alt="{{.Name}}">
+                        </div>
+                        <div class="favorite-banner">
+                            {{if .Favorite}}
+                                <span><span class="oi oi-star"></span> Favorite
+                            {{end}}
+                        </div>
                     </div>
                     <div class="file-details">
-                        <span class="file-thumb-name">
-                            {{if .Favorite}}
-                                <span><span class="oi oi-star"></span>
-                            {{end}}
-                        {{.Name}}</span>
+                        <span class="file-thumb-name">{{.Name}}</span>
                     </div>
                 </div>
             </a>
