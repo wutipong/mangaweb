@@ -22,7 +22,6 @@ func main() {
 	log.Printf("Image Source Path: %s", *path)
 	log.Printf("using prefix %s", *prefix)
 
-	initDB()
 	// Echo instance
 	e := echo.New()
 
