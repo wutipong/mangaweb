@@ -27,8 +27,7 @@ body {
 
 .file-thumb-name {
     max-width: 20em;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display:block;
     overflow: hidden;
     z-index: 1;
 }
