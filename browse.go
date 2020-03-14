@@ -105,6 +105,11 @@ func browse(c echo.Context) error {
 		sortBy = "name"
 	}
 
+	descending := false
+	if f, e := strconv.ParseBool(c.QueryParam("descending")); e == nil {
+		descending = f
+	}
+
 	items := createItems(files)
 	if fav == true {
 		var tempItems []item
@@ -126,6 +131,14 @@ func browse(c echo.Context) error {
 			return items[j].CreateTime.Before(items[i].CreateTime)
 		})
 	}
+
+	if descending {
+		for i := len(items)/2 - 1; i >= 0; i-- {
+			opp := len(items) - 1 - i
+			items[i], items[opp] = items[opp], items[i]
+		}
+	}
+
 	data := browseData{
 		Title:        fmt.Sprintf("Manga - Browsing"),
 		FavoriteOnly: fav,

@@ -11,10 +11,13 @@ $(function(){
         
     $("#sort-by").val(sortBy)
 
-    let favURL = new URL(url.toString())
-    
+    let desc = searchParams.get("descending")
+    if(desc === "true") 
+        $("#order").prop("checked", true)
 
+    let favURL = new URL(url.toString())
     let favOnly = searchParams.get("favorite")
+
     if (favOnly ==="true")
         favOnly = "false"
     else
@@ -34,6 +37,22 @@ function sortChanged(){
     url.search = searchParams.toString()
     
 }
+
+function orderChanged(){
+    let url = window.location
+    let searchParams = new URLSearchParams(url.search);
+
+    let desc = $("#order").prop("checked")
+
+    if (desc == null) {
+        desc = false
+    } 
+
+    searchParams.set("descending", desc)
+
+    url.search = searchParams.toString()
+    
+}
 </script>
 
 <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
@@ -45,6 +64,8 @@ function sortChanged(){
                 <option selected value="name">Name</option>
                 <option value="date">Added Date</option>
             </select>
+            <input type="checkbox" id="order" onchange="orderChanged()">
+            <label for="order">Reverse</label>
         </form>       
     </div>
     {{if .FavoriteOnly}}
