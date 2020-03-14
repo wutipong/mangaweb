@@ -1,13 +1,49 @@
 {{template "html-head" .}}
 
+<script>
+
+$(function(){
+    let url = window.location
+    let searchParams = new URLSearchParams(url.search);
+    let sortBy = searchParams.get("sort")
+    if(sortBy === null) 
+        sortBy = "name"
+        
+    $("#sort-by").val(sortBy)
+
+    let favURL = new URL(url.toString())
+    
+
+    let favOnly = searchParams.get("favorite")
+    if (favOnly ==="true")
+        favOnly = "false"
+    else
+        favOnly = "true"
+
+    searchParams.set("favorite", favOnly)
+
+    favURL.search = searchParams.toString()
+    $("#favorite-btn").attr("href", favURL)
+})
+
+function sortChanged(){
+    let url = window.location
+    let searchParams = new URLSearchParams(url.search);
+    searchParams.set("sort", $("#sort-by").val())
+
+    url.search = searchParams.toString()
+    
+}
+</script>
+
 <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
    <span class="navbar-brand mr-auto text-truncate h1">Manga Browse</span>
     <div class="my-2 my-lg-0">
         <form class="form-inline">
             <label for="sort-by">Sort By</label>
-            <select id="sort-by" class="form-control">
-                <option selected>Name</option>
-                <option>Added Date</option>
+            <select id="sort-by" class="form-control" onchange="sortChanged()">
+                <option selected value="name">Name</option>
+                <option value="date">Added Date</option>
             </select>
         </form>       
     </div>

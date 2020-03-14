@@ -100,7 +100,11 @@ func browse(c echo.Context) error {
 		fav = f
 	}
 
-	sort.Strings(files)
+	sortBy := c.QueryParam("sort")
+	if sortBy == "" {
+		sortBy = "name"
+	}
+
 	items := createItems(files)
 	if fav == true {
 		var tempItems []item
@@ -110,6 +114,17 @@ func browse(c echo.Context) error {
 			}
 		}
 		items = tempItems
+	}
+
+	switch sortBy {
+	case "name":
+		sort.Slice(items, func(i, j int) bool {
+			return items[i].Name < items[j].Name
+		})
+	case "date":
+		sort.Slice(items, func(i, j int) bool {
+			return items[j].CreateTime.Before(items[i].CreateTime)
+		})
 	}
 	data := browseData{
 		Title:        fmt.Sprintf("Manga - Browsing"),
