@@ -22,6 +22,9 @@
     </div>
     <script>
     $(function() {
+        if (window.location .search !== "")
+            window.location.search = ""
+
         $('.lazy').Lazy();
         $('.carousel').carousel({
             interval: false
@@ -33,9 +36,27 @@
 
         $('#carouselControl').on('slide.bs.carousel', function (e) {
             $('#download-btn').attr("href", imgUrls[e.to])
-            var url = window.location.origin + window.location.pathname + "#" + (e.to +1);
-            history.pushState(null, '', url);
+            let url = window.location
+            url.hash = "" + (e.to +1)
+            url.search = ""
+
+            history.pushState(null, '', url.toString());
+
+            let favURL = new URL(url.toString())
+            let searchParams = new URLSearchParams(favURL.search);
+
+            {{if .Favorite}}
+                $('#favorite-btn').addClass('active')
+                searchParams.set("favorite", "false")
+            {{end}}
+            {{if not .Favorite}}
+                searchParams.set("favorite", "true")
+            {{end}}
+
+            favURL.search = searchParams.toString()
+            $('#favorite-btn').attr("href", favURL)
         })
+
 
         let indexStr = window.location.hash.substr(1);
         let index = parseInt(indexStr)
@@ -46,8 +67,6 @@
         $(sel).addClass('active');
 
         $('#download-btn').attr("href", imgUrls[index-1])
-
-        //$('#download-btn').attr("href", imgUrls[{{.StartIndex}} -1])
         
         {{if .Favorite}}
             $('#favorite-btn').addClass('active')
