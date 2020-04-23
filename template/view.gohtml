@@ -22,7 +22,7 @@
     </div>
     <script>
     $(function() {
-        if (window.location .search !== "")
+        if (window.location.search !== "")
             window.location.search = ""
 
         $('.lazy').Lazy();
@@ -36,13 +36,8 @@
 
         $('#carouselControl').on('slide.bs.carousel', function (e) {
             $('#download-btn').attr("href", imgUrls[e.to])
-            let url = window.location
-            url.hash = "" + (e.to +1)
-            url.search = ""
-
-            history.pushState(null, '', url.toString());
-
-            let favURL = new URL(url.toString())
+            let favURL = new URL(window.location.toString())
+            favURL.hash = "" + (e.to +1)
             let searchParams = new URLSearchParams(favURL.search);
 
             {{if .Favorite}}
