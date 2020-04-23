@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"os"
 	"path/filepath"
+	"sort"
 )
 
 type Page struct {
@@ -20,13 +21,22 @@ func ListPages(file string) (pages []Page, err error) {
 	}
 	defer r.Close()
 
-	for i, f := range r.File {
+	var fileNames []string
+	for _, f := range r.File {
 		if filter(f.Name) {
-			pages = append(pages, Page{
-				Name:  filepath.Base(f.Name),
-				Index: i,
-			})
+			fileNames = append(fileNames, filepath.Base(f.Name))
 		}
 	}
+
+	sort.Strings(fileNames)
+
+	pages = make([]Page, len(fileNames))
+	for i, f := range fileNames {
+		pages[i] = Page{
+			Name:  filepath.Base(f),
+			Index: i,
+		}
+	}
+
 	return
 }
