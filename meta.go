@@ -26,6 +26,16 @@ func generateMetaFileName(name string) string {
 	return filepath.Join(BaseDirectory, name+".meta")
 }
 
+func isMetaFileExist(name string) bool {
+	metaFile := generateMetaFileName(name)
+
+	if _, err := os.Stat(metaFile); err == nil {
+		return true
+	}
+
+	return false
+}
+
 func (m *itemMeta) Write() error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
