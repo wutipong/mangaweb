@@ -2,6 +2,7 @@ package main
 
 import (
 	"archive/zip"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -30,10 +31,14 @@ func ListPages(file string) (pages []Page, err error) {
 
 	sort.Strings(fileNames)
 
+	for _, f := range fileNames {
+		log.Println(f)
+	}
+
 	pages = make([]Page, len(fileNames))
 	for i, f := range fileNames {
 		pages[i] = Page{
-			Name:  filepath.Base(f),
+			Name:  f,
 			Index: i,
 		}
 	}

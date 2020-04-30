@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -42,15 +43,9 @@ func GetImage(c echo.Context) error {
 		index = i
 	}
 
-	reader, f, err := OpenZipEntry(p, index)
-	if err != nil {
-		return nil
-	}
-	defer reader.Close()
+	data, f, err := OpenZipEntry(p, index)
 
 	if width == 0 || height == 0 {
-		data, err := ioutil.ReadAll(reader)
-
 		if err != nil {
 			return nil
 		}
@@ -65,6 +60,7 @@ func GetImage(c echo.Context) error {
 
 		return c.Blob(http.StatusOK, mimetype, data)
 	}
+	reader := bytes.NewBuffer(data)
 	output, err := CreateResized(reader, uint(width), uint(height))
 	if err != nil {
 		return err
@@ -73,24 +69,51 @@ func GetImage(c echo.Context) error {
 	return c.Blob(http.StatusOK, "image/jpeg", output)
 }
 
-func OpenZipEntry(name string, index int) (reader io.ReadCloser, filename string, err error) {
+func OpenZipEntry(name string, index int) (content []byte, filename string, err error) {
 	fullpath := BaseDirectory + string(os.PathSeparator) + name
 	r, err := zip.OpenReader(fullpath)
 	if err != nil {
 		return
 	}
-	if index < 0 || index > len(r.File) {
+
+	defer r.Close()
+
+	var fileNames []string
+	for _, f := range r.File {
+		if filter(f.Name) {
+			fileNames = append(fileNames, filepath.Base(f.Name))
+		}
+	}
+
+	if index < 0 || index > len(fileNames) {
 		err = fmt.Errorf("index out of range : %v", index)
 		return
 	}
-	f := r.File[index]
-	if !filter(f.Name) {
-		err = fmt.Errorf("invalid format : %v", f.Name)
+
+	sort.Strings(fileNames)
+	filename = fileNames[index]
+
+	var zf *zip.File
+	for _, f := range r.File {
+		if f.Name == filename {
+			zf = f
+			break
+		}
+	}
+
+	if zf == nil {
+		err = fmt.Errorf("file not found : %v", index)
 		return
 	}
 
-	filename = f.Name
-	reader, err = f.Open()
+	filename = zf.Name
+	reader, err := zf.Open()
+
+	defer reader.Close()
+	if content, err = ioutil.ReadAll(reader); err != nil {
+		content = nil
+		return
+	}
 	return
 }
 

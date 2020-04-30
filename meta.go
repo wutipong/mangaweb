@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -85,11 +86,11 @@ func (m *itemMeta) GenerateThumbnail() error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	reader, _, err := OpenZipEntry(m.Name, 0)
+	data, _, err := OpenZipEntry(m.Name, 0)
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
+	reader := bytes.NewBuffer(data)
 
 	thumbnail, err := CreateResized(reader, 200, 200)
 	if err != nil {
