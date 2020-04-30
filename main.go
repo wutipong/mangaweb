@@ -85,8 +85,7 @@ func root(c echo.Context) error {
 }
 
 func updateMetaRoutine() (stop func(), done chan bool) {
-
-	updateInterval := time.Minute //time.Hour
+	updateInterval := 30 * time.Minute
 	checkInterval := 30 * time.Second
 	lastUpdate := time.Now()
 
