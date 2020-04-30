@@ -1,12 +1,14 @@
 package main
 
 import (
-	"bytes"
+	"archive/zip"
 	"encoding/json"
 	"errors"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sort"
 	"sync"
 	"time"
 )
@@ -15,6 +17,7 @@ type itemMeta struct {
 	Name       string    `json:"name"`
 	CreateTime time.Time `json:"create_time"`
 	Favorite   bool      `json:"favorite"`
+	Pages      []string  `json:"pages"`
 	Thumbnail  []byte    `json:"thumbnail"`
 	mutex      sync.Mutex
 }
@@ -86,11 +89,31 @@ func (m *itemMeta) GenerateThumbnail() error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	data, _, err := OpenZipEntry(m.Name, 0)
+	fullpath := BaseDirectory + string(os.PathSeparator) + m.Name
+
+	r, err := zip.OpenReader(fullpath)
 	if err != nil {
 		return err
 	}
-	reader := bytes.NewBuffer(data)
+	defer r.Close()
+
+	if len(m.Pages) == 0 {
+		m.GeneratePages()
+	}
+
+	var reader io.ReadCloser
+	for _, zf := range r.File {
+		if zf.Name == m.Pages[0] {
+			reader, err = zf.Open()
+			break
+		}
+	}
+
+	if err != nil {
+		return err
+	}
+
+	defer reader.Close()
 
 	thumbnail, err := CreateResized(reader, 200, 200)
 	if err != nil {
@@ -98,6 +121,32 @@ func (m *itemMeta) GenerateThumbnail() error {
 	}
 
 	m.Thumbnail = thumbnail
+
+	return nil
+}
+
+func (m *itemMeta) GeneratePages() error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	fullpath := BaseDirectory + string(os.PathSeparator) + m.Name
+
+	r, err := zip.OpenReader(fullpath)
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	var fileNames []string
+	for _, f := range r.File {
+		if filter(f.Name) {
+			fileNames = append(fileNames, f.Name)
+		}
+	}
+
+	sort.Strings(fileNames)
+
+	m.Pages = fileNames
 
 	return nil
 }

@@ -1,39 +1,23 @@
 package main
 
-import (
-	"archive/zip"
-	"log"
-	"os"
-	"path/filepath"
-	"sort"
-)
-
 type Page struct {
 	Index int
 	Name  string
 }
 
 func ListPages(file string) (pages []Page, err error) {
-	fullpath := BaseDirectory + string(os.PathSeparator) + file
-
-	r, err := zip.OpenReader(fullpath)
+	var meta itemMeta
+	err = meta.Read(file)
 	if err != nil {
 		return
 	}
-	defer r.Close()
 
-	var fileNames []string
-	for _, f := range r.File {
-		if filter(f.Name) {
-			fileNames = append(fileNames, filepath.Base(f.Name))
-		}
+	if len(meta.Pages) == 0 {
+		meta.GeneratePages()
+		meta.Write()
 	}
 
-	sort.Strings(fileNames)
-
-	for _, f := range fileNames {
-		log.Println(f)
-	}
+	fileNames := meta.Pages
 
 	pages = make([]Page, len(fileNames))
 	for i, f := range fileNames {

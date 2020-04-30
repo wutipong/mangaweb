@@ -13,7 +13,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -78,20 +77,15 @@ func OpenZipEntry(name string, index int) (content []byte, filename string, err 
 
 	defer r.Close()
 
-	var fileNames []string
-	for _, f := range r.File {
-		if filter(f.Name) {
-			fileNames = append(fileNames, filepath.Base(f.Name))
-		}
+	var meta itemMeta
+	meta.Read(name)
+
+	if len(meta.Pages) == 0 {
+		meta.GeneratePages()
+		meta.Write()
 	}
 
-	if index < 0 || index > len(fileNames) {
-		err = fmt.Errorf("index out of range : %v", index)
-		return
-	}
-
-	sort.Strings(fileNames)
-	filename = fileNames[index]
+	filename = meta.Pages[index]
 
 	var zf *zip.File
 	for _, f := range r.File {
