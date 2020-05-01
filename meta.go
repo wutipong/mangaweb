@@ -4,22 +4,24 @@ import (
 	"archive/zip"
 	"encoding/json"
 	"errors"
-	"io"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
 	"sync"
 	"time"
+
+	"bitbucket.org/zombiezen/cardcpx/natsort"
 )
 
 type itemMeta struct {
-	Name       string    `json:"name"`
-	CreateTime time.Time `json:"create_time"`
-	Favorite   bool      `json:"favorite"`
-	Pages      []string  `json:"pages"`
-	Thumbnail  []byte    `json:"thumbnail"`
-	mutex      sync.Mutex
+	Name        string    `json:"name"`
+	CreateTime  time.Time `json:"create_time"`
+	Favorite    bool      `json:"favorite"`
+	FileIndices []int     `json:"file_indices"`
+	Thumbnail   []byte    `json:"thumbnail"`
+	mutex       sync.Mutex
 }
 
 func generateMetaFileName(name string) string {
@@ -107,18 +109,14 @@ func (m *itemMeta) GenerateThumbnail() error {
 	}
 	defer r.Close()
 
-	if len(m.Pages) == 0 {
+	if len(m.FileIndices) == 0 {
 		m.GeneratePages()
 	}
 
-	var reader io.ReadCloser
-	for _, zf := range r.File {
-		if zf.Name == m.Pages[0] {
-			reader, err = zf.Open()
-			break
-		}
+	if len(m.FileIndices) == 0 {
+		return fmt.Errorf("file list is empty")
 	}
-
+	reader, err := r.File[m.FileIndices[0]].Open()
 	if err != nil {
 		return err
 	}
@@ -147,16 +145,29 @@ func (m *itemMeta) GeneratePages() error {
 	}
 	defer r.Close()
 
-	var fileNames []string
-	for _, f := range r.File {
+	type fileIndexPair struct {
+		Index    int
+		FileName string
+	}
+
+	var fileNames []fileIndexPair
+	for i, f := range r.File {
 		if filter(f.Name) {
-			fileNames = append(fileNames, f.Name)
+			fileNames = append(fileNames,
+				fileIndexPair{
+					i, f.Name,
+				})
 		}
 	}
 
-	sort.Strings(fileNames)
+	sort.Slice(fileNames, func(i, j int) bool {
+		return natsort.Less(fileNames[i].FileName, fileNames[j].FileName)
+	})
 
-	m.Pages = fileNames
+	m.FileIndices = make([]int, len(fileNames))
+	for i, p := range fileNames {
+		m.FileIndices[i] = p.Index
+	}
 
 	return nil
 }

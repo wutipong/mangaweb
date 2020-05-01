@@ -69,6 +69,19 @@ func GetImage(c echo.Context) error {
 }
 
 func OpenZipEntry(name string, index int) (content []byte, filename string, err error) {
+
+	var meta itemMeta
+	meta.Read(name)
+
+	if len(meta.FileIndices) == 0 {
+		meta.GeneratePages()
+		meta.Write()
+	}
+
+	if len(meta.FileIndices) == 0 {
+		err = fmt.Errorf("image file not found")
+	}
+
 	fullpath := BaseDirectory + string(os.PathSeparator) + name
 	r, err := zip.OpenReader(fullpath)
 	if err != nil {
@@ -77,23 +90,7 @@ func OpenZipEntry(name string, index int) (content []byte, filename string, err 
 
 	defer r.Close()
 
-	var meta itemMeta
-	meta.Read(name)
-
-	if len(meta.Pages) == 0 {
-		meta.GeneratePages()
-		meta.Write()
-	}
-
-	filename = meta.Pages[index]
-
-	var zf *zip.File
-	for _, f := range r.File {
-		if f.Name == filename {
-			zf = f
-			break
-		}
-	}
+	zf := r.File[meta.FileIndices[index]]
 
 	if zf == nil {
 		err = fmt.Errorf("file not found : %v", index)

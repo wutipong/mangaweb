@@ -1,5 +1,10 @@
 package main
 
+import (
+	"archive/zip"
+	"os"
+)
+
 type Page struct {
 	Index int
 	Name  string
@@ -12,17 +17,27 @@ func ListPages(file string) (pages []Page, err error) {
 		return
 	}
 
-	if len(meta.Pages) == 0 {
+	if len(meta.FileIndices) == 0 {
 		meta.GeneratePages()
 		meta.Write()
 	}
 
-	fileNames := meta.Pages
+	if len(meta.FileIndices) == 0 {
+		return
+	}
 
-	pages = make([]Page, len(fileNames))
-	for i, f := range fileNames {
+	fullpath := BaseDirectory + string(os.PathSeparator) + file
+	r, err := zip.OpenReader(fullpath)
+	if err != nil {
+		return
+	}
+
+	defer r.Close()
+
+	pages = make([]Page, len(meta.FileIndices))
+	for i, f := range meta.FileIndices {
 		pages[i] = Page{
-			Name:  f,
+			Name:  r.File[f].Name,
 			Index: i,
 		}
 	}
