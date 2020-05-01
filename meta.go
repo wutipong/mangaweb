@@ -110,12 +110,9 @@ func (m *itemMeta) GenerateThumbnail() error {
 	defer r.Close()
 
 	if len(m.FileIndices) == 0 {
-		m.GenerateImageIndices()
-	}
-
-	if len(m.FileIndices) == 0 {
 		return fmt.Errorf("file list is empty")
 	}
+
 	reader, err := r.File[m.FileIndices[0]].Open()
 	if err != nil {
 		return err

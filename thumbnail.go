@@ -18,9 +18,16 @@ func thumbnail(c echo.Context) error {
 	var m itemMeta
 	err = m.Read(name)
 	if errors.Is(err, os.ErrNotExist) {
+		m = NewMeta(name)
+		defer m.Write()
 	} else if err != nil {
 		return err
 	}
+
+	if len(m.FileIndices) == 0 {
+		m.GenerateImageIndices()
+	}
+
 	if m.Thumbnail == nil {
 		defer m.Write()
 		m.GenerateThumbnail()
