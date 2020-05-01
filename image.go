@@ -74,7 +74,7 @@ func OpenZipEntry(name string, index int) (content []byte, filename string, err 
 	meta.Read(name)
 
 	if len(meta.FileIndices) == 0 {
-		meta.GeneratePages()
+		meta.GenerateImageIndices()
 		meta.Write()
 	}
 

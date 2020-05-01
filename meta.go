@@ -110,7 +110,7 @@ func (m *itemMeta) GenerateThumbnail() error {
 	defer r.Close()
 
 	if len(m.FileIndices) == 0 {
-		m.GeneratePages()
+		m.GenerateImageIndices()
 	}
 
 	if len(m.FileIndices) == 0 {
@@ -133,7 +133,7 @@ func (m *itemMeta) GenerateThumbnail() error {
 	return nil
 }
 
-func (m *itemMeta) GeneratePages() error {
+func (m *itemMeta) GenerateImageIndices() error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 

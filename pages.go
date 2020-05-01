@@ -18,7 +18,7 @@ func ListPages(file string) (pages []Page, err error) {
 	}
 
 	if len(meta.FileIndices) == 0 {
-		meta.GeneratePages()
+		meta.GenerateImageIndices()
 		meta.Write()
 	}
 

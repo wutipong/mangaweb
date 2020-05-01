@@ -121,7 +121,7 @@ func updateMetaRoutine() (stop func(), done chan bool) {
 				}
 
 				meta := NewMeta(file)
-				meta.GeneratePages()
+				meta.GenerateImageIndices()
 				meta.GenerateThumbnail()
 				meta.Write()
 			}
