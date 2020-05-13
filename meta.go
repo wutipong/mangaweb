@@ -70,7 +70,9 @@ func migrateMeta(db *sqlx.DB) error {
 	}
 
 	for _, file := range files {
-		f, err := os.Open(filepath.Join(BaseDirectory, file))
+		log.Printf("Processing %s", file)
+		metaFile := generateMetaFileName(file)
+		f, err := os.Open(filepath.Join(BaseDirectory, metaFile))
 		if err != nil {
 			continue
 		}

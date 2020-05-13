@@ -17,6 +17,8 @@ services:
       - "6699:80"
     networks:
       - backend
+    restart: "unless-stopped"
+
 
   db:
     image: postgres:11
@@ -30,6 +32,7 @@ services:
         POSTGRES_USER: "user"
         POSTGRES_PASSWORD: "password"
         POSTGRES_DB: "manga"
+    restart: unless-stopped
 
 networks:
   backend:
