@@ -2,6 +2,8 @@ version: "3.3"
 
 services:
   manga:
+    depends_on:
+      - db
     build:
       context: ./
       dockerfile: Dockerfile
@@ -9,22 +11,24 @@ services:
         buildno: 1
     
     volumes:
-      #- /mnt/storage1/manga:/data
-      - /home/wutipong/manga:/data
+      - /mnt/storage1/manga:/data
+      # - /home/wutipong/manga:/data
     ports:
-      - "8888:80"
+      - "6699:80"
     networks:
       - backend
 
   db:
-    image: postgres:9.4
+    image: postgres:11
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
       - backend
+    expose:
+      - "5432"
     environment: 
         POSTGRES_USER: "user"
-        POSTGRES_PASSWORD: "postgrespass"
+        POSTGRES_PASSWORD: "password"
         POSTGRES_DB: "manga"
 
 networks:

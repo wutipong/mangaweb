@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"github.com/nfnt/resize"
 )
@@ -26,6 +27,8 @@ func GetImage(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
+	db := c.Get("db").(*sqlx.DB)
 
 	var width, height int64 = 0, 0
 	if w, e := strconv.ParseInt(c.QueryParam("width"), 10, 64); e == nil {
@@ -42,7 +45,7 @@ func GetImage(c echo.Context) error {
 		index = i
 	}
 
-	data, f, err := OpenZipEntry(p, index)
+	data, f, err := OpenZipEntry(db, p, index)
 
 	if width == 0 || height == 0 {
 		if err != nil {
@@ -68,15 +71,9 @@ func GetImage(c echo.Context) error {
 	return c.Blob(http.StatusOK, "image/jpeg", output)
 }
 
-func OpenZipEntry(name string, index int) (content []byte, filename string, err error) {
-
+func OpenZipEntry(db *sqlx.DB, name string, index int) (content []byte, filename string, err error) {
 	var meta itemMeta
-	meta.Read(name)
-
-	if len(meta.FileIndices) == 0 {
-		meta.GenerateImageIndices()
-		meta.Write()
-	}
+	meta.Read(db, name)
 
 	if len(meta.FileIndices) == 0 {
 		err = fmt.Errorf("image file not found")

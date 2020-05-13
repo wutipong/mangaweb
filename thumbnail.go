@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
 
@@ -15,22 +16,14 @@ func thumbnail(c echo.Context) error {
 		return err
 	}
 
+	db := c.Get("db").(*sqlx.DB)
+
 	var m itemMeta
-	err = m.Read(name)
+	err = m.Read(db, name)
 	if errors.Is(err, os.ErrNotExist) {
-		m = NewMeta(name)
-		defer m.Write()
+		m = NewMeta(db, name)
 	} else if err != nil {
 		return err
-	}
-
-	if len(m.FileIndices) == 0 {
-		m.GenerateImageIndices()
-	}
-
-	if m.Thumbnail == nil {
-		defer m.Write()
-		m.GenerateThumbnail()
 	}
 
 	return c.Blob(http.StatusOK, "image/jpeg", m.Thumbnail)

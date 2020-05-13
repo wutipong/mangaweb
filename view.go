@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
 
@@ -39,7 +40,6 @@ type viewData struct {
 }
 
 func view(c echo.Context) error {
-
 	builder := strings.Builder{}
 
 	p, err := url.PathUnescape(c.Param("*"))
@@ -47,7 +47,9 @@ func view(c echo.Context) error {
 		return err
 	}
 
-	pages, err := ListPages(p)
+	db := c.Get("db").(*sqlx.DB)
+
+	pages, err := ListPages(db, p)
 	if err != nil {
 		return err
 	}
@@ -57,11 +59,11 @@ func view(c echo.Context) error {
 	id := hash.Sum64()
 
 	var meta itemMeta
-	meta.Read(p)
+	meta.Read(db, p)
 	if fav, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
 		if fav != meta.Favorite {
 			meta.Favorite = fav
-			meta.Write()
+			meta.Write(db)
 		}
 	}
 

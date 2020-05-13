@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
@@ -26,6 +27,12 @@ func main() {
 	log.Printf("Image Source Path: %s", *path)
 	log.Printf("using prefix %s", *prefix)
 
+	dbx, err := initDatabase()
+	defer dbx.Close()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 	// Echo instance
 	e := echo.New()
 
@@ -37,6 +44,8 @@ func main() {
 	e.Pre(middleware.Rewrite(map[string]string{
 		*prefix: "$1",
 	}))
+
+	e.Pre(addDB(dbx))
 
 	// Routes
 	e.GET("/", root)
@@ -62,7 +71,7 @@ func main() {
 		e.Logger.Fatal()
 	}()
 
-	metaStop, metaDone := updateMetaRoutine()
+	metaStop, metaDone := updateMetaRoutine(dbx)
 
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
@@ -79,12 +88,21 @@ func main() {
 
 }
 
+func addDB(db *sqlx.DB) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set("db", db)
+			return next(c)
+		}
+	}
+}
+
 // Handler
 func root(c echo.Context) error {
 	return c.Redirect(http.StatusPermanentRedirect, "/browse")
 }
 
-func updateMetaRoutine() (stop func(), done chan bool) {
+func updateMetaRoutine(db *sqlx.DB) (stop func(), done chan bool) {
 	updateInterval := 30 * time.Minute
 	checkInterval := 30 * time.Second
 	lastUpdate := time.Now()
@@ -116,14 +134,12 @@ func updateMetaRoutine() (stop func(), done chan bool) {
 			}
 
 			for _, file := range files {
-				if isMetaFileExist(file) {
+				if isMetaFileExist(db, file) {
 					continue
 				}
 
-				meta := NewMeta(file)
-				meta.GenerateImageIndices()
-				meta.GenerateThumbnail()
-				meta.Write()
+				_ = NewMeta(db, file)
+
 			}
 		}
 		done <- true

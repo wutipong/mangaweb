@@ -2,10 +2,10 @@ package main
 
 import (
 	"archive/zip"
-	"encoding/json"
+	"database/sql"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -13,85 +13,109 @@ import (
 	"time"
 
 	"bitbucket.org/zombiezen/cardcpx/natsort"
+	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 )
 
+const databaseURL = "user=user password=password host=db dbname=manga port=5432 sslmode=disable"
+const databaseDriver = "postgres"
+const maxAttempt = 10
+const waitTime = time.Second * 10
+
 type itemMeta struct {
-	Name        string    `json:"name"`
-	CreateTime  time.Time `json:"create_time"`
-	Favorite    bool      `json:"favorite"`
-	FileIndices []int     `json:"file_indices"`
-	Thumbnail   []byte    `json:"thumbnail"`
-	mutex       sync.Mutex
+	Name        string    `json:"name" db:"name"`
+	CreateTime  time.Time `json:"create_time" db:"create_time"`
+	Favorite    bool      `json:"favorite" db:"favorite"`
+	FileIndices []int     `json:"file_indices" db:"file_indices"`
+	Thumbnail   []byte    `json:"thumbnail" db:"thumbnail"`
+	mutex       *sync.Mutex
+}
+
+func initDatabase() (dbx *sqlx.DB, err error) {
+	for i := 0; i < maxAttempt; i++ {
+		log.Printf("Connecting to Database, attempt #%v.", i)
+		dbx, err = sqlx.Connect(databaseDriver, databaseURL)
+		if err == nil {
+			break
+		}
+		time.Sleep(waitTime)
+	}
+
+	if err != nil {
+		return
+	}
+
+	_, err = dbx.Exec(`
+		CREATE TABLE IF NOT EXISTS 
+		manga_meta (
+			name text, 
+			create_time timestamp, 
+			favorite boolean,
+			file_indices integer[],
+			thumbnail bytea);`)
+
+	return
 }
 
 func generateMetaFileName(name string) string {
 	return filepath.Join(BaseDirectory, name+".meta")
 }
 
-func isMetaFileExist(name string) bool {
-	metaFile := generateMetaFileName(name)
+func isMetaFileExist(db *sqlx.DB, name string) bool {
 
-	if _, err := os.Stat(metaFile); err == nil {
+	_, err := db.Query("SELECT * FROM manga_meta where name = $1", name)
+	if err != nil {
 		return true
 	}
 
 	return false
 }
 
-func (m *itemMeta) Write() error {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-
-	metaFile := generateMetaFileName(m.Name)
-	b, err := json.Marshal(m)
-	if err != nil {
-		return err
-	}
-
-	f, err := os.Create(metaFile)
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-	f.Write(b)
-
+func (m *itemMeta) Write(db *sqlx.DB) error {
+	db.NamedExec(`UPDATE manga_meta
+		SET favorite = :favorite,
+		WHERE name = :name
+	`, m)
 	return nil
 }
 
-func NewMeta(name string) itemMeta {
-	return itemMeta{
+func NewMeta(db *sqlx.DB, name string) itemMeta {
+	meta := itemMeta{
 		Name:       name,
 		CreateTime: time.Now(),
 		Favorite:   false,
+		mutex:      new(sync.Mutex),
 	}
+
+	meta.GenerateImageIndices()
+	meta.GenerateThumbnail()
+
+	_, e := db.Exec(`INSERT INTO 
+		manga_meta(name, create_time, favorite, file_indices, thumbnail) 
+			VALUES($1, $2, $3, $4, $5)`, meta.Name, meta.CreateTime, meta.Favorite, pq.Array(meta.FileIndices), meta.Thumbnail)
+
+	log.Printf("%v", e)
+	return meta
 }
 
-func (m *itemMeta) Read(name string) error {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+func (m *itemMeta) Read(db *sqlx.DB, name string) error {
 
-	metaFile := generateMetaFileName(name)
-	f, err := os.Open(metaFile)
-	if err != nil {
-		return err
+	row := db.DB.QueryRow("SELECT name, create_time, favorite, file_indices, thumbnail from manga_meta where name = $1", name)
+
+	var x []sql.NullInt32
+	err := row.Scan(&m.Name, &m.CreateTime, &m.Favorite, pq.Array(&x /*m.FileIndices*/), &m.Thumbnail)
+
+	m.FileIndices = make([]int, len(x))
+	for i := range x {
+		m.FileIndices[i] = (int)(x[i].Int32)
 	}
-
-	defer f.Close()
-
-	b, err := ioutil.ReadAll(f)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(b, &m)
+	return err
 }
 
-func ReadMeta(name string) (meta itemMeta, err error) {
-	err = meta.Read(name)
-	if errors.Is(err, os.ErrNotExist) {
-		meta = NewMeta(name)
-		err = meta.Write()
+func ReadMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
+	err = meta.Read(db, name)
+	if errors.Is(err, sql.ErrNoRows) {
+		meta = NewMeta(db, name)
 	}
 
 	return

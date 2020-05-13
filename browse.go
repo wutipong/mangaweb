@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
 
@@ -45,7 +46,7 @@ type item struct {
 	Favorite   bool
 }
 
-func createItems(files []string) []item {
+func createItems(db *sqlx.DB, files []string) []item {
 	output := make([]item, len(files))
 	for i, f := range files {
 		var url string
@@ -58,7 +59,7 @@ func createItems(files []string) []item {
 		hash.Write([]byte(f))
 		id := hash.Sum64()
 
-		meta, _ := ReadMeta(f)
+		meta, _ := ReadMeta(db, f)
 		output[i] = item{
 			ID:         id,
 			Name:       f,
@@ -88,6 +89,8 @@ func makeRows(items []item, col int) [][]item {
 
 // Handler
 func browse(c echo.Context) error {
+	db := c.Get("db").(*sqlx.DB)
+
 	builder := strings.Builder{}
 
 	files, err := ListDir()
@@ -110,7 +113,7 @@ func browse(c echo.Context) error {
 		descending = f
 	}
 
-	items := createItems(files)
+	items := createItems(db, files)
 	if fav == true {
 		var tempItems []item
 		for _, item := range items {

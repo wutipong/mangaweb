@@ -3,6 +3,8 @@ package main
 import (
 	"archive/zip"
 	"os"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Page struct {
@@ -10,16 +12,11 @@ type Page struct {
 	Name  string
 }
 
-func ListPages(file string) (pages []Page, err error) {
+func ListPages(db *sqlx.DB, file string) (pages []Page, err error) {
 	var meta itemMeta
-	err = meta.Read(file)
+	err = meta.Read(db, file)
 	if err != nil {
 		return
-	}
-
-	if len(meta.FileIndices) == 0 {
-		meta.GenerateImageIndices()
-		meta.Write()
 	}
 
 	if len(meta.FileIndices) == 0 {
