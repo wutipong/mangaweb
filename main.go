@@ -28,11 +28,14 @@ func main() {
 	log.Printf("using prefix %s", *prefix)
 
 	dbx, err := initDatabase()
-	defer dbx.Close()
 
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer dbx.Close()
+
+	migrateMeta(dbx)
+
 	// Echo instance
 	e := echo.New()
 

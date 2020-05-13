@@ -3,8 +3,10 @@ package main
 import (
 	"archive/zip"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -59,6 +61,32 @@ func initDatabase() (dbx *sqlx.DB, err error) {
 
 func generateMetaFileName(name string) string {
 	return filepath.Join(BaseDirectory, name+".meta")
+}
+
+func migrateMeta(db *sqlx.DB) error {
+	files, err := ListDir()
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		f, err := os.Open(filepath.Join(BaseDirectory, file))
+		if err != nil {
+			continue
+		}
+		b, err := ioutil.ReadAll(f)
+
+		if err != nil {
+			continue
+		}
+
+		var m itemMeta
+		json.Unmarshal(b, &m)
+
+		m.Write(db)
+	}
+
+	return nil
 }
 
 func isMetaFileExist(db *sqlx.DB, name string) bool {
