@@ -138,7 +138,7 @@ func updateMetaRoutine(db *sqlx.DB) (stop func(), done chan bool) {
 					continue
 				}
 
-				_ = NewMeta(db, file)
+				NewMeta(db, file)
 
 			}
 		}

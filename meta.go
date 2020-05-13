@@ -79,8 +79,8 @@ func (m *itemMeta) Write(db *sqlx.DB) error {
 	return nil
 }
 
-func NewMeta(db *sqlx.DB, name string) itemMeta {
-	meta := itemMeta{
+func NewMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
+	meta = itemMeta{
 		Name:       name,
 		CreateTime: time.Now(),
 		Favorite:   false,
@@ -90,12 +90,11 @@ func NewMeta(db *sqlx.DB, name string) itemMeta {
 	meta.GenerateImageIndices()
 	meta.GenerateThumbnail()
 
-	_, e := db.Exec(`INSERT INTO 
+	_, err = db.Exec(`INSERT INTO 
 		manga_meta(name, create_time, favorite, file_indices, thumbnail) 
 			VALUES($1, $2, $3, $4, $5)`, meta.Name, meta.CreateTime, meta.Favorite, pq.Array(meta.FileIndices), meta.Thumbnail)
 
-	log.Printf("%v", e)
-	return meta
+	return
 }
 
 func (m *itemMeta) Read(db *sqlx.DB, name string) error {
@@ -115,7 +114,7 @@ func (m *itemMeta) Read(db *sqlx.DB, name string) error {
 func ReadMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
 	err = meta.Read(db, name)
 	if errors.Is(err, sql.ErrNoRows) {
-		meta = NewMeta(db, name)
+		meta, err = NewMeta(db, name)
 	}
 
 	return
