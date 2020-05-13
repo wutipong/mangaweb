@@ -34,7 +34,7 @@ func main() {
 	}
 	defer dbx.Close()
 
-	migrateMeta(dbx)
+	// migrateMeta(dbx)
 
 	// Echo instance
 	e := echo.New()
