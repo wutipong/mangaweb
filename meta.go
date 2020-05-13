@@ -102,6 +102,7 @@ func isMetaFileExist(db *sqlx.DB, name string) bool {
 func (m *itemMeta) Write(db *sqlx.DB) error {
 	db.NamedExec(`UPDATE manga_meta
 		SET favorite = :favorite,
+			create_time = :create_time
 		WHERE name = :name
 	`, m)
 	return nil
