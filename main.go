@@ -120,7 +120,11 @@ func createMissingMeta() error {
 			continue
 		}
 
-		NewMeta(db, file)
+		log.Printf("Creating metadata for %s", file)
+		_, err := NewMeta(db, file)
+		if err != nil {
+			log.Printf("Failed to create meta data : %v", err)
+		}
 	}
 
 	return nil
@@ -138,6 +142,7 @@ func updateMetaRoutine() (stop func(), done chan bool) {
 
 	go func() {
 		for isRunning {
+			log.Printf("Update metadata set.")
 			createMissingMeta()
 			<-time.After(updateInterval)
 		}
