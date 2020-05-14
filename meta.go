@@ -19,7 +19,8 @@ import (
 	"github.com/lib/pq"
 )
 
-const databaseURL = "user=user password=password host=db dbname=manga port=5432 sslmode=disable"
+var databaseURL string
+
 const databaseDriver = "postgres"
 const maxAttempt = 10
 const waitTime = time.Second * 10
@@ -39,10 +40,11 @@ func connectDB() (dbx *sqlx.DB, err error) {
 	return
 }
 
-func initDatabase() error {
+func initDatabase(dbAddress string) error {
 	var dbx *sqlx.DB
 	var err error
 
+	databaseURL = dbAddress
 	for i := 0; i < maxAttempt; i++ {
 		log.Printf("Connecting to Database, attempt #%v.", i)
 		dbx, err = connectDB()

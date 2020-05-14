@@ -14,10 +14,20 @@ import (
 	"log"
 )
 
+func setupFlag(flagName, defValue, variable, description string) *string {
+	varValue := os.Getenv(variable)
+	if varValue != "" {
+		defValue = varValue
+	}
+
+	return flag.String(flagName, defValue, description)
+}
+
 func main() {
-	address := flag.String("address", ":80", "The server address")
-	path := flag.String("path", "/data", "Image source path")
-	prefix := flag.String("prefix", "*", "Url prefix")
+	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
+	path := setupFlag("path", "/data", "MANGAWEB_IMAGE_PATH", "Image source path")
+	prefix := setupFlag("prefix", "*", "MANGAWEB_URL_PREFIX", "Url prefix")
+	database := setupFlag("database", "localhost:5432", "MANGAWEB_DB", "Specify the database connection string")
 
 	flag.Parse()
 
@@ -26,7 +36,7 @@ func main() {
 	log.Printf("Image Source Path: %s", *path)
 	log.Printf("using prefix %s", *prefix)
 
-	err := initDatabase()
+	err := initDatabase(*database)
 
 	if err != nil {
 		log.Fatal(err)

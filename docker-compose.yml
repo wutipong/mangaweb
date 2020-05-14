@@ -9,10 +9,12 @@ services:
       dockerfile: Dockerfile
       args:
         buildno: 1
-    
+
+    environment: 
+      MANGAWEB_DB: "user=user password=password host=db dbname=manga port=5432 sslmode=disable"
+
     volumes:
       - /mnt/storage1/manga:/data
-      # - /home/wutipong/manga:/data
     ports:
       - "6699:80"
     networks:
@@ -25,6 +27,10 @@ services:
       - db-data:/var/lib/postgresql/data
     networks:
       - backend
+    
+    #ports:
+    #  - "5432:5432"
+
     expose:
       - "5432"
     environment: 

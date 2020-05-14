@@ -29,7 +29,7 @@ func init() {
 // ListDir returns a list of content of a directory.
 func ListDir(path string) (files []string, err error) {
 
-	actualPath := filepath.Join(BaseDirectory)
+	actualPath := filepath.Join(BaseDirectory, path)
 	dir, err := os.Open(actualPath)
 	if err != nil {
 		return
@@ -47,8 +47,6 @@ func ListDir(path string) (files []string, err error) {
 		name := filepath.Join(path, f.Name())
 
 		if f.IsDir() {
-			continue
-
 			subFiles, e := ListDir(name)
 			if e != nil {
 				err = e
