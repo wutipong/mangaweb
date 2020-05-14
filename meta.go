@@ -25,12 +25,13 @@ const maxAttempt = 10
 const waitTime = time.Second * 10
 
 type itemMeta struct {
-	Name        string    `json:"name" db:"name"`
-	CreateTime  time.Time `json:"create_time" db:"create_time"`
-	Favorite    bool      `json:"favorite" db:"favorite"`
-	FileIndices []int     `json:"file_indices" db:"file_indices"`
-	Thumbnail   []byte    `json:"thumbnail" db:"thumbnail"`
-	mutex       *sync.Mutex
+	Name           string          `json:"name" db:"name"`
+	CreateTime     time.Time       `json:"create_time" db:"create_time"`
+	Favorite       bool            `json:"favorite" db:"favorite"`
+	FileIndices    []int           `json:"file_indices"`
+	FileIndicesSQL []sql.NullInt32 `db:"file_indices"`
+	Thumbnail      []byte          `json:"thumbnail" db:"thumbnail"`
+	mutex          *sync.Mutex
 }
 
 func connectDB() (dbx *sqlx.DB, err error) {
@@ -151,6 +152,13 @@ func (m *itemMeta) Read(db *sqlx.DB, name string) error {
 	}
 
 	return err
+}
+
+func (m *itemMeta) updateIndex() {
+	m.FileIndices = make([]int, len(m.FileIndicesSQL))
+	for i := range m.FileIndicesSQL {
+		m.FileIndices[i] = (int)(m.FileIndicesSQL[i].Int32)
+	}
 }
 
 func OpenMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
