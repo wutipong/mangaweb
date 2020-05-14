@@ -165,8 +165,8 @@ func OpenMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
 func ReadAllMeta(db *sqlx.DB) (meta []itemMeta, err error) {
 	err = db.Select(&meta,
 		`SELECT name, create_time, favorite, file_indices, thumbnail 
-			FROM manga_meta;
-			ORDER BY name`)
+			FROM manga_meta
+			ORDER BY name;`)
 	return
 }
 
