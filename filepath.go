@@ -47,6 +47,8 @@ func ListDir(path string) (files []string, err error) {
 		name := filepath.Join(path, f.Name())
 
 		if f.IsDir() {
+			continue
+
 			subFiles, e := ListDir(name)
 			if e != nil {
 				err = e
