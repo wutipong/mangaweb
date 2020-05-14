@@ -140,7 +140,7 @@ func NewMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
 
 func (m *itemMeta) Read(db *sqlx.DB, name string) error {
 
-	row := db.DB.QueryRow("SELECT name, create_time, favorite, file_indices, thumbnail from manga_meta where name = $1", name)
+	row := db.QueryRow("SELECT name, create_time, favorite, file_indices, thumbnail from manga_meta where name = $1", name)
 
 	var x []sql.NullInt32
 	err := row.Scan(&m.Name, &m.CreateTime, &m.Favorite, pq.Array(&x), &m.Thumbnail)
@@ -163,10 +163,31 @@ func OpenMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
 }
 
 func ReadAllMeta(db *sqlx.DB) (meta []itemMeta, err error) {
-	err = db.Select(&meta,
+	rows, err := db.Query(
 		`SELECT name, create_time, favorite, file_indices, thumbnail 
 			FROM manga_meta
 			ORDER BY name;`)
+
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		var m itemMeta
+		var x []sql.NullInt32
+
+		err = rows.Scan(&m.Name, &m.CreateTime, &m.Favorite, pq.Array(&x), &m.Thumbnail)
+		if err != nil {
+			continue
+		}
+		m.FileIndices = make([]int, len(x))
+		for i := range x {
+			m.FileIndices[i] = (int)(x[i].Int32)
+		}
+
+		meta = append(meta, m)
+	}
+
 	return
 }
 
