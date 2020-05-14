@@ -92,6 +92,40 @@ func root(c echo.Context) error {
 	return c.Redirect(http.StatusPermanentRedirect, "/browse")
 }
 
+func createMissingMeta() error {
+	db, err := connectDB()
+	if err != nil {
+		return err
+	}
+
+	allMeta, err := ReadAllMeta(db)
+	if err != nil {
+		return err
+	}
+
+	files, err := ListDir()
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		found := false
+		for _, m := range allMeta {
+			if m.Name == file {
+				found = true
+				break
+			}
+		}
+		if found {
+			continue
+		}
+
+		NewMeta(db, file)
+	}
+
+	return nil
+}
+
 func updateMetaRoutine() (stop func(), done chan bool) {
 
 	updateInterval := 30 * time.Minute
@@ -107,9 +141,6 @@ func updateMetaRoutine() (stop func(), done chan bool) {
 	done = make(chan bool)
 
 	go func() {
-		db, _ := connectDB()
-		defer db.Close()
-
 		for isRunning {
 			<-time.After(checkInterval)
 
@@ -121,20 +152,8 @@ func updateMetaRoutine() (stop func(), done chan bool) {
 			}
 
 			lastUpdate = now
+			createMissingMeta()
 
-			files, err := ListDir()
-			if err != nil {
-				continue
-			}
-
-			for _, file := range files {
-				if isMetaFileExist(db, file) {
-					continue
-				}
-
-				NewMeta(db, file)
-
-			}
 		}
 		done <- true
 	}()

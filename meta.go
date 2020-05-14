@@ -128,8 +128,8 @@ func NewMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
 		mutex:      new(sync.Mutex),
 	}
 
-	meta.GenerateImageIndices()
-	meta.GenerateThumbnail()
+	meta.generateImageIndices()
+	meta.generateThumbnail()
 
 	_, err = db.Exec(`INSERT INTO 
 		manga_meta(name, create_time, favorite, file_indices, thumbnail) 
@@ -143,16 +143,17 @@ func (m *itemMeta) Read(db *sqlx.DB, name string) error {
 	row := db.DB.QueryRow("SELECT name, create_time, favorite, file_indices, thumbnail from manga_meta where name = $1", name)
 
 	var x []sql.NullInt32
-	err := row.Scan(&m.Name, &m.CreateTime, &m.Favorite, pq.Array(&x /*m.FileIndices*/), &m.Thumbnail)
+	err := row.Scan(&m.Name, &m.CreateTime, &m.Favorite, pq.Array(&x), &m.Thumbnail)
 
 	m.FileIndices = make([]int, len(x))
 	for i := range x {
 		m.FileIndices[i] = (int)(x[i].Int32)
 	}
+
 	return err
 }
 
-func ReadMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
+func OpenMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
 	err = meta.Read(db, name)
 	if errors.Is(err, sql.ErrNoRows) {
 		meta, err = NewMeta(db, name)
@@ -161,11 +162,19 @@ func ReadMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
 	return
 }
 
-func (m *itemMeta) GenerateThumbnail() error {
+func ReadAllMeta(db *sqlx.DB) (meta []itemMeta, err error) {
+	err = db.Select(&meta,
+		`SELECT name, create_time, favorite, file_indices, thumbnail 
+			FROM manga_meta;
+			ORDER BY name`)
+	return
+}
+
+func (m *itemMeta) generateThumbnail() error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	fullpath := BaseDirectory + string(os.PathSeparator) + m.Name
+	fullpath := filepath.Join(BaseDirectory, m.Name)
 
 	r, err := zip.OpenReader(fullpath)
 	if err != nil {
@@ -194,7 +203,7 @@ func (m *itemMeta) GenerateThumbnail() error {
 	return nil
 }
 
-func (m *itemMeta) GenerateImageIndices() error {
+func (m *itemMeta) generateImageIndices() error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 

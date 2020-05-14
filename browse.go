@@ -59,7 +59,7 @@ func createItems(db *sqlx.DB, files []string) []item {
 		hash.Write([]byte(f))
 		id := hash.Sum64()
 
-		meta, _ := ReadMeta(db, f)
+		meta, _ := OpenMeta(db, f)
 		output[i] = item{
 			ID:         id,
 			Name:       f,
