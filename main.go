@@ -127,11 +127,7 @@ func createMissingMeta() error {
 }
 
 func updateMetaRoutine() (stop func(), done chan bool) {
-
 	updateInterval := 30 * time.Minute
-	checkInterval := 30 * time.Second
-	lastUpdate := time.Now()
-
 	isRunning := true
 
 	stop = func() {
@@ -142,18 +138,8 @@ func updateMetaRoutine() (stop func(), done chan bool) {
 
 	go func() {
 		for isRunning {
-			<-time.After(checkInterval)
-
-			now := time.Now()
-			sub := now.Sub(lastUpdate)
-
-			if sub < updateInterval {
-				continue
-			}
-
-			lastUpdate = now
 			createMissingMeta()
-
+			<-time.After(updateInterval)
 		}
 		done <- true
 	}()
