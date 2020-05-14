@@ -46,13 +46,13 @@ type item struct {
 	Favorite   bool
 }
 
-func createItems(db *sqlx.DB) []item {
+func createItems(db *sqlx.DB) (allItems []item, err error) {
 	allMeta, err := ReadAllMeta(db)
 	if err != nil {
-		return nil
+		return
 	}
 
-	output := make([]item, len(allMeta))
+	allItems = make([]item, len(allMeta))
 
 	for i, m := range allMeta {
 		var url string
@@ -65,7 +65,7 @@ func createItems(db *sqlx.DB) []item {
 		hash.Write([]byte(m.Name))
 		id := hash.Sum64()
 
-		output[i] = item{
+		allItems[i] = item{
 			ID:         id,
 			Name:       m.Name,
 			LinkURL:    url,
@@ -74,7 +74,7 @@ func createItems(db *sqlx.DB) []item {
 			Favorite:   m.Favorite,
 		}
 	}
-	return output
+	return
 }
 
 func makeRows(items []item, col int) [][]item {
@@ -117,7 +117,11 @@ func browse(c echo.Context) error {
 		descending = f
 	}
 
-	items := createItems(db)
+	items, err := createItems(db)
+	if err != nil {
+		return err
+	}
+
 	if fav == true {
 		var tempItems []item
 		for _, item := range items {
