@@ -61,11 +61,31 @@ func initDatabase() error {
 	_, err = dbx.Exec(`
 		CREATE TABLE IF NOT EXISTS 
 		manga_meta (
-			name text, 
+			name text PRIMARY KEY, 
 			create_time timestamp, 
 			favorite boolean,
 			file_indices integer[],
 			thumbnail bytea);`)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = dbx.Exec(`
+		CREATE INDEX IF NOT EXISTS manga_meta_name
+		ON manga_meta (name);`)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = dbx.Exec(`
+		CREATE INDEX IF NOT EXISTS manga_meta_name_favorite
+		ON manga_meta (name, favorite);`)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
