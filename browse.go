@@ -46,27 +46,32 @@ type item struct {
 	Favorite   bool
 }
 
-func createItems(db *sqlx.DB, files []string) []item {
-	output := make([]item, len(files))
-	for i, f := range files {
+func createItems(db *sqlx.DB) []item {
+	allMeta, err := ReadAllMeta(db)
+	if err != nil {
+		return nil
+	}
+
+	output := make([]item, len(allMeta))
+
+	for i, m := range allMeta {
 		var url string
 		var thumbURL string
 
-		url = "/view/" + f
-		thumbURL = "/thumbnail/" + f
+		url = "/view/" + m.Name
+		thumbURL = "/thumbnail/" + m.Name
 
 		hash := fnv.New64()
-		hash.Write([]byte(f))
+		hash.Write([]byte(m.Name))
 		id := hash.Sum64()
 
-		meta, _ := OpenMeta(db, f)
 		output[i] = item{
 			ID:         id,
-			Name:       f,
+			Name:       m.Name,
 			LinkURL:    url,
 			ThumbURL:   thumbURL,
-			CreateTime: meta.CreateTime,
-			Favorite:   meta.Favorite,
+			CreateTime: m.CreateTime,
+			Favorite:   m.Favorite,
 		}
 	}
 	return output
@@ -97,11 +102,6 @@ func browse(c echo.Context) error {
 
 	builder := strings.Builder{}
 
-	files, err := ListDir()
-	if err != nil {
-		return err
-	}
-
 	fav := false
 	if f, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
 		fav = f
@@ -117,7 +117,7 @@ func browse(c echo.Context) error {
 		descending = f
 	}
 
-	items := createItems(db, files)
+	items := createItems(db)
 	if fav == true {
 		var tempItems []item
 		for _, item := range items {
