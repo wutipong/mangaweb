@@ -103,7 +103,7 @@ func createMissingMeta() error {
 		return err
 	}
 
-	files, err := ListDir()
+	files, err := ListDir("")
 	if err != nil {
 		return err
 	}

@@ -27,9 +27,10 @@ func init() {
 }
 
 // ListDir returns a list of content of a directory.
-func ListDir() (files []string, err error) {
+func ListDir(path string) (files []string, err error) {
 
-	dir, err := os.Open(BaseDirectory)
+	actualPath := filepath.Join(BaseDirectory)
+	dir, err := os.Open(actualPath)
 	if err != nil {
 		return
 	}
@@ -43,14 +44,22 @@ func ListDir() (files []string, err error) {
 			continue
 		}
 
+		name := filepath.Join(path, f.Name())
+
 		if f.IsDir() {
-			continue
+			subFiles, e := ListDir(name)
+			if e != nil {
+				err = e
+				return
+			}
+			files = append(files, subFiles...)
 		}
 
 		ext := strings.ToLower(filepath.Ext(f.Name()))
 
 		if ext == ".zip" || ext == ".cbz" {
-			files = append(files, f.Name())
+
+			files = append(files, name)
 		}
 	}
 	return

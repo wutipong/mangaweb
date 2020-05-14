@@ -95,7 +95,7 @@ func generateMetaFileName(name string) string {
 }
 
 func migrateMeta(db *sqlx.DB) error {
-	files, err := ListDir()
+	files, err := ListDir("")
 	if err != nil {
 		return err
 	}
