@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
 
@@ -16,7 +15,11 @@ func thumbnail(c echo.Context) error {
 		return err
 	}
 
-	db := c.Get("db").(*sqlx.DB)
+	db, err := connectDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
 
 	var m itemMeta
 	err = m.Read(db, name)

@@ -11,7 +11,6 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
 
@@ -47,7 +46,11 @@ func view(c echo.Context) error {
 		return err
 	}
 
-	db := c.Get("db").(*sqlx.DB)
+	db, err := connectDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
 
 	pages, err := ListPages(db, p)
 	if err != nil {

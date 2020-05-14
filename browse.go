@@ -89,7 +89,11 @@ func makeRows(items []item, col int) [][]item {
 
 // Handler
 func browse(c echo.Context) error {
-	db := c.Get("db").(*sqlx.DB)
+	db, err := connectDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
 
 	builder := strings.Builder{}
 

@@ -33,10 +33,18 @@ type itemMeta struct {
 	mutex       *sync.Mutex
 }
 
-func initDatabase() (dbx *sqlx.DB, err error) {
+func connectDB() (dbx *sqlx.DB, err error) {
+	dbx, err = sqlx.Connect(databaseDriver, databaseURL)
+	return
+}
+
+func initDatabase() error {
+	var dbx *sqlx.DB
+	var err error
+
 	for i := 0; i < maxAttempt; i++ {
 		log.Printf("Connecting to Database, attempt #%v.", i)
-		dbx, err = sqlx.Connect(databaseDriver, databaseURL)
+		dbx, err = connectDB()
 		if err == nil {
 			break
 		}
@@ -44,8 +52,10 @@ func initDatabase() (dbx *sqlx.DB, err error) {
 	}
 
 	if err != nil {
-		return
+		return err
 	}
+
+	defer dbx.Close()
 
 	_, err = dbx.Exec(`
 		CREATE TABLE IF NOT EXISTS 
@@ -56,7 +66,7 @@ func initDatabase() (dbx *sqlx.DB, err error) {
 			file_indices integer[],
 			thumbnail bytea);`)
 
-	return
+	return nil
 }
 
 func generateMetaFileName(name string) string {

@@ -28,7 +28,11 @@ func GetImage(c echo.Context) error {
 		return err
 	}
 
-	db := c.Get("db").(*sqlx.DB)
+	db, err := connectDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
 
 	var width, height int64 = 0, 0
 	if w, e := strconv.ParseInt(c.QueryParam("width"), 10, 64); e == nil {
