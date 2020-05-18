@@ -104,9 +104,11 @@ func root(c echo.Context) error {
 
 func createMissingMeta() error {
 	db, err := connectDB()
+
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 
 	allMeta, err := ReadAllMeta(db)
 	if err != nil {
