@@ -94,6 +94,10 @@ function orderChanged(){
                             {{if .Favorite}}
                                 <span><span class="oi oi-star"></span> Favorite
                             {{end}}
+
+                            {{if not .IsRead}}
+                                <span><span class="oi oi-bolt"></span> New
+                            {{end}}
                         </div>
                     </div>
                     <div class="file-details">

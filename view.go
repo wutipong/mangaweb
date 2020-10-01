@@ -70,6 +70,11 @@ func view(c echo.Context) error {
 		}
 	}
 
+	if !meta.IsRead {
+		meta.IsRead = true
+		meta.Write(db)
+	}
+
 	data := viewData{
 		Name:      p,
 		Title:     fmt.Sprintf("Manga - Viewing [%s]", p),

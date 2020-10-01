@@ -32,6 +32,7 @@ type itemMeta struct {
 	FileIndices    []int           `json:"file_indices"`
 	FileIndicesSQL []sql.NullInt32 `db:"file_indices"`
 	Thumbnail      []byte          `json:"thumbnail" db:"thumbnail"`
+	IsRead         bool            `json:"is_read" db:"read"`
 	mutex          *sync.Mutex
 }
 
@@ -67,7 +68,8 @@ func initDatabase(dbAddress string) error {
 			create_time timestamp, 
 			favorite boolean,
 			file_indices integer[],
-			thumbnail bytea);`)
+			thumbnail bytea
+			read boolean NOT NULL DEFAULT false);`)
 
 	if err != nil {
 		return err
@@ -137,7 +139,8 @@ func isMetaFileExist(db *sqlx.DB, name string) bool {
 func (m *itemMeta) Write(db *sqlx.DB) error {
 	db.NamedExec(`UPDATE manga_meta
 		SET favorite = :favorite,
-			create_time = :create_time
+			create_time = :create_time,
+			read = :read
 		WHERE name = :name
 	`, m)
 	return nil
@@ -169,10 +172,10 @@ func DeleteMeta(db *sqlx.DB, m itemMeta) error {
 
 func (m *itemMeta) Read(db *sqlx.DB, name string) error {
 
-	row := db.QueryRow("SELECT name, create_time, favorite, file_indices, thumbnail from manga_meta where name = $1", name)
+	row := db.QueryRow("SELECT name, create_time, favorite, file_indices, thumbnail, read from manga_meta where name = $1", name)
 
 	var x []sql.NullInt32
-	err := row.Scan(&m.Name, &m.CreateTime, &m.Favorite, pq.Array(&x), &m.Thumbnail)
+	err := row.Scan(&m.Name, &m.CreateTime, &m.Favorite, pq.Array(&x), &m.Thumbnail, &m.IsRead)
 
 	m.FileIndices = make([]int, len(x))
 	for i := range x {
@@ -200,7 +203,7 @@ func OpenMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
 
 func ReadAllMeta(db *sqlx.DB) (meta []itemMeta, err error) {
 	rows, err := db.Query(
-		`SELECT name, create_time, favorite, file_indices, thumbnail 
+		`SELECT name, create_time, favorite, file_indices, thumbnail, read 
 			FROM manga_meta
 			ORDER BY name;`)
 
@@ -212,7 +215,7 @@ func ReadAllMeta(db *sqlx.DB) (meta []itemMeta, err error) {
 		var m itemMeta
 		var x []sql.NullInt32
 
-		err = rows.Scan(&m.Name, &m.CreateTime, &m.Favorite, pq.Array(&x), &m.Thumbnail)
+		err = rows.Scan(&m.Name, &m.CreateTime, &m.Favorite, pq.Array(&x), &m.Thumbnail, &m.IsRead)
 		if err != nil {
 			continue
 		}
