@@ -68,7 +68,7 @@ func initDatabase(dbAddress string) error {
 			create_time timestamp, 
 			favorite boolean,
 			file_indices integer[],
-			thumbnail bytea
+			thumbnail bytea,
 			read boolean NOT NULL DEFAULT false);`)
 
 	if err != nil {
