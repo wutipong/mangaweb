@@ -56,10 +56,10 @@ func createItems(db *sqlx.DB) (allItems []item, err error) {
 	allItems = make([]item, len(allMeta))
 
 	for i, m := range allMeta {
-		var url string
+		var urlStr string
 		var thumbURL string
 
-		url = "/view/" + url.PathEscape(m.Name)
+		urlStr = "/view/" + url.PathEscape(m.Name)
 		thumbURL = "/thumbnail/" + m.Name
 
 		hash := fnv.New64()
@@ -69,7 +69,7 @@ func createItems(db *sqlx.DB) (allItems []item, err error) {
 		allItems[i] = item{
 			ID:         id,
 			Name:       m.Name,
-			LinkURL:    url,
+			LinkURL:    urlStr,
 			ThumbURL:   thumbURL,
 			CreateTime: m.CreateTime,
 			Favorite:   m.Favorite,
