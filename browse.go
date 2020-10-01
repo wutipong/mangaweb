@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"url"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
@@ -58,7 +59,7 @@ func createItems(db *sqlx.DB) (allItems []item, err error) {
 		var url string
 		var thumbURL string
 
-		url = "/view/" + m.Name
+		url = "/view/" + url.PathEscape(m.Name)
 		thumbURL = "/thumbnail/" + m.Name
 
 		hash := fnv.New64()
