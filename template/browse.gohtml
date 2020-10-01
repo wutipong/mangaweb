@@ -7,7 +7,7 @@ $(function(){
     let searchParams = new URLSearchParams(url.search);
     let sortBy = searchParams.get("sort")
     if(sortBy === null) 
-        sortBy = "name"
+        sortBy = "date"
         
     $("#sort-by").val(sortBy)
 
