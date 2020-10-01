@@ -102,7 +102,7 @@ func root(c echo.Context) error {
 	return c.Redirect(http.StatusPermanentRedirect, "/browse")
 }
 
-func createMissingMeta() error {
+func synchronizeMetaData() error {
 	db, err := connectDB()
 
 	if err != nil {
@@ -139,6 +139,25 @@ func createMissingMeta() error {
 		}
 	}
 
+	for _, m := range allMeta {
+		found := false
+		for _, file := range files {
+			if m.Name == file {
+				found = true
+				break
+			}
+		}
+		if found {
+			continue
+		}
+
+		log.Printf("Deleting metadata for %s", m.Name)
+		if err := DeleteMeta(db, m); err != nil {
+			log.Printf("Failed to delete meta for %s", m.Name)
+		}
+
+	}
+
 	return nil
 }
 
@@ -155,7 +174,7 @@ func updateMetaRoutine() (stop func(), done chan bool) {
 	go func() {
 		for isRunning {
 			log.Printf("Update metadata set.")
-			createMissingMeta()
+			synchronizeMetaData()
 			<-time.After(updateInterval)
 		}
 		done <- true

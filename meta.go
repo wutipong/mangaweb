@@ -161,6 +161,12 @@ func NewMeta(db *sqlx.DB, name string) (meta itemMeta, err error) {
 	return
 }
 
+func DeleteMeta(db *sqlx.DB, m itemMeta) error {
+	_, err := db.NamedExec(`DELETE from manga_meta
+		WHERE name = :name;`, m)
+	return err
+}
+
 func (m *itemMeta) Read(db *sqlx.DB, name string) error {
 
 	row := db.QueryRow("SELECT name, create_time, favorite, file_indices, thumbnail from manga_meta where name = $1", name)
