@@ -6,12 +6,12 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
-	"net/url"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
@@ -110,7 +110,7 @@ func browse(c echo.Context) error {
 
 	sortBy := c.QueryParam("sort")
 	if sortBy == "" {
-		sortBy = "name"
+		sortBy = "date"
 	}
 
 	descending := false
