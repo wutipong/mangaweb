@@ -60,7 +60,7 @@ func createItems(db *sqlx.DB) (allItems []item, err error) {
 		var thumbURL string
 
 		urlStr = "/view/" + url.PathEscape(m.Name)
-		thumbURL = "/thumbnail/" + m.Name
+		thumbURL = "/thumbnail/" + url.PathEscape(m.Name)
 
 		hash := fnv.New64()
 		hash.Write([]byte(m.Name))
