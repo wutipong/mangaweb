@@ -89,7 +89,7 @@ func view(c echo.Context) error {
 func createImageURLs(file string, pages []Page) []string {
 	output := make([]string, len(pages))
 	for i, p := range pages {
-		url := fmt.Sprintf("/get_image/%s?i=%v", file, p.Index)
+		url := fmt.Sprintf("/get_image/%s?i=%v", url.PathEscape(file), p.Index)
 
 		output[i] = url
 	}
