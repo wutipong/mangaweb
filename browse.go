@@ -45,6 +45,7 @@ type item struct {
 	ThumbURL   string
 	CreateTime time.Time
 	Favorite   bool
+	IsRead     bool
 }
 
 func createItems(db *sqlx.DB) (allItems []item, err error) {
@@ -73,6 +74,7 @@ func createItems(db *sqlx.DB) (allItems []item, err error) {
 			ThumbURL:   thumbURL,
 			CreateTime: m.CreateTime,
 			Favorite:   m.Favorite,
+			IsRead:     m.IsRead,
 		}
 	}
 	return
