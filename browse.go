@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"url"
+	"net/url"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
