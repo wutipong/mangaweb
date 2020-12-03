@@ -64,7 +64,7 @@ services:
         POSTGRES_DBNAME: "manga"
         POSTGRES_HOST: "db"
     volumes:
-      - db_backups:/backups
+      - db-backups:/backups
     restart: unless-stopped
 
 networks:
@@ -72,3 +72,5 @@ networks:
 
 volumes:
   db-data:
+  db-backups:
+  pgadmin:
