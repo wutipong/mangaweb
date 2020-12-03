@@ -49,7 +49,10 @@ services:
         POSTGRES_USER: "user"
         POSTGRES_PASSWORD: "password"
         POSTGRES_DB: "manga"
+        PGADMIN_SERVER_JSON_FILE: "/config/servers.json"
     restart: unless-stopped
+    volumes:
+      - pgadmin: /config
 
   pgbackup:
     image: kartoza/pg-backup
