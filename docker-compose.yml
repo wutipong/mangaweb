@@ -52,7 +52,7 @@ services:
         PGADMIN_SERVER_JSON_FILE: "/config/servers.json"
     restart: unless-stopped
     volumes:
-      - pgadmin: /config
+      - pgadmin:/config
 
   pgbackup:
     image: kartoza/pg-backup
@@ -64,7 +64,7 @@ services:
         POSTGRES_DBNAME: "manga"
         POSTGRES_HOST: "db"
     volumes:
-      - db_backups: /backups
+      - db_backups:/backups
     restart: unless-stopped
 
 networks:
