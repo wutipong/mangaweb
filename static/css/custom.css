@@ -54,6 +54,14 @@ body {
 
 .favorite-banner {
     position: absolute;
+    background-color: pink;
+    width:100px;
+    color: #343a40;
+    bottom: 80px;
+}
+
+.new-banner {
+    position: absolute;
     background-color: yellow;
     width:100px;
     color: #343a40;
