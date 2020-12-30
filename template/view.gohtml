@@ -75,17 +75,21 @@
 
 <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
    <span class="navbar-brand mr-auto text-truncate h1 d-none d-md-block" style="max-width: 50%;">{{.Name}}</span>
-    <div class="my-2 my-lg-0">
-        {{if .Favorite}}
-            <a id="favorite-btn" class="btn btn-warning active">
-                <span><span class="oi oi-star"></span>
-                Favorite
-            </a>
-        {{end}}
-        {{if not .Favorite}}
-            <a id="favorite-btn" class="btn btn-secondary">Favorite</a>
-        {{end}}
-        <a id="download-btn" class="btn btn-primary" download>Download</a>
-        <a id="close-btn" class="btn btn-danger" href="{{.BrowseURL}}"> Close</a>
+   <div class="btn-toolbar my-2 my-lg-0">
+        <div class="btn-group">
+            {{if .Favorite}}
+                <a id="favorite-btn" class="btn btn-warning active">
+                    <span><span class="oi oi-star"></span>
+                    Favorite
+                </a>
+            {{end}}
+            {{if not .Favorite}}
+                <a id="favorite-btn" class="btn btn-secondary">Favorite</a>
+            {{end}}
+            <a id="download-btn" class="btn btn-primary" download>Download</a>
+        </div>
+        <div class="btn-group">
+            <a id="close-btn" class="btn btn-danger" href="{{.BrowseURL}}"> Close</a>
+        </div>
     </div>
 </nav>
