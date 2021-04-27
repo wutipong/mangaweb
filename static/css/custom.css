@@ -72,3 +72,10 @@ body {
     height: 90vh;
     max-height: 100%;
 }
+
+.dropdown-item-checked::before {
+    position: absolute;
+    left: .4rem;
+    content: '✓';
+    font-weight: 600;
+  }

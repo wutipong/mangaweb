@@ -2,84 +2,98 @@
 
 <script>
 
+const checkedClass = "dropdown-item-checked"
+
 $(function(){
     let url = window.location
     let searchParams = new URLSearchParams(url.search);
     let sortBy = searchParams.get("sort")
+
     if(sortBy === null) 
         sortBy = "date"
-        
-    $("#sort-by").val(sortBy)
+
+    switch(sortBy){
+    case "date": 
+        $("#sort-by-date").addClass(checkedClass)
+        break;
+
+    case "name":
+        $("#sort-by-name").addClass(checkedClass)
+        break;
+    }
 
     let desc = searchParams.get("descending")
-    if(desc === "true") 
-        $("#order").prop("checked", true)
+    if(desc === "true") {
+        $("#order-reverse").addClass(checkedClass)
+    }
 
-    let favURL = new URL(url.toString())
     let favOnly = searchParams.get("favorite")
-
-    if (favOnly ==="true")
-        favOnly = "false"
-    else
-        favOnly = "true"
-
-    searchParams.set("favorite", favOnly)
-
-    favURL.search = searchParams.toString()
-    $("#favorite-btn").attr("href", favURL)
+    if(favOnly === "true"){
+        $("#filter-favorite").addClass(checkedClass)
+    }
 })
 
-function sortChanged(){
+function changeSort(sortBy){
     let url = window.location
     let searchParams = new URLSearchParams(url.search);
-    searchParams.set("sort", $("#sort-by").val())
+    searchParams.set("sort", sortBy)
 
     url.search = searchParams.toString()
-    
 }
 
-function orderChanged(){
+function toggleOrder(){
     let url = window.location
     let searchParams = new URLSearchParams(url.search);
 
-    let desc = $("#order").prop("checked")
+    let isDesc = $("#order-reverse").hasClass(checkedClass)
+    searchParams.set("descending", !isDesc)
 
-    if (desc == null) {
-        desc = false
-    } 
-
-    searchParams.set("descending", desc)
-
-    url.search = searchParams.toString()
-    
+    url.search = searchParams.toString()    
 }
+
+function toggleFavorite(){
+    let url = window.location
+    let searchParams = new URLSearchParams(url.search);
+
+    let isFavorite = $("#filter-favorite").hasClass(checkedClass)
+    searchParams.set("favorite", !isFavorite)
+
+    url.search = searchParams.toString()    
+}
+
 </script>
 
 <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
     <span class="navbar-brand mr-auto text-truncate h1">Browse</span>
+
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <form class="form-inline">
-            <label for="sort-by">Sort By</label>
-            <select id="sort-by" class="form-control" onchange="sortChanged()">
-                <option selected value="name">Name</option>
-                <option value="date">Added Date</option>
-            </select>
-            <input type="checkbox" id="order" onchange="orderChanged()">
-            <label for="order">Reverse</label>
 
-            {{if .FavoriteOnly}}
-                <a id="favorite-btn" class="btn btn-warning active" href="/browse">
-                <span><span class="oi oi-star"></span>
-                Favorite Only
-            </a>
-            {{end}}
-            {{if not .FavoriteOnly}}
-                <a id="favorite-btn" class="btn btn-secondary" href="/browse?favorite=true">Favorite Only</a>
-            {{end}}
-        </form> 
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Sort By
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <button class="dropdown-item" type="button" id="sort-by-name" onclick="changeSort('name')">Name</button>
+                    <button class="dropdown-item" type="button" id="sort-by-date" onclick="changeSort('date')">Added Date</button>
+                    
+                    <div class="dropdown-divider"></div>
+                
+                    <button class="dropdown-item" type="button" id="order-reverse" onclick="toggleOrder()">Reverse</button>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Filter
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <button class="dropdown-item" type="button" id="filter-favorite" onclick="toggleFavorite()">Favorite</button>
+                </div>
+            </li>
+        </ul>
     </div>
 </nav>
 
