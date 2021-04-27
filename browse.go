@@ -5,6 +5,8 @@ import (
 	"hash/fnv"
 	"html/template"
 	"log"
+	"mangaweb/meta"
+	"mangaweb/meta/postgres"
 	"net/http"
 	"net/url"
 	"os"
@@ -13,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
 
@@ -48,8 +49,8 @@ type item struct {
 	IsRead     bool
 }
 
-func createItems(db *sqlx.DB) (allItems []item, err error) {
-	allMeta, err := ReadAllMeta(db)
+func createItems(p meta.Provider) (allItems []item, err error) {
+	allMeta, err := p.ReadAll()
 	if err != nil {
 		return
 	}
@@ -97,11 +98,11 @@ func makeRows(items []item, col int) [][]item {
 
 // Handler
 func browse(c echo.Context) error {
-	db, err := connectDB()
+	p, err := postgres.New()
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer p.Close()
 
 	builder := strings.Builder{}
 
@@ -120,7 +121,7 @@ func browse(c echo.Context) error {
 		descending = f
 	}
 
-	items, err := createItems(db)
+	items, err := createItems(&p)
 	if err != nil {
 		return err
 	}

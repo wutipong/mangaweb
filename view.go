@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"log"
+	"mangaweb/meta/postgres"
 	"net/http"
 	"net/url"
 	"os"
@@ -46,13 +47,18 @@ func view(c echo.Context) error {
 		return err
 	}
 
-	db, err := connectDB()
+	db, err := postgres.New()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	pages, err := ListPages(db, p)
+	m, err := db.Read(p)
+	if err != nil {
+		return err
+	}
+
+	pages, err := ListPages(m)
 	if err != nil {
 		return err
 	}
@@ -61,18 +67,16 @@ func view(c echo.Context) error {
 	hash.Write([]byte(p))
 	id := hash.Sum64()
 
-	var meta itemMeta
-	meta.Read(db, p)
 	if fav, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
-		if fav != meta.Favorite {
-			meta.Favorite = fav
-			meta.Write(db)
+		if fav != m.Favorite {
+			m.Favorite = fav
+			db.Write(m)
 		}
 	}
 
-	if !meta.IsRead {
-		meta.IsRead = true
-		meta.Write(db)
+	if !m.IsRead {
+		m.IsRead = true
+		db.Write(m)
 	}
 
 	data := viewData{
@@ -80,7 +84,7 @@ func view(c echo.Context) error {
 		Title:     fmt.Sprintf("Manga - Viewing [%s]", p),
 		BrowseURL: fmt.Sprintf("/browse#%v", id),
 		ImageURLs: createImageURLs(p, pages),
-		Favorite:  meta.Favorite,
+		Favorite:  m.Favorite,
 	}
 	err = viewTemplate.Execute(&builder, data)
 	if err != nil {

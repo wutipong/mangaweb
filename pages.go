@@ -2,9 +2,8 @@ package main
 
 import (
 	"archive/zip"
-	"os"
-
-	"github.com/jmoiron/sqlx"
+	"mangaweb/meta"
+	"path/filepath"
 )
 
 type Page struct {
@@ -12,18 +11,12 @@ type Page struct {
 	Name  string
 }
 
-func ListPages(db *sqlx.DB, file string) (pages []Page, err error) {
-	var meta itemMeta
-	err = meta.Read(db, file)
-	if err != nil {
+func ListPages(m meta.Item) (pages []Page, err error) {
+	if len(m.FileIndices) == 0 {
 		return
 	}
 
-	if len(meta.FileIndices) == 0 {
-		return
-	}
-
-	fullpath := BaseDirectory + string(os.PathSeparator) + file
+	fullpath := filepath.Join(meta.BaseDirectory, m.Name)
 	r, err := zip.OpenReader(fullpath)
 	if err != nil {
 		return
@@ -31,8 +24,8 @@ func ListPages(db *sqlx.DB, file string) (pages []Page, err error) {
 
 	defer r.Close()
 
-	pages = make([]Page, len(meta.FileIndices))
-	for i, f := range meta.FileIndices {
+	pages = make([]Page, len(m.FileIndices))
+	for i, f := range m.FileIndices {
 		pages[i] = Page{
 			Name:  r.File[f].Name,
 			Index: i,

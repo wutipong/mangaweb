@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"mangaweb/meta"
+	"mangaweb/meta/postgres"
 	"net/http"
 	"os"
 	"os/signal"
@@ -31,12 +33,12 @@ func main() {
 
 	flag.Parse()
 
-	BaseDirectory = *path
+	meta.BaseDirectory = *path
 
 	log.Printf("Image Source Path: %s", *path)
 	log.Printf("using prefix %s", *prefix)
 
-	err := initDatabase(*database)
+	err := postgres.Init(*database)
 
 	if err != nil {
 		log.Fatal(err)
@@ -103,19 +105,19 @@ func root(c echo.Context) error {
 }
 
 func synchronizeMetaData() error {
-	db, err := connectDB()
+	provider, err := postgres.New()
 
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer provider.Close()
 
-	allMeta, err := ReadAllMeta(db)
+	allMeta, err := provider.ReadAll()
 	if err != nil {
 		return err
 	}
 
-	files, err := ListDir("")
+	files, err := meta.ListDir("")
 	if err != nil {
 		return err
 	}
@@ -133,7 +135,7 @@ func synchronizeMetaData() error {
 		}
 
 		log.Printf("Creating metadata for %s", file)
-		_, err := NewMeta(db, file)
+		_, err := provider.New(file)
 		if err != nil {
 			log.Printf("Failed to create meta data : %v", err)
 		}
@@ -152,7 +154,7 @@ func synchronizeMetaData() error {
 		}
 
 		log.Printf("Deleting metadata for %s", m.Name)
-		if err := DeleteMeta(db, m); err != nil {
+		if err := provider.Delete(m); err != nil {
 			log.Printf("Failed to delete meta for %s", m.Name)
 		}
 

@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"mangaweb/meta/postgres"
 	"net/http"
 	"net/url"
 
@@ -15,16 +16,15 @@ func thumbnail(c echo.Context) error {
 		return err
 	}
 
-	db, err := connectDB()
+	provider, err := postgres.New()
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer provider.Close()
 
-	var m itemMeta
-	err = m.Read(db, name)
+	m, err := provider.Read(name)
 	if errors.Is(err, sql.ErrNoRows) {
-		m, _ = NewMeta(db, name)
+		m, _ = provider.New(name)
 	} else if err != nil {
 		return err
 	}

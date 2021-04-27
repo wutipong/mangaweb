@@ -4,21 +4,18 @@ import (
 	"archive/zip"
 	"bytes"
 	"fmt"
-	"image"
-	"image/jpeg"
 	_ "image/png"
-	"io"
 	"io/ioutil"
+	"mangaweb/image"
+	"mangaweb/meta"
+	"mangaweb/meta/postgres"
 	"net/http"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
-	"github.com/nfnt/resize"
 )
 
 // GetImage returns an image with specific width/height while retains aspect ratio.
@@ -28,11 +25,11 @@ func GetImage(c echo.Context) error {
 		return err
 	}
 
-	db, err := connectDB()
+	provider, err := postgres.New()
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer provider.Close()
 
 	var width, height int64 = 0, 0
 	if w, e := strconv.ParseInt(c.QueryParam("width"), 10, 64); e == nil {
@@ -49,7 +46,8 @@ func GetImage(c echo.Context) error {
 		index = i
 	}
 
-	data, f, err := OpenZipEntry(db, p, index)
+	m, err := provider.Read(p)
+	data, f, err := OpenZipEntry(m, index)
 
 	if width == 0 || height == 0 {
 		if err != nil {
@@ -67,7 +65,7 @@ func GetImage(c echo.Context) error {
 		return c.Blob(http.StatusOK, mimetype, data)
 	}
 	reader := bytes.NewBuffer(data)
-	output, err := CreateResized(reader, uint(width), uint(height))
+	output, err := image.CreateResized(reader, uint(width), uint(height))
 	if err != nil {
 		return err
 	}
@@ -75,15 +73,12 @@ func GetImage(c echo.Context) error {
 	return c.Blob(http.StatusOK, "image/jpeg", output)
 }
 
-func OpenZipEntry(db *sqlx.DB, name string, index int) (content []byte, filename string, err error) {
-	var meta itemMeta
-	meta.Read(db, name)
-
-	if len(meta.FileIndices) == 0 {
+func OpenZipEntry(m meta.Item, index int) (content []byte, filename string, err error) {
+	if len(m.FileIndices) == 0 {
 		err = fmt.Errorf("image file not found")
 	}
 
-	fullpath := BaseDirectory + string(os.PathSeparator) + name
+	fullpath := filepath.Join(meta.BaseDirectory, m.Name)
 	r, err := zip.OpenReader(fullpath)
 	if err != nil {
 		return
@@ -91,7 +86,7 @@ func OpenZipEntry(db *sqlx.DB, name string, index int) (content []byte, filename
 
 	defer r.Close()
 
-	zf := r.File[meta.FileIndices[index]]
+	zf := r.File[m.FileIndices[index]]
 
 	if zf == nil {
 		err = fmt.Errorf("file not found : %v", index)
@@ -106,22 +101,5 @@ func OpenZipEntry(db *sqlx.DB, name string, index int) (content []byte, filename
 		content = nil
 		return
 	}
-	return
-}
-
-func CreateResized(reader io.Reader, width uint, height uint) (output []byte, err error) {
-	img, _, err := image.Decode(reader)
-	if err != nil {
-		return
-	}
-
-	resized := resize.Thumbnail(width, height, img, resize.MitchellNetravali)
-	buffer := bytes.Buffer{}
-
-	err = jpeg.Encode(&buffer, resized, nil)
-	if err != nil {
-		return
-	}
-	output = buffer.Bytes()
 	return
 }

@@ -14,7 +14,7 @@ services:
       MANGAWEB_DB: "user=user password=password host=db dbname=manga port=5432 sslmode=disable"
 
     volumes:
-      - /mnt/storage1/manga:/data
+      - /mnt/d/test:/data
     ports:
       - "6699:80"
     networks:
