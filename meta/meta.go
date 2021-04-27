@@ -14,13 +14,13 @@ import (
 )
 
 type Item struct {
-	Name        string      `json:"name" db:"name"`
-	CreateTime  time.Time   `json:"create_time" db:"create_time"`
-	Favorite    bool        `json:"favorite" db:"favorite"`
-	FileIndices []int       `json:"file_indices"`
-	Thumbnail   []byte      `json:"thumbnail" db:"thumbnail"`
-	IsRead      bool        `json:"is_read" db:"read"`
-	Mutex       *sync.Mutex `json:"-" db:"-"`
+	Name        string      `json:"name" db:"name" bson:"name"`
+	CreateTime  time.Time   `json:"create_time" db:"create_time" bson:"create_time"`
+	Favorite    bool        `json:"favorite" db:"favorite" bson:"favorite"`
+	FileIndices []int       `json:"file_indices" bson:"file_indices"`
+	Thumbnail   []byte      `json:"thumbnail" db:"thumbnail" bson:"thumbnail"`
+	IsRead      bool        `json:"is_read" db:"read" bson:"is_read"`
+	Mutex       *sync.Mutex `json:"-" db:"-" bson:"-"`
 }
 
 func (m *Item) GenerateThumbnail() error {
