@@ -135,9 +135,11 @@ func (p *Provider) ReadAll() (items []meta.Item, err error) {
 	return
 }
 
-func (p *Provider) GetCount() (count int64, err error) {
+func (p *Provider) NeedSetup() (b bool, err error) {
 	ctx := context.Background()
-	count, err = p.getItemCollection().CountDocuments(ctx, bson.D{})
+	collectionNames, err := p.client.Database(DatabaseName).ListCollectionNames(ctx, bson.D{})
+
+	b = len(collectionNames) == 0
 
 	return
 }

@@ -211,7 +211,7 @@ func syncToMongo() error {
 		return err
 	}
 
-	if c, _ := p2.GetCount(); c != 0 {
+	if c, _ := p2.NeedSetup(); c {
 		return nil
 	}
 

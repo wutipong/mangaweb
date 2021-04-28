@@ -15,7 +15,7 @@ services:
       MANGAWEB_USE_MONGO: "true"
 
     volumes:
-      - /mnt/c/Test:/data
+      - /mnt/storage1/manga:/data
     ports:
       - "6699:80"
     networks:
