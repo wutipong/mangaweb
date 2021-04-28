@@ -33,8 +33,11 @@ func main() {
 	path := setupFlag("path", "/data", "MANGAWEB_IMAGE_PATH", "Image source path")
 	prefix := setupFlag("prefix", "*", "MANGAWEB_URL_PREFIX", "Url prefix")
 	database := setupFlag("database", "localhost:5432", "MANGAWEB_DB", "Specify the database connection string")
+	useMongoStr := setupFlag("mongo", "", "MANGAWEB_USE_MONGO", "use mongo flag")
 
 	flag.Parse()
+
+	useMongo = *useMongoStr == "true"
 
 	meta.BaseDirectory = *path
 
@@ -227,7 +230,7 @@ func syncToMongo() error {
 	return nil
 }
 
-const useMongo = true
+var useMongo bool
 
 func getProvider() (p meta.Provider, err error) {
 	if useMongo {

@@ -12,6 +12,7 @@ services:
 
     environment: 
       MANGAWEB_DB: "user=user password=password host=db dbname=manga port=5432 sslmode=disable"
+      MANGAWEB_USE_MONGO: "true"
 
     volumes:
       - /mnt/c/Test:/data
