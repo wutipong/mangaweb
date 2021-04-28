@@ -31,6 +31,11 @@ $(function(){
     if(favOnly === "true"){
         $("#filter-favorite").addClass(checkedClass)
     }
+
+    let search = searchParams.get("search")
+    if (search !== "") {
+        $("#search-text").val(search)
+    }
 })
 
 function changeSort(sortBy){
@@ -59,6 +64,15 @@ function toggleFavorite(){
     searchParams.set("favorite", !isFavorite)
 
     url.search = searchParams.toString()    
+}
+
+function onSearchClick(){
+    let searchText = $("#search-text").val()
+    let url = window.location
+    let searchParams = new URLSearchParams(url.search);
+     searchParams.set("search", searchText)
+
+    url.search = searchParams.toString()
 }
 
 </script>
@@ -94,6 +108,10 @@ function toggleFavorite(){
                 </div>
             </li>
         </ul>
+        <form class="form-inline">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="search-text">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="search-button" onclick="onSearchClick()">Search</button>
+        </form>
     </div>
 </nav>
 
