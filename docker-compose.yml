@@ -10,7 +10,7 @@ services:
       args:
         buildno: 1
     environment: 
-      MANGAWEB_DB: "mongodb://root:password@localhost"
+      MANGAWEB_DB: "mongodb://root:password@mongo"
     volumes:
       - /mnt/storage1/manga:/data
     ports:
