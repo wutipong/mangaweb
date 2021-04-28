@@ -9,5 +9,6 @@ type Provider interface {
 	Read(name string) (i Item, err error)
 	Open(name string) (i Item, err error)
 	ReadAll() (items []Item, err error)
+	Find(name string) (items []Item, err error)
 	Close() error
 }
