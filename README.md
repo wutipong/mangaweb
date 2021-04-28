@@ -29,3 +29,71 @@ The souce code contains `docker-compose` file which has mangaweb, MongoDB and Mo
 The mangaweb service runs at port 8080 and mongo-express at 8081.
 
 You can debug mangaweb inside the container, or run it externally using different port than 8080 (which is already different than the default port 80). 
+
+## Example docker-compose
+
+Below is what I use on running server at home. 
+
+```docker-compose
+version: "3.3"
+
+services:
+  manga:
+    image: wutipong/mangaweb:21.04.1
+    depends_on:
+      - mongo
+    environment: 
+      MANGAWEB_DB: "mongodb://root:password@mongo"
+      MANGAWEB_DATA_PATH: /data
+    volumes:
+      - /mnt/storage1/manga:/data
+    ports:
+      - "6699:80"
+    networks:
+      - backend
+    restart: "unless-stopped"
+
+  mongo:
+    image: mongo
+    restart: always
+    networks:
+      - backend
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo-db:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    networks:
+      - backend
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+
+  mongo-backup:
+    image: tiredofit/mongodb-backup
+    volumes:
+      - mongo-backup:/backups
+    environment:
+      DB_HOST: mongo
+      DB_DUMP_FREQ: 1440
+      DB_CLEANUP_TIME: 8640
+      MD5: "TRUE"
+      COMPRESSION: NONE
+      DB_USER: root
+      DB_PASS: password
+    networks:
+      - backend
+
+networks:
+  backend:
+
+volumes:
+  mongo-db:
+  mongo-backup:
+```
