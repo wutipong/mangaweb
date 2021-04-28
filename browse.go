@@ -6,7 +6,7 @@ import (
 	"html/template"
 	"log"
 	"mangaweb/meta"
-	"mangaweb/meta/postgres"
+	"mangaweb/meta/mongo"
 	"net/http"
 	"net/url"
 	"os"
@@ -98,7 +98,7 @@ func makeRows(items []item, col int) [][]item {
 
 // Handler
 func browse(c echo.Context) error {
-	p, err := postgres.New()
+	p, err := mongo.New()
 	if err != nil {
 		return err
 	}

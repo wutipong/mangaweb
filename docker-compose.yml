@@ -14,7 +14,7 @@ services:
       MANGAWEB_DB: "user=user password=password host=db dbname=manga port=5432 sslmode=disable"
 
     volumes:
-      - /mnt/d/test:/data
+      - /mnt/c/Test:/data
     ports:
       - "6699:80"
     networks:
@@ -66,6 +66,43 @@ services:
     volumes:
       - db-backups:/backups
     restart: unless-stopped
+  
+  mongo:
+    image: mongo
+    restart: always
+    networks:
+      - backend
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo-db:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    networks:
+      - backend
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+
+  mongo-backup:
+    image: tiredofit/mongodb-backup
+    volumes:
+      - mongo-backup:/backups
+    environment:
+      DB_HOST: mongo
+      DB_DUMP_FREQ: 1440
+      DB_CLEANUP_TIME: 8640
+      MD5: "TRUE"
+      COMPRESSION: XZ
+      DB_USER: root
+      DB_PASS: password
+    networks:
+      - backend
 
 networks:
   backend:
@@ -74,3 +111,5 @@ volumes:
   db-data:
   db-backups:
   pgadmin:
+  mongo-db:
+  mongo-backup:

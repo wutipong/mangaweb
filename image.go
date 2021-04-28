@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"mangaweb/image"
 	"mangaweb/meta"
-	"mangaweb/meta/postgres"
+	"mangaweb/meta/mongo"
 	"net/http"
 	"net/url"
 	"path/filepath"
@@ -25,7 +25,7 @@ func GetImage(c echo.Context) error {
 		return err
 	}
 
-	provider, err := postgres.New()
+	provider, err := mongo.New()
 	if err != nil {
 		return err
 	}

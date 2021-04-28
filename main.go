@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"mangaweb/meta"
+	"mangaweb/meta/mongo"
 	"mangaweb/meta/postgres"
 	"net/http"
 	"os"
@@ -15,6 +16,8 @@ import (
 	"flag"
 	"log"
 )
+
+const mongoStr = "mongodb://root:password@mongo"
 
 func setupFlag(flagName, defValue, variable, description string) *string {
 	varValue := os.Getenv(variable)
@@ -39,7 +42,16 @@ func main() {
 	log.Printf("using prefix %s", *prefix)
 
 	err := postgres.Init(*database)
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	err = mongo.Init(mongoStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = syncToMongo()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -183,4 +195,34 @@ func updateMetaRoutine() (stop func(), done chan bool) {
 	}()
 
 	return
+}
+
+func syncToMongo() error {
+	p1, err := postgres.New()
+	if err != nil {
+		return err
+	}
+
+	p2, err := mongo.New()
+	if err != nil {
+		return err
+	}
+
+	if c, _ := p2.GetCount(); c != 0 {
+		return nil
+	}
+
+	items, err := p1.ReadAll()
+	if err != nil {
+		return err
+	}
+
+	for _, i := range items {
+		err = p2.Write(i)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"mangaweb/meta"
 	"sync"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,9 +34,13 @@ func New() (p Provider, err error) {
 	return
 }
 
+func (p *Provider) getItemCollection() *mongo.Collection {
+	return p.client.Database(DatabaseName).Collection(CollectionName)
+}
+
 func (p *Provider) IsItemExist(name string) bool {
 	ctx := context.Background()
-	result := p.client.Database(DatabaseName).Collection(CollectionName).FindOne(ctx, bson.D{{"name", name}})
+	result := p.getItemCollection().FindOne(ctx, bson.D{{"name", name}})
 
 	var item meta.Item
 
@@ -48,10 +53,13 @@ func (p *Provider) Write(i meta.Item) error {
 	ctx := context.Background()
 
 	var err error
-	if p.IsItemExist(i.Name) {
-		_, err = p.client.Database(DatabaseName).Collection(CollectionName).UpdateOne(ctx, bson.D{{"name", i.Name}}, i)
-	} else {
-		_, err = p.client.Database(DatabaseName).Collection(CollectionName).InsertOne(ctx, i)
+	result, err := p.getItemCollection().UpdateOne(ctx, bson.D{{"name", bson.E{"$eq", i.Name}}}, bson.M{"$set": i})
+	if err != nil {
+		return err
+	}
+
+	if result.MatchedCount == 0 {
+		_, err = p.getItemCollection().InsertOne(ctx, i)
 	}
 
 	return err
@@ -59,21 +67,29 @@ func (p *Provider) Write(i meta.Item) error {
 
 func (p *Provider) New(name string) (i meta.Item, err error) {
 	i = meta.Item{
-		Mutex: new(sync.Mutex),
+		Name:       name,
+		CreateTime: time.Now(),
+		Favorite:   false,
+		Mutex:      new(sync.Mutex),
 	}
+
+	i.GenerateImageIndices()
+	i.GenerateThumbnail()
+
+	err = p.Write(i)
 
 	return
 }
 func (p *Provider) Delete(i meta.Item) error {
 	ctx := context.Background()
-	_, err := p.client.Database(DatabaseName).Collection(CollectionName).DeleteOne(ctx, bson.D{{"name", i.Name}})
+	_, err := p.getItemCollection().DeleteOne(ctx, bson.D{{"name", i.Name}})
 
 	return err
 }
 
 func (p *Provider) Read(name string) (i meta.Item, err error) {
 	ctx := context.Background()
-	result := p.client.Database(DatabaseName).Collection(CollectionName).FindOne(ctx, bson.D{{"name", name}})
+	result := p.getItemCollection().FindOne(ctx, bson.D{{"name", name}})
 
 	err = result.Decode(&i)
 
@@ -81,7 +97,7 @@ func (p *Provider) Read(name string) (i meta.Item, err error) {
 }
 func (p *Provider) Open(name string) (i meta.Item, err error) {
 	ctx := context.Background()
-	result := p.client.Database(DatabaseName).Collection(CollectionName).FindOne(ctx, bson.D{{"name", name}})
+	result := p.getItemCollection().FindOne(ctx, bson.D{{"name", name}})
 
 	err = result.Decode(&i)
 
@@ -90,7 +106,7 @@ func (p *Provider) Open(name string) (i meta.Item, err error) {
 
 func (p *Provider) ReadAll() (items []meta.Item, err error) {
 	ctx := context.Background()
-	cursor, err := p.client.Database(DatabaseName).Collection(CollectionName).Find(ctx, bson.D{})
+	cursor, err := p.getItemCollection().Find(ctx, bson.D{})
 	if err != nil {
 		return
 	}
@@ -106,6 +122,13 @@ func (p *Provider) ReadAll() (items []meta.Item, err error) {
 
 		items = append(items, i)
 	}
+
+	return
+}
+
+func (p *Provider) GetCount() (count int64, err error) {
+	ctx := context.Background()
+	count, err = p.getItemCollection().CountDocuments(ctx, bson.D{})
 
 	return
 }
