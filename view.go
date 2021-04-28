@@ -46,7 +46,7 @@ func view(c echo.Context) error {
 		return err
 	}
 
-	db, err := getProvider()
+	db, err := newProvider()
 	if err != nil {
 		return err
 	}
