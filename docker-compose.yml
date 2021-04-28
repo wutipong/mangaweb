@@ -11,7 +11,7 @@ services:
         buildno: 1
     environment: 
       MANGAWEB_DB: "mongodb://root:password@mongo"
-      MANGAWEB_IMAGE_PATH: /data
+      MANGAWEB_DATA_PATH: /data
     volumes:
       - ./data:/data
     ports:
