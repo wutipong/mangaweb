@@ -74,7 +74,8 @@
 </div>
 
 <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
-   <span class="navbar-brand mr-auto text-truncate h1 d-none d-md-block" style="max-width: 50%;">{{.Name}}</span>
+   <span class="navbar-brand mr-auto text-truncate h1 d-none d-sm-block" style="max-width: 50%;">{{.Name}}</span>
+   <span class="navbar-brand mr-auto text-truncate h1 d-block d-sm-none" style="max-width: 50%;">View</span>
    <div class="btn-toolbar my-2 my-lg-0">
         <div class="btn-group">
             {{if .Favorite}}
@@ -88,7 +89,7 @@
             {{end}}
             <a id="download-btn" class="btn btn-primary" download>Download</a>
         </div>
-        <div class="btn-group">
+        <div class="btn-group px-2">
             <a id="close-btn" class="btn btn-danger" href="{{.BrowseURL}}"> Close</a>
         </div>
     </div>
