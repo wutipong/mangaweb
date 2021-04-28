@@ -23,6 +23,22 @@ type Provider struct {
 func Init(con string) error {
 	uri = con
 
+	p, err := New()
+	if err != nil {
+		return err
+	}
+	defer p.Close()
+
+	model := mongo.IndexModel{
+		Keys: bson.M{
+			"name": 1,
+		},
+		Options: options.Index().SetUnique(true),
+	}
+
+	ctx := context.Background()
+	p.getItemCollection().Indexes().CreateOne(ctx, model)
+
 	return nil
 }
 
@@ -52,15 +68,8 @@ func (p *Provider) IsItemExist(name string) bool {
 func (p *Provider) Write(i meta.Item) error {
 	ctx := context.Background()
 
-	var err error
-	result, err := p.getItemCollection().UpdateOne(ctx, bson.D{{"name", bson.E{"$eq", i.Name}}}, bson.M{"$set": i})
-	if err != nil {
-		return err
-	}
-
-	if result.MatchedCount == 0 {
-		_, err = p.getItemCollection().InsertOne(ctx, i)
-	}
+	_, err := p.getItemCollection().UpdateOne(
+		ctx, bson.D{{"name", i.Name}}, bson.M{"$set": i}, options.Update().SetUpsert(true))
 
 	return err
 }
