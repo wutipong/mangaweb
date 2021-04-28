@@ -16,8 +16,6 @@ import (
 	"log"
 )
 
-const mongoStr = "mongodb://root:password@mongo"
-
 func setupFlag(flagName, defValue, variable, description string) *string {
 	varValue := os.Getenv(variable)
 	if varValue != "" {
