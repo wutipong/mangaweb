@@ -48,12 +48,7 @@ type item struct {
 	IsRead     bool
 }
 
-func createItems(p meta.Provider) (allItems []item, err error) {
-	allMeta, err := p.ReadAll()
-	if err != nil {
-		return
-	}
-
+func createItems(allMeta []meta.Item) (allItems []item, err error) {
 	allItems = make([]item, len(allMeta))
 
 	for i, m := range allMeta {
@@ -120,7 +115,21 @@ func browse(c echo.Context) error {
 		descending = f
 	}
 
-	items, err := createItems(p)
+	var allMeta []meta.Item
+	search := c.QueryParam("search")
+	if search == "" {
+		allMeta, err = p.ReadAll()
+		if err != nil {
+			return err
+		}
+	} else {
+		allMeta, err = p.Find(search)
+		if err != nil {
+			return err
+		}
+	}
+
+	items, err := createItems(allMeta)
 	if err != nil {
 		return err
 	}

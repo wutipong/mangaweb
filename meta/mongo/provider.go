@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -116,6 +117,35 @@ func (p *Provider) Open(name string) (i meta.Item, err error) {
 func (p *Provider) ReadAll() (items []meta.Item, err error) {
 	ctx := context.Background()
 	cursor, err := p.getItemCollection().Find(ctx, bson.D{})
+	if err != nil {
+		return
+	}
+
+	for cursor.Next(ctx) {
+		i := meta.Item{
+			Mutex: new(sync.Mutex),
+		}
+		err = cursor.Decode(&i)
+		if err != nil {
+			return
+		}
+
+		items = append(items, i)
+	}
+
+	return
+}
+
+func (p *Provider) Find(name string) (items []meta.Item, err error) {
+	ctx := context.Background()
+	pattern := ".*" + name + ".*"
+	regex := primitive.Regex{Pattern: pattern, Options: "i"}
+	cursor, err := p.getItemCollection().Find(ctx,
+		bson.D{{
+			"name",
+			bson.D{{"$regex", regex}},
+		}},
+	)
 	if err != nil {
 		return
 	}
