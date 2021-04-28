@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"hash/fnv"
 	"log"
-	"mangaweb/meta/mongo"
 	"net/http"
 	"net/url"
 	"os"
@@ -47,7 +46,7 @@ func view(c echo.Context) error {
 		return err
 	}
 
-	db, err := mongo.New()
+	db, err := getProvider()
 	if err != nil {
 		return err
 	}

@@ -226,3 +226,19 @@ func syncToMongo() error {
 
 	return nil
 }
+
+const useMongo = true
+
+func getProvider() (p meta.Provider, err error) {
+	if useMongo {
+		mp, e := mongo.New()
+		p = &mp
+		err = e
+		return
+	} else {
+		mp, e := postgres.New()
+		p = &mp
+		err = e
+		return
+	}
+}
