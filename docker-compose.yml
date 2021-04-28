@@ -3,17 +3,14 @@ version: "3.3"
 services:
   manga:
     depends_on:
-      - db
+      - mongo
     build:
       context: ./
       dockerfile: Dockerfile
       args:
         buildno: 1
-
     environment: 
-      MANGAWEB_DB: "user=user password=password host=db dbname=manga port=5432 sslmode=disable"
-      MANGAWEB_USE_MONGO: "true"
-
+      MANGAWEB_DB: "mongodb://root:password@localhost"
     volumes:
       - /mnt/storage1/manga:/data
     ports:
@@ -22,52 +19,6 @@ services:
       - backend
     restart: "unless-stopped"
 
-  db:
-    image: postgres:11
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    networks:
-      - backend
-    #ports:
-    #  - "5432:5432"
-    expose:
-      - "5432"
-    environment: 
-        POSTGRES_USER: "user"
-        POSTGRES_PASSWORD: "password"
-        POSTGRES_DB: "manga"
-    restart: unless-stopped
-  
-  pgadmin:
-    image: dpage/pgadmin4
-    networks:
-      - backend
-    ports:
-      - "16699:80"
-    environment:
-        PGADMIN_DEFAULT_EMAIL: "admin@email.com"
-        PGADMIN_DEFAULT_PASSWORD: "password"
-        POSTGRES_USER: "user"
-        POSTGRES_PASSWORD: "password"
-        POSTGRES_DB: "manga"
-        PGADMIN_SERVER_JSON_FILE: "/config/servers.json"
-    restart: unless-stopped
-    volumes:
-      - pgadmin:/config
-
-  pgbackup:
-    image: kartoza/pg-backup
-    networks:
-      - backend
-    environment: 
-        POSTGRES_USER: "user"
-        POSTGRES_PASS: "password"
-        POSTGRES_DBNAME: "manga"
-        POSTGRES_HOST: "db"
-    volumes:
-      - db-backups:/backups
-    restart: unless-stopped
-  
   mongo:
     image: mongo
     restart: always
@@ -99,7 +50,7 @@ services:
       DB_DUMP_FREQ: 1440
       DB_CLEANUP_TIME: 8640
       MD5: "TRUE"
-      COMPRESSION: XZ
+      COMPRESSION: NONE
       DB_USER: root
       DB_PASS: password
     networks:
@@ -109,8 +60,5 @@ networks:
   backend:
 
 volumes:
-  db-data:
-  db-backups:
-  pgadmin:
   mongo-db:
   mongo-backup:

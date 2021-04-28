@@ -15,7 +15,7 @@ func thumbnail(c echo.Context) error {
 		return err
 	}
 
-	provider, err := getProvider()
+	provider, err := newProvider()
 	if err != nil {
 		return err
 	}

@@ -97,7 +97,7 @@ func makeRows(items []item, col int) [][]item {
 
 // Handler
 func browse(c echo.Context) error {
-	p, err := getProvider()
+	p, err := newProvider()
 	if err != nil {
 		return err
 	}

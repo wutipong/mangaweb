@@ -4,7 +4,6 @@ import (
 	"context"
 	"mangaweb/meta"
 	"mangaweb/meta/mongo"
-	"mangaweb/meta/postgres"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,8 +15,6 @@ import (
 	"flag"
 	"log"
 )
-
-const mongoStr = "mongodb://root:password@mongo"
 
 func setupFlag(flagName, defValue, variable, description string) *string {
 	varValue := os.Getenv(variable)
@@ -32,34 +29,18 @@ func main() {
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
 	path := setupFlag("path", "/data", "MANGAWEB_IMAGE_PATH", "Image source path")
 	prefix := setupFlag("prefix", "*", "MANGAWEB_URL_PREFIX", "Url prefix")
-	database := setupFlag("database", "localhost:5432", "MANGAWEB_DB", "Specify the database connection string")
-	useMongoStr := setupFlag("mongo", "", "MANGAWEB_USE_MONGO", "use mongo flag")
+	database := setupFlag("database", "mongodb://localhost", "MANGAWEB_DB", "Specify the database connection string")
 
 	flag.Parse()
-
-	useMongo = *useMongoStr == "true"
 
 	meta.BaseDirectory = *path
 
 	log.Printf("Image Source Path: %s", *path)
 	log.Printf("using prefix %s", *prefix)
 
-	err := postgres.Init(*database)
-	if err != nil {
+	if err := mongo.Init(*database); err != nil {
 		log.Fatal(err)
 	}
-
-	err = mongo.Init(mongoStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = syncToMongo()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// migrateMeta(dbx)
 
 	// Echo instance
 	e := echo.New()
@@ -120,7 +101,7 @@ func root(c echo.Context) error {
 }
 
 func synchronizeMetaData() error {
-	provider, err := postgres.New()
+	provider, err := newProvider()
 
 	if err != nil {
 		return err
@@ -200,48 +181,9 @@ func updateMetaRoutine() (stop func(), done chan bool) {
 	return
 }
 
-func syncToMongo() error {
-	p1, err := postgres.New()
-	if err != nil {
-		return err
-	}
-
-	p2, err := mongo.New()
-	if err != nil {
-		return err
-	}
-
-	if c, _ := p2.NeedSetup(); c {
-		return nil
-	}
-
-	items, err := p1.ReadAll()
-	if err != nil {
-		return err
-	}
-
-	for _, i := range items {
-		err = p2.Write(i)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-var useMongo bool
-
-func getProvider() (p meta.Provider, err error) {
-	if useMongo {
-		mp, e := mongo.New()
-		p = &mp
-		err = e
-		return
-	} else {
-		mp, e := postgres.New()
-		p = &mp
-		err = e
-		return
-	}
+func newProvider() (p meta.Provider, err error) {
+	mp, e := mongo.New()
+	p = &mp
+	err = e
+	return
 }
