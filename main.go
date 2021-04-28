@@ -27,7 +27,7 @@ func setupFlag(flagName, defValue, variable, description string) *string {
 
 func main() {
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
-	path := setupFlag("data", "data", "MANGAWEB_DATA_PATH", "Manga source path")
+	path := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
 	database := setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
 
 	flag.Parse()
