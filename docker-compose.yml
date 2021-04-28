@@ -12,7 +12,8 @@ services:
     environment: 
       MANGAWEB_DB: "mongodb://root:password@mongo"
     volumes:
-      - /mnt/storage1/manga:/data
+      #- /mnt/storage1/manga:/data
+      - /mnt/d/test:/data
     ports:
       - "6699:80"
     networks:
