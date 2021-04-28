@@ -11,28 +11,26 @@ services:
         buildno: 1
     environment: 
       MANGAWEB_DB: "mongodb://root:password@mongo"
+      MANGAWEB_IMAGE_PATH: /data
     volumes:
-      - /mnt/storage1/manga:/data
+      - ./data:/data
     ports:
-      - "6699:80"
+      - "8080:80"
     networks:
       - backend
-    restart: "unless-stopped"
 
   mongo:
     image: mongo
-    restart: always
     networks:
       - backend
+    ports:
+      - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
-    volumes:
-      - mongo-db:/data/db
 
   mongo-express:
     image: mongo-express
-    restart: always
     ports:
       - 8081:8081
     networks:
@@ -41,24 +39,5 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: password
 
-  mongo-backup:
-    image: tiredofit/mongodb-backup
-    volumes:
-      - mongo-backup:/backups
-    environment:
-      DB_HOST: mongo
-      DB_DUMP_FREQ: 1440
-      DB_CLEANUP_TIME: 8640
-      MD5: "TRUE"
-      COMPRESSION: NONE
-      DB_USER: root
-      DB_PASS: password
-    networks:
-      - backend
-
 networks:
   backend:
-
-volumes:
-  mongo-db:
-  mongo-backup:

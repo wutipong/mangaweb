@@ -27,16 +27,14 @@ func setupFlag(flagName, defValue, variable, description string) *string {
 
 func main() {
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
-	path := setupFlag("path", "/data", "MANGAWEB_IMAGE_PATH", "Image source path")
-	prefix := setupFlag("prefix", "*", "MANGAWEB_URL_PREFIX", "Url prefix")
-	database := setupFlag("database", "mongodb://localhost", "MANGAWEB_DB", "Specify the database connection string")
+	path := setupFlag("path", "data", "MANGAWEB_IMAGE_PATH", "Image source path")
+	database := setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
 
 	flag.Parse()
 
 	meta.BaseDirectory = *path
 
 	log.Printf("Image Source Path: %s", *path)
-	log.Printf("using prefix %s", *prefix)
 
 	if err := mongo.Init(*database); err != nil {
 		log.Fatal(err)
@@ -50,9 +48,6 @@ func main() {
 	e.Use(middleware.Recover())
 
 	e.Pre(middleware.RemoveTrailingSlash())
-	e.Pre(middleware.Rewrite(map[string]string{
-		*prefix: "$1",
-	}))
 
 	// Routes
 	e.GET("/", root)
