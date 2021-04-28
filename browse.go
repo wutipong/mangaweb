@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"log"
 	"mangaweb/meta"
-	"mangaweb/meta/postgres"
 	"net/http"
 	"net/url"
 	"os"
@@ -98,7 +97,7 @@ func makeRows(items []item, col int) [][]item {
 
 // Handler
 func browse(c echo.Context) error {
-	p, err := postgres.New()
+	p, err := getProvider()
 	if err != nil {
 		return err
 	}
@@ -121,7 +120,7 @@ func browse(c echo.Context) error {
 		descending = f
 	}
 
-	items, err := createItems(&p)
+	items, err := createItems(p)
 	if err != nil {
 		return err
 	}

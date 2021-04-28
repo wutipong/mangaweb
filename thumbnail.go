@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"errors"
-	"mangaweb/meta/postgres"
 	"net/http"
 	"net/url"
 
@@ -16,7 +15,7 @@ func thumbnail(c echo.Context) error {
 		return err
 	}
 
-	provider, err := postgres.New()
+	provider, err := getProvider()
 	if err != nil {
 		return err
 	}
