@@ -50,16 +50,17 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.Pre(middleware.RemoveTrailingSlash())
-
 	if prefix != nil {
 		pattern := path.Join(*prefix, "*")
 		e.Pre(middleware.Rewrite(map[string]string{
-			pattern: "$1",
+			*prefix: "/",
+			pattern: "/$1",
 		}))
 
 		urlutil.SetPrefix(*prefix)
 	}
+
+	e.Pre(middleware.RemoveTrailingSlash())
 
 	// Routes
 	e.GET("/", root)
@@ -104,7 +105,7 @@ func main() {
 
 // Handler
 func root(c echo.Context) error {
-	return c.Redirect(http.StatusPermanentRedirect, "/browse")
+	return c.Redirect(http.StatusPermanentRedirect, urlutil.CreateURL("/browse"))
 }
 
 func synchronizeMetaData() error {

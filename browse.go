@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"mangaweb/meta"
+	"mangaweb/urlutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -55,8 +56,8 @@ func createItems(allMeta []meta.Item) (allItems []item, err error) {
 		var urlStr string
 		var thumbURL string
 
-		urlStr = "/view/" + url.PathEscape(m.Name)
-		thumbURL = "/thumbnail/" + url.PathEscape(m.Name)
+		urlStr = urlutil.CreateURL("/view/", url.PathEscape(m.Name))
+		thumbURL = urlutil.CreateURL("/thumbnail/", url.PathEscape(m.Name))
 
 		hash := fnv.New64()
 		hash.Write([]byte(m.Name))

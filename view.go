@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"log"
+	"mangaweb/urlutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -81,7 +82,7 @@ func view(c echo.Context) error {
 	data := viewData{
 		Name:      p,
 		Title:     fmt.Sprintf("Manga - Viewing [%s]", p),
-		BrowseURL: fmt.Sprintf("/browse#%v", id),
+		BrowseURL: urlutil.CreateURL(fmt.Sprintf("/browse#%v", id)),
 		ImageURLs: createImageURLs(p, pages),
 		Favorite:  m.Favorite,
 	}
@@ -97,7 +98,7 @@ func view(c echo.Context) error {
 func createImageURLs(file string, pages []Page) []string {
 	output := make([]string, len(pages))
 	for i, p := range pages {
-		url := fmt.Sprintf("/get_image/%s?i=%v", url.PathEscape(file), p.Index)
+		url := urlutil.CreateURL(fmt.Sprintf("/get_image/%s?i=%v", url.PathEscape(file), p.Index))
 
 		output[i] = url
 	}
