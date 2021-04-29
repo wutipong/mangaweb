@@ -1,6 +1,7 @@
 package urlutil
 
 import (
+	"html/template"
 	"path"
 )
 
@@ -14,4 +15,10 @@ func CreateURL(p ...string) string {
 	args := append([]string{prefix}, p...)
 
 	return path.Join(args...)
+}
+
+func TemplateFuncMap() template.FuncMap {
+	return template.FuncMap{
+		"CreateURL": CreateURL,
+	}
 }

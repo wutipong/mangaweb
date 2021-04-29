@@ -21,6 +21,7 @@ import (
 func init() {
 	var err error
 	broseTemplate, err = template.New("browse.gohtml").
+		Funcs(urlutil.TemplateFuncMap()).
 		ParseFiles(
 			"template/browse.gohtml",
 			"template/header.gohtml",
