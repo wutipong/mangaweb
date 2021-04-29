@@ -4,9 +4,11 @@ import (
 	"context"
 	"mangaweb/meta"
 	"mangaweb/meta/mongo"
+	"mangaweb/urlutil"
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -27,14 +29,15 @@ func setupFlag(flagName, defValue, variable, description string) *string {
 
 func main() {
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
-	path := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
+	dataPath := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
 	database := setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
+	prefix := setupFlag("prefix", "", "MANGAWEB_PREFIX", "URL prefix")
 
 	flag.Parse()
 
-	meta.BaseDirectory = *path
+	meta.BaseDirectory = *dataPath
 
-	log.Printf("Image Source Path: %s", *path)
+	log.Printf("Image Source Path: %s", *dataPath)
 
 	if err := mongo.Init(*database); err != nil {
 		log.Fatal(err)
@@ -48,6 +51,15 @@ func main() {
 	e.Use(middleware.Recover())
 
 	e.Pre(middleware.RemoveTrailingSlash())
+
+	if prefix != nil {
+		pattern := path.Join(*prefix, "*")
+		e.Pre(middleware.Rewrite(map[string]string{
+			pattern: "$1",
+		}))
+
+		urlutil.SetPrefix(*prefix)
+	}
 
 	// Routes
 	e.GET("/", root)
