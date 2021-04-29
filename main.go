@@ -50,7 +50,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	if prefix != nil {
+	if *prefix != "" {
 		pattern := path.Join(*prefix, "*")
 		e.Pre(middleware.Rewrite(map[string]string{
 			*prefix: "/",
