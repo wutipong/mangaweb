@@ -1,4 +1,5 @@
 {{template "html-head" .}}
+<body>
 
  <div class="fullscreen" style="padding-top:80px;">
     <div class="carousel slide w-100 h-100" id="carouselControl">
@@ -20,57 +21,6 @@
             <span class="sr-only">Next</span>
         </a>
     </div>
-    <script>
-    $(function() {
-        if (window.location.search !== "")
-            window.location.search = ""
-
-        $('.carousel').carousel({
-            interval: false
-        })
-        
-        let imgUrls = [{{range .ImageURLs}}
-            "{{.}}",
-        {{end}}]
-
-        $('#carouselControl').on('slide.bs.carousel', function (e) {
-            $('#download-btn').attr("href", imgUrls[e.to])
-            let favURL = new URL(window.location.toString())
-            favURL.hash = "" + (e.to +1)
-            let searchParams = new URLSearchParams(favURL.search);
-
-            {{if .Favorite}}
-                $('#favorite-btn').addClass('active')
-                searchParams.set("favorite", "false")
-            {{end}}
-            {{if not .Favorite}}
-                searchParams.set("favorite", "true")
-            {{end}}
-
-            favURL.search = searchParams.toString()
-            $('#favorite-btn').attr("href", favURL)
-        })
-
-
-        let indexStr = window.location.hash.substr(1);
-        let index = parseInt(indexStr)
-        if(!index || index < 1){
-            index = 1
-        }
-        let sel = '.carousel-item:nth-child(' + index + ')'
-        $(sel).addClass('active');
-
-        $('#download-btn').attr("href", imgUrls[index-1])
-        
-        {{if .Favorite}}
-            $('#favorite-btn').addClass('active')
-            $('#favorite-btn').attr("href", window.location.href + "?favorite=false")
-        {{end}}
-        {{if not .Favorite}}
-            $('#favorite-btn').attr("href", window.location.href + "?favorite=true")
-        {{end}}
-    });
-    </script>
 </div>
 
 <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
@@ -80,17 +30,73 @@
         <div class="btn-group">
             {{if .Favorite}}
                 <a id="favorite-btn" class="btn btn-warning active">
-                    <span><span class="oi oi-star"></span>
+                    <i class="bi bi-star-fill"></i>
                     Favorite
                 </a>
             {{end}}
             {{if not .Favorite}}
-                <a id="favorite-btn" class="btn btn-secondary">Favorite</a>
+                <a id="favorite-btn" class="btn btn-secondary">
+                    <i class="bi bi-star"></i>
+                    Favorite
+                </a>
             {{end}}
-            <a id="download-btn" class="btn btn-primary" download>Download</a>
+            <a id="download-btn" class="btn btn-primary" download> <i class="bi bi-download"></i> Download</a>
         </div>
         <div class="btn-group px-2">
-            <a id="close-btn" class="btn btn-danger" href="{{.BrowseURL}}"> Close</a>
+            <a id="close-btn" class="btn btn-danger" href="{{.BrowseURL}}"><i class="bi bi-x-circle-fill"></i> Close</a>
         </div>
     </div>
 </nav>
+<script src='{{CreateURL "/static/index.js"}}'></script>
+<script>
+$(function() {
+    if (window.location.search !== "")
+        window.location.search = ""
+
+    $('.carousel').carousel({
+        interval: false
+    })
+    
+    let imgUrls = [{{range .ImageURLs}}
+        "{{.}}",
+    {{end}}]
+
+    $('#carouselControl').on('slide.bs.carousel', function (e) {
+        $('#download-btn').attr("href", imgUrls[e.to])
+        let favURL = new URL(window.location.toString())
+        favURL.hash = "" + (e.to +1)
+        let searchParams = new URLSearchParams(favURL.search);
+
+        {{if .Favorite}}
+            $('#favorite-btn').addClass('active')
+            searchParams.set("favorite", "false")
+        {{end}}
+        {{if not .Favorite}}
+            searchParams.set("favorite", "true")
+        {{end}}
+
+        favURL.search = searchParams.toString()
+        $('#favorite-btn').attr("href", favURL)
+    })
+
+
+    let indexStr = window.location.hash.substr(1);
+    let index = parseInt(indexStr)
+    if(!index || index < 1){
+        index = 1
+    }
+    let sel = '.carousel-item:nth-child(' + index + ')'
+    $(sel).addClass('active');
+
+    $('#download-btn').attr("href", imgUrls[index-1])
+    
+    {{if .Favorite}}
+        $('#favorite-btn').addClass('active')
+        $('#favorite-btn').attr("href", window.location.href + "?favorite=false")
+    {{end}}
+    {{if not .Favorite}}
+        $('#favorite-btn').attr("href", window.location.href + "?favorite=true")
+    {{end}}
+});
+</script>
+</body>

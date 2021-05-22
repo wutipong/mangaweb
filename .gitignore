@@ -2,3 +2,5 @@ mangaweb.exe
 .vscode/launch.json
 /mangaweb
 __debug_bin
+node_modules
+.parcel-cache
