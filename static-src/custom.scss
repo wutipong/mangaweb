@@ -1,6 +1,5 @@
-body {
-    font-family: sans-serif !important;
-}
+@import "../node_modules/bootswatch/dist/darkly/bootstrap.min.css";
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
 .fullscreen {
     position: absolute;
@@ -52,20 +51,19 @@ body {
     flex-direction: column;
 }
 
-.favorite-banner {
-    position: absolute;
-    background-color: pink;
+.thumb-banner {
+    position: relative;
     width:100px;
     color: #343a40;
     bottom: 80px;
 }
 
+.favorite-banner {
+    background-color: pink;
+}
+
 .new-banner {
-    position: absolute;
     background-color: yellow;
-    width:100px;
-    color: #343a40;
-    bottom: 80px;
 }
 
 #carouselControl {
@@ -78,4 +76,4 @@ body {
     left: .4rem;
     content: '✓';
     font-weight: 600;
-  }
+}

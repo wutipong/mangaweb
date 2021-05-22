@@ -1,0 +1,30 @@
+{
+  "name": "mangaweb",
+  "version": "1.0.0",
+  "description": "`mangaweb` is a web application which let the user read a manga from zip file without extracting it. Basically it scans for files in a designated directory and display \r it as a web application.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prebuild": "npx rimraf build",
+    "build": "parcel build --dist-dir ./static ./static-src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wutipong/mangaweb.git"
+  },
+  "author": "Wutipong Wongsakuldej",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wutipong/mangaweb/issues"
+  },
+  "homepage": "https://github.com/wutipong/mangaweb#readme",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.0.0-beta.3.1",
+    "parcel": "^2.0.0-beta.3.1"
+  },
+  "dependencies": {
+    "bootstrap": "^5.0.1",
+    "bootstrap-icons": "^1.5.0",
+    "bootswatch": "^5.0.1",
+    "jquery": "^3.6.0"
+  }
+}
