@@ -4,3 +4,4 @@ mangaweb.exe
 __debug_bin
 node_modules
 .parcel-cache
+data-private
