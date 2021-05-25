@@ -44,37 +44,35 @@
     </div>
 </nav>
 
-<div class="container" style="padding-top:100px;">
-    {{range .Rows}}
-    <div class="row">
-        {{range .}}
-        <div class="col" id="{{.ID}}">
-            <a href="{{.LinkURL}}">
-                <div class="file-border">
-                    <div class ="file-thumb-border">
-                        <div class="thumb-border">
-                            <img class="file-thumb lazy" loading="lazy" src="{{.ThumbURL}}" alt="{{.Name}}">
+<div class="container-fluid" style="padding-top:100px;">
+    <div class="row row-cols-auto">
+        {{range .Items}}
+            <div class="col" id="{{.ID}}">
+                <a href="{{.LinkURL}}">
+                    <div class="file-border">
+                        <div class ="file-thumb-border">
+                            <div class="thumb-border">
+                                <img class="file-thumb lazy" loading="lazy" src="{{.ThumbURL}}" alt="{{.Name}}">
+                            </div>
+                            <div class="thumb-banner favorite-banner">
+                                {{if .Favorite}}
+                                    <span><i class="bi bi-star-fill"></i> Favorite
+                                {{end}}
+                            </div>
+                            <div class="thumb-banner new-banner">
+                                {{if not .IsRead}}
+                                    <span><i class="bi bi-lightning-fill"></i> New
+                                {{end}}
+                            </div>
                         </div>
-                        <div class="thumb-banner favorite-banner">
-                            {{if .Favorite}}
-                                <span><i class="bi bi-star-fill"></i> Favorite
-                            {{end}}
-                        </div>
-                        <div class="thumb-banner new-banner">
-                            {{if not .IsRead}}
-                                <span><i class="bi bi-lightning-fill"></i> New
-                            {{end}}
+                        <div class="file-details">
+                            <span class="file-thumb-name">{{.Name}}</span>
                         </div>
                     </div>
-                    <div class="file-details">
-                        <span class="file-thumb-name">{{.Name}}</span>
-                    </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
         {{end}}
     </div>
-    {{end}}
 </div>
 
 <script src='{{CreateURL "/static/index.js"}}'></script>
