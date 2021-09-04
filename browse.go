@@ -37,7 +37,7 @@ var broseTemplate *template.Template
 type browseData struct {
 	Title        string
 	FavoriteOnly bool
-	Rows         [][]item
+	Items        []item
 }
 
 type item struct {
@@ -167,7 +167,7 @@ func browse(c echo.Context) error {
 	data := browseData{
 		Title:        fmt.Sprintf("Manga - Browsing"),
 		FavoriteOnly: fav,
-		Rows:         makeRows(items, 2),
+		Items:        items,
 	}
 	err = broseTemplate.Execute(&builder, data)
 	if err != nil {
