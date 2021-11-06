@@ -4,7 +4,7 @@
   "description": "`mangaweb` is a web application which let the user read a manga from zip file without extracting it. Basically it scans for files in a designated directory and display \r it as a web application.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "npx rimraf build",
+    "prebuild": "npx rimraf ./static",
     "build": "parcel build --dist-dir ./static ./static-src/index.js"
   },
   "repository": {
