@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"hash/fnv"
 	"html/template"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -12,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/labstack/gommon/log"
 
 	"github.com/wutipong/mangaweb/meta"
 
@@ -104,9 +104,9 @@ func browse(c echo.Context) error {
 
 	builder := strings.Builder{}
 
-	fav := false
+	favOnly := false
 	if f, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
-		fav = f
+		favOnly = f
 	}
 
 	sortBy := c.QueryParam("sort")
@@ -138,10 +138,10 @@ func browse(c echo.Context) error {
 		return err
 	}
 
-	if fav == true {
+	if favOnly {
 		var tempItems []item
 		for _, item := range items {
-			if item.Favorite == true {
+			if item.Favorite {
 				tempItems = append(tempItems, item)
 			}
 		}
@@ -167,13 +167,13 @@ func browse(c echo.Context) error {
 	}
 
 	data := browseData{
-		Title:        fmt.Sprintf("Manga - Browsing"),
-		FavoriteOnly: fav,
+		Title:        "Manga - Browsing",
+		FavoriteOnly: favOnly,
 		Items:        items,
 	}
 	err = broseTemplate.Execute(&builder, data)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 		return err
 	}
 

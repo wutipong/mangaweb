@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"hash/fnv"
 	"html/template"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/labstack/gommon/log"
 
 	"github.com/labstack/echo/v4"
 
@@ -90,7 +91,7 @@ func view(c echo.Context) error {
 	}
 	err = viewTemplate.Execute(&builder, data)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 		return err
 	}
 

@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
+	"fmt"
+
 	"net/http"
 	"os"
 	"os/signal"
@@ -15,6 +16,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
+	"github.com/labstack/gommon/log"
 
 	urlutil "github.com/wutipong/go-utils/url"
 )
@@ -32,6 +35,8 @@ func setupFlag(flagName, defValue, variable, description string) *string {
 	return flag.String(flagName, defValue, description)
 }
 
+var versionString string = "development"
+
 func main() {
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
 	dataPath := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
@@ -41,9 +46,10 @@ func main() {
 	flag.Parse()
 
 	meta.BaseDirectory = *dataPath
+	printBanner()
+	log.Infof("MangaWeb version:%s", versionString)
 
-	log.Printf("Image Source Path: %s", *dataPath)
-
+	log.Infof("Data source Path: %s", *dataPath)
 	if err := mongo.Init(*database); err != nil {
 		log.Fatal(err)
 	}
@@ -184,7 +190,7 @@ func updateMetaRoutine() (stop func(), done chan bool) {
 
 	go func() {
 		for isRunning {
-			log.Printf("Update metadata set.")
+			log.Info("Update metadata set.")
 			synchronizeMetaData()
 			<-time.After(updateInterval)
 		}
@@ -199,4 +205,17 @@ func newProvider() (p meta.Provider, err error) {
 	p = &mp
 	err = e
 	return
+}
+
+func printBanner() {
+	fmt.Printf(
+		`
+	███╗░░░███╗░█████╗░███╗░░██╗░██████╗░░█████╗░░██╗░░░░░░░██╗███████╗██████╗░
+	████╗░████║██╔══██╗████╗░██║██╔════╝░██╔══██╗░██║░░██╗░░██║██╔════╝██╔══██╗
+	██╔████╔██║███████║██╔██╗██║██║░░██╗░███████║░╚██╗████╗██╔╝█████╗░░██████╦╝
+	██║╚██╔╝██║██╔══██║██║╚████║██║░░╚██╗██╔══██║░░████╔═████║░██╔══╝░░██╔══██╗
+	██║░╚═╝░██║██║░░██║██║░╚███║╚██████╔╝██║░░██║░░╚██╔╝░╚██╔╝░███████╗██████╦╝
+	╚═╝░░░░░╚═╝╚═╝░░╚═╝╚═╝░░╚══╝░╚═════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚══════╝╚═════╝░
+	Version: %s`, versionString)
+	fmt.Println()
 }
