@@ -24,9 +24,9 @@ jobs:
             type=semver,pattern={{version}}
             type=sha
 
-      - name: get the version
-        id: get_version
-        uses: battila7/get-version-action@v2
+      - name: Find Tag
+        id: tagger
+        uses: jimschubert/query-tag-action@v2
 
       -
         name: Set up Docker Buildx
@@ -47,4 +47,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            VERSION=${{ steps.get_version.outputs.version-without-v }}
+            VERSION=${{steps.tagger.outputs.tag}}
