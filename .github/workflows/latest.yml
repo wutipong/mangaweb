@@ -38,8 +38,8 @@ jobs:
           context: .
           pull: true
           push: true
-          build-args: 
-            - VERSION=${{ steps.get_version.outputs.version-without-v }}
+          build-args: |
+            VERSION=${{ steps.get_version.outputs.version-without-v }}
           cache-from: type=registry,ref=wutipong/mangaweb:latest
           cache-to: type=inline
           tags: wutipong/mangaweb:latest
