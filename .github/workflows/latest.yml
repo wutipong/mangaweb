@@ -16,6 +16,10 @@ jobs:
         name: Check out the repo
         uses: actions/checkout@v2
 
+      - name: get the version
+        id: get_version
+        uses: battila7/get-version-action@v2
+
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -34,6 +38,8 @@ jobs:
           context: .
           pull: true
           push: true
+          build-args: 
+            - VERSION: ${{ steps.get_version.outputs.version-without-v }}
           cache-from: type=registry,ref=wutipong/mangaweb:latest
           cache-to: type=inline
           tags: wutipong/mangaweb:latest
