@@ -1,9 +1,12 @@
-@import "../node_modules/bootswatch/dist/darkly/bootstrap.min.css";
+@import "~bootswatch/dist/darkly/variables";
+@import "~bootstrap/scss/bootstrap";
+@import "~bootswatch/dist/darkly/bootswatch";
+
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
 .fullscreen {
     position: absolute;
-    top:0px;
+    top: 0px;
     bottom: 0px;
     left: 0px;
     right: 0px;
@@ -11,10 +14,9 @@
 
 .file-border {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     width: auto;
-    height: 250px;
     margin: 4px;
     background: black;
     padding: 4px;
@@ -24,10 +26,14 @@
     border-width: 1px;
 }
 
+@include media-breakpoint-up(sm) {
+    .file-border {
+        flex-direction: row;
+    }
+}
+
 .file-thumb-name {
-    max-width: 20em;
-    min-width: 10em;
-    display:block;
+    display: block;
     overflow: hidden;
     z-index: 1;
 }
@@ -36,11 +42,11 @@
     width: 200px;
     height: 200px;
     margin: 4px;
-    display:flex;
+    display: flex;
 }
 
 .file-thumb {
-    display:inline-flex;
+    display: inline-flex;
     margin: auto;
     max-width: 200px;
     max-height: 200px;
@@ -53,9 +59,28 @@
 
 .thumb-banner {
     position: relative;
-    width:100px;
+    width: 100px;
     color: #343a40;
     bottom: 80px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto;
+}
+
+@include media-breakpoint-up(lg) {
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto;
+    }
+}
+
+@include media-breakpoint-up(xxl) {
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto auto;
+    }
 }
 
 .favorite-banner {
@@ -74,6 +99,6 @@
 .dropdown-item-checked::before {
     position: absolute;
     left: .4rem;
-    content: '✓';
+    content: '✓ ';
     font-weight: 600;
 }
