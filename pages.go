@@ -2,8 +2,9 @@ package main
 
 import (
 	"archive/zip"
-	"mangaweb/meta"
 	"path/filepath"
+
+	"github.com/wutipong/mangaweb/meta"
 )
 
 type Page struct {

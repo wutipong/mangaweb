@@ -3,12 +3,13 @@ package meta
 import (
 	"archive/zip"
 	"fmt"
-	"mangaweb/image"
 	"os"
 	"path/filepath"
 	"sort"
 	"sync"
 	"time"
+
+	"github.com/wutipong/mangaweb/image"
 
 	"bitbucket.org/zombiezen/cardcpx/natsort"
 )

@@ -5,8 +5,6 @@ import (
 	"hash/fnv"
 	"html/template"
 	"log"
-	"mangaweb/meta"
-	"mangaweb/urlutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -15,13 +13,17 @@ import (
 	"strings"
 	"time"
 
+	"github.com/wutipong/mangaweb/meta"
+
 	"github.com/labstack/echo/v4"
+
+	urlutil "github.com/wutipong/go-utils/url"
 )
 
 func init() {
 	var err error
 	broseTemplate, err = template.New("browse.gohtml").
-		Funcs(urlutil.TemplateFuncMap()).
+		Funcs(urlutil.HtmlTemplateFuncMap()).
 		ParseFiles(
 			"template/browse.gohtml",
 			"template/header.gohtml",

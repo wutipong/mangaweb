@@ -5,7 +5,6 @@ import (
 	"hash/fnv"
 	"html/template"
 	"log"
-	"mangaweb/urlutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -13,12 +12,14 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
+
+	urlutil "github.com/wutipong/go-utils/url"
 )
 
 func init() {
 	var err error
 	viewTemplate, err = template.New("view.gohtml").
-		Funcs(urlutil.TemplateFuncMap()).
+		Funcs(urlutil.HtmlTemplateFuncMap()).
 		ParseFiles(
 			"template/view.gohtml",
 			"template/header.gohtml",

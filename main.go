@@ -2,20 +2,21 @@ package main
 
 import (
 	"context"
-	"mangaweb/meta"
-	"mangaweb/meta/mongo"
-	"mangaweb/urlutil"
+	"flag"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"path"
 	"time"
 
+	"github.com/wutipong/mangaweb/meta"
+	"github.com/wutipong/mangaweb/meta/mongo"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	"flag"
-	"log"
+	urlutil "github.com/wutipong/go-utils/url"
 )
 
 // Recreate the static resource file.

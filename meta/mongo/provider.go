@@ -2,9 +2,10 @@ package mongo
 
 import (
 	"context"
-	"mangaweb/meta"
 	"sync"
 	"time"
+
+	"github.com/wutipong/mangaweb/meta"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

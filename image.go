@@ -6,14 +6,15 @@ import (
 	"fmt"
 	_ "image/png"
 	"io/ioutil"
-	"mangaweb/image"
-	"mangaweb/meta"
-	"mangaweb/meta/mongo"
 	"net/http"
 	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/wutipong/mangaweb/image"
+	"github.com/wutipong/mangaweb/meta"
+	"github.com/wutipong/mangaweb/meta/mongo"
 
 	"github.com/labstack/echo/v4"
 )
