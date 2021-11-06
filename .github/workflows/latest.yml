@@ -16,9 +16,9 @@ jobs:
         name: Check out the repo
         uses: actions/checkout@v2
 
-      - name: get the version
-        id: get_version
-        uses: battila7/get-version-action@v2
+      - name: Find Tag
+        id: tagger
+        uses: jimschubert/query-tag-action@v2
 
       -
         name: Set up Docker Buildx
@@ -39,7 +39,7 @@ jobs:
           pull: true
           push: true
           build-args: |
-            VERSION=${{ steps.get_version.outputs.version-without-v }}
+            VERSION=${{steps.tagger.outputs.tag}}
           cache-from: type=registry,ref=wutipong/mangaweb:latest
           cache-to: type=inline
           tags: wutipong/mangaweb:latest
