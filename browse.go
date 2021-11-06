@@ -38,6 +38,7 @@ var broseTemplate *template.Template
 
 type browseData struct {
 	Title        string
+	Version      string
 	FavoriteOnly bool
 	Items        []item
 }
@@ -168,6 +169,7 @@ func browse(c echo.Context) error {
 
 	data := browseData{
 		Title:        "Manga - Browsing",
+		Version:      versionString,
 		FavoriteOnly: favOnly,
 		Items:        items,
 	}

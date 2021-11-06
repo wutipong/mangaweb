@@ -34,6 +34,9 @@
                         <button class="dropdown-item" type="button" id="filter-favorite" onclick="toggleFavorite()">Favorite</button>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">About</a>
+                </li>
             </ul>
             <form class="d-flex">
                 <div class="input-group mb-3">
@@ -76,6 +79,26 @@
             </div>
         {{end}}
     </div>
+</div>
+
+<div class="modal fade" id="aboutModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">MangaWeb</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h6>Version {{.Version}} </h6>
+        <p>&copy; 2021 Wutipong Wongsakuldej. All rights reserved</p>
+        <p>Licensed under MIT License</p>
+        <p><a href="https://github.com/wutipong/mangaweb">Homepage</a></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src='{{CreateURL "/static/index.js"}}'></script>
