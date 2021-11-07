@@ -4,6 +4,30 @@
 
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
+$all-colors: map-merge-multiple($pinks, $yellows);
+
+$utilities: map-merge(
+    $utilities,
+    (
+        "color":
+            map-merge(
+                map-get($utilities, "color"),
+                (
+                    values: map-merge(map-get(map-get($utilities, "color"), "values"), ($all-colors)),
+                )
+            ),
+        "border":
+            map-merge(
+                map-get($utilities, "border-color"),
+                (
+                    values: map-merge(map-get(map-get($utilities, "color"), "values"), ($all-colors))
+                )
+            ),
+    )
+);
+
+@import "~bootstrap/scss/utilities/api";
+
 .fullscreen {
     position: absolute;
     top: 0px;
@@ -12,83 +36,22 @@
     right: 0px;
 }
 
-.file-border {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: auto;
-    margin: 4px;
-    background: black;
-    padding: 4px;
-    border-style: solid;
-    border-color: gray;
-    border-radius: 2px;
-    border-width: 1px;
-}
-
-@include media-breakpoint-up(sm) {
-    .file-border {
-        flex-direction: row;
-    }
-}
-
-.file-thumb-name {
-    display: block;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.thumb-border {
-    width: 200px;
-    height: 200px;
-    margin: 4px;
-    display: flex;
-}
-
-.file-thumb {
-    display: inline-flex;
-    margin: auto;
-    max-width: 200px;
-    max-height: 200px;
-}
-
-.file-details {
-    display: flex;
-    flex-direction: column;
-}
-
-.thumb-banner {
-    position: relative;
-    width: 100px;
-    color: #343a40;
-    bottom: 80px;
-}
-
 .grid-container {
     display: grid;
     grid-template-columns: auto;
+    grid-gap: 1rem;
 }
 
 @include media-breakpoint-up(lg) {
     .grid-container {
-        display: grid;
         grid-template-columns: auto auto;
     }
 }
 
 @include media-breakpoint-up(xxl) {
     .grid-container {
-        display: grid;
         grid-template-columns: auto auto auto;
     }
-}
-
-.favorite-banner {
-    background-color: pink;
-}
-
-.new-banner {
-    background-color: yellow;
 }
 
 #carouselControl {
@@ -98,7 +61,7 @@
 
 .dropdown-item-checked::before {
     position: absolute;
-    left: .4rem;
-    content: '✓ ';
+    left: 0.4rem;
+    content: "✓ ";
     font-weight: 600;
 }

@@ -1,4 +1,37 @@
 {{template "html-head" .}}
+
+{{define "item-card"}}
+
+    <div class="card mb-3 
+        {{if .Favorite}}border border-pink-500 border-5 {{end}} 
+        {{if not .IsRead}}border border-yellow-500 border-5 {{end}}"
+        id="{{.ID}}">
+
+        <div class="row g-0">
+            <div class="col-md-4">
+                <a href="{{.LinkURL}}">
+                    <img class="img-fluid rounded-start lazy" loading="lazy" src="{{.ThumbURL}}" alt="{{.Name}}">
+                </a>
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title"><a href="{{.LinkURL}}">{{.Name}}</a></h5>
+                    <p class="card-text">
+                        {{if .Favorite}}
+                            <span><i class="bi bi-star-fill text-pink-500"></i> Favorite
+                        {{end}}
+                    
+                        {{if not .IsRead}}
+                            <span><i class="bi bi-lightning-fill text-yellow-500"></i> New
+                        {{end}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+{{end}}
+
 <body>
 <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
     <div class="container-fluid">
@@ -53,30 +86,7 @@
 <div class="container-fluid" style="padding-top:100px;">
     <div class="grid-container">
         {{range .Items}}
-            <div id="{{.ID}}">
-                <a href="{{.LinkURL}}">
-                    <div class="file-border">
-                        <div class ="file-thumb-border">
-                            <div class="thumb-border">
-                                <img class="file-thumb lazy" loading="lazy" src="{{.ThumbURL}}" alt="{{.Name}}">
-                            </div>
-                            <div class="thumb-banner favorite-banner">
-                                {{if .Favorite}}
-                                    <span><i class="bi bi-star-fill"></i> Favorite
-                                {{end}}
-                            </div>
-                            <div class="thumb-banner new-banner">
-                                {{if not .IsRead}}
-                                    <span><i class="bi bi-lightning-fill"></i> New
-                                {{end}}
-                            </div>
-                        </div>
-                        <div class="file-details">
-                            <span class="file-thumb-name">{{.Name}}</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
+            {{template "item-card" .}}
         {{end}}
     </div>
 </div>
