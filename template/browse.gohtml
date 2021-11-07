@@ -3,9 +3,22 @@
 {{define "item-card"}}
 
     <div class="card mb-3 
-        {{if .Favorite}}border border-pink-500 border-5 {{end}} 
-        {{if not .IsRead}}border border-yellow-500 border-5 {{end}}"
+        {{if .Favorite}}border border-pink {{end}} 
+        {{if not .IsRead}}border border-yellow {{end}}"
         id="{{.ID}}">
+
+        {{if .Favorite}}
+            <span class="position-absolute bottom-0 end-0 p-2 badge bg-pink">
+                <span><i class="bi bi-star-fill"></i> Favorite</span>
+            </span>
+        {{end}}
+
+        {{if not .IsRead}}
+            <span class="position-absolute bottom-0 end-0 p-2 badge bg-yellow">
+                <span><i class="bi bi-lightning-fill"></i> New </span>
+            </span>
+        {{end}}
+
 
         <div class="row g-0">
             <div class="col-md-4">
@@ -16,15 +29,6 @@
             <div class="col-md-8">
                 <div class="card-body">
                     <h5 class="card-title"><a href="{{.LinkURL}}">{{.Name}}</a></h5>
-                    <p class="card-text">
-                        {{if .Favorite}}
-                            <span><i class="bi bi-star-fill text-pink-500"></i> Favorite
-                        {{end}}
-                    
-                        {{if not .IsRead}}
-                            <span><i class="bi bi-lightning-fill text-yellow-500"></i> New
-                        {{end}}
-                    </p>
                 </div>
             </div>
         </div>

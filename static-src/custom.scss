@@ -4,29 +4,7 @@
 
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
-$all-colors: map-merge-multiple($pinks, $yellows);
-
-$utilities: map-merge(
-    $utilities,
-    (
-        "color":
-            map-merge(
-                map-get($utilities, "color"),
-                (
-                    values: map-merge(map-get(map-get($utilities, "color"), "values"), ($all-colors)),
-                )
-            ),
-        "border":
-            map-merge(
-                map-get($utilities, "border-color"),
-                (
-                    values: map-merge(map-get(map-get($utilities, "color"), "values"), ($all-colors))
-                )
-            ),
-    )
-);
-
-@import "~bootstrap/scss/utilities/api";
+@import "~bootswatch/dist/darkly/variables";
 
 .fullscreen {
     position: absolute;
@@ -64,4 +42,20 @@ $utilities: map-merge(
     left: 0.4rem;
     content: "✓ ";
     font-weight: 600;
+}
+
+.bg-pink {
+    background-color: $pink !important;
+}
+
+.bg-yellow {
+    background-color: $yellow !important;
+}
+
+.border-pink {
+    border-color: $pink !important;
+}
+
+.border-yellow {
+    border-color: $yellow !important;
 }
