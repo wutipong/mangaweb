@@ -59,3 +59,7 @@
 .border-yellow {
     border-color: $yellow !important;
 }
+
+.btn-pink {
+    @include button-variant($pink, $pink);
+}
