@@ -1,13 +1,11 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 
 	"net/http"
 	"os"
-	"os/signal"
 	"path"
 	"time"
 
@@ -20,6 +18,8 @@ import (
 	"github.com/labstack/gommon/log"
 
 	urlutil "github.com/wutipong/go-utils/url"
+
+	"github.com/go-co-op/gocron"
 )
 
 // Recreate the static resource file.
@@ -90,28 +90,20 @@ func main() {
 	e.GET("/view", view)
 	e.GET("/view/*", view)
 
-	go func() {
-		if err := e.Start(*address); err != nil {
-			e.Logger.Info("shutting down the server")
-		}
-		e.Logger.Fatal()
-	}()
+	// Schedule the update metadata task to run every 30 minutes.
+	s := gocron.NewScheduler(time.UTC)
+	s.Every(30).Minutes().Do(func() {
+		log.Info("Update metadata set.")
+		synchronizeMetaData()
+	})
+	s.StartAsync()
 
-	metaStop, metaDone := updateMetaRoutine()
-
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-
-	metaStop()
-	<-metaDone
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := e.Shutdown(ctx); err != nil {
-		e.Logger.Fatal(err)
+	log.Info("Server starts.")
+	if err := e.Start(*address); err != http.ErrServerClosed {
+		log.Error(err)
 	}
-
+	log.Info("shutting down the server")
+	s.Stop()
 }
 
 // Handler
@@ -176,28 +168,6 @@ func synchronizeMetaData() error {
 	}
 
 	return nil
-}
-
-func updateMetaRoutine() (stop func(), done chan bool) {
-	updateInterval := 30 * time.Minute
-	isRunning := true
-
-	stop = func() {
-		isRunning = false
-	}
-
-	done = make(chan bool)
-
-	go func() {
-		for isRunning {
-			log.Info("Update metadata set.")
-			synchronizeMetaData()
-			<-time.After(updateInterval)
-		}
-		done <- true
-	}()
-
-	return
 }
 
 func newProvider() (p meta.Provider, err error) {
