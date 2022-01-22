@@ -6,6 +6,8 @@ import (
 	"image/jpeg"
 	"io"
 
+	_ "golang.org/x/image/webp"
+
 	"github.com/nfnt/resize"
 )
 

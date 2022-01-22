@@ -22,6 +22,9 @@ func init() {
 		if ext == ".png" {
 			return true
 		}
+		if ext == ".webp" {
+			return true
+		}
 		return false
 	}
 }
