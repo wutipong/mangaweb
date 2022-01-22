@@ -63,3 +63,10 @@
 .btn-pink {
     @include button-variant($pink, $pink);
 }
+
+.thumb-link {
+    display: block;
+    width: 200px;
+    height: 200px;
+    margin: auto;
+}
