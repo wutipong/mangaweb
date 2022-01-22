@@ -10,6 +10,8 @@ require (
 	go.mongodb.org/mongo-driver v1.8.2
 )
 
+require github.com/joho/godotenv v1.4.0
+
 require (
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect

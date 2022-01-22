@@ -20,6 +20,8 @@ import (
 	urlutil "github.com/wutipong/go-utils/url"
 
 	"github.com/go-co-op/gocron"
+
+	"github.com/joho/godotenv"
 )
 
 // Recreate the static resource file.
@@ -38,6 +40,11 @@ func setupFlag(flagName, defValue, variable, description string) *string {
 var versionString string = "development"
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Info("Use .env file.")
+	}
+
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
 	dataPath := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
 	database := setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
