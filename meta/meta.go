@@ -40,19 +40,18 @@ func (m *Item) GenerateThumbnail() error {
 		return fmt.Errorf("file list is empty")
 	}
 
-	reader, err := r.File[m.FileIndices[0]].Open()
+	img, err := image.CreateCover(m.FileIndices, r)
 	if err != nil {
 		return err
 	}
 
-	defer reader.Close()
-
-	thumbnail, err := image.CreateResized(reader, 200, 200)
+	resized := image.CreateThumbnail(img)
+	jpeg, err := image.ToJPEG(resized)
 	if err != nil {
 		return err
 	}
 
-	m.Thumbnail = thumbnail
+	m.Thumbnail = jpeg
 
 	return nil
 }

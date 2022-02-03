@@ -66,10 +66,14 @@ func GetImage(c echo.Context) error {
 		return c.Blob(http.StatusOK, mimetype, data)
 	}
 	reader := bytes.NewBuffer(data)
-	output, err := image.CreateResized(reader, uint(width), uint(height))
+
+	img, err := image.Create(reader)
 	if err != nil {
 		return err
 	}
+
+	resized := image.Resize(img, uint(width), uint(height))
+	output, err := image.ToJPEG(resized)
 
 	return c.Blob(http.StatusOK, "image/jpeg", output)
 }
