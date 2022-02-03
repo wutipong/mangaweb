@@ -49,6 +49,7 @@ func main() {
 	dataPath := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
 	database := setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
 	prefix := setupFlag("prefix", "", "MANGAWEB_PREFIX", "URL prefix")
+	rebuild := setupFlag("rebuild_thumbnail", "false", "MANGAWEB_REBUILD_THUMBNAIL", "force rebuild all thumbnail.")
 
 	flag.Parse()
 
@@ -103,6 +104,14 @@ func main() {
 		log.Info("Update metadata set.")
 		synchronizeMetaData()
 	})
+
+	if *rebuild == "true" {
+		s.Every(1).Millisecond().LimitRunsTo(1).Do(func() {
+			log.Info("Force updating thumbnail")
+			rebuildThumbnail()
+		})
+	}
+
 	s.StartAsync()
 
 	log.Info("Server starts.")
@@ -172,6 +181,33 @@ func synchronizeMetaData() error {
 			log.Printf("Failed to delete meta for %s", m.Name)
 		}
 
+	}
+
+	return nil
+}
+
+func rebuildThumbnail() error {
+	provider, err := newProvider()
+
+	if err != nil {
+		return err
+	}
+	defer provider.Close()
+
+	allMeta, err := provider.ReadAll()
+	if err != nil {
+		return err
+	}
+
+	for _, m := range allMeta {
+		e := m.GenerateThumbnail()
+		log.Printf("Generating new thumbnail for %s", m.Name)
+		if e != nil {
+			log.Printf("Failed to generate thumbnail for %s", m.Name)
+			continue
+		}
+
+		provider.Write(m)
 	}
 
 	return nil
