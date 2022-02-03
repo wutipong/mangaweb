@@ -65,10 +65,11 @@
 }
 
 .thumb-link {
-    display: block;
+    display: flex;
     width: 200px;
     height: 200px;
     margin: auto;
+    justify-content: center;
 }
 
 .thumb-img {
