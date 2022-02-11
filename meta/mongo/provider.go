@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/wutipong/mangaweb/meta"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -56,7 +55,7 @@ func (p *Provider) getItemCollection() *mongo.Collection {
 
 func (p *Provider) IsItemExist(name string) bool {
 	ctx := context.Background()
-	result := p.getItemCollection().FindOne(ctx, bson.D{{"name", name}})
+	result := p.getItemCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
 	var item meta.Item
 
@@ -69,21 +68,21 @@ func (p *Provider) Write(i meta.Item) error {
 	ctx := context.Background()
 
 	_, err := p.getItemCollection().UpdateOne(
-		ctx, bson.D{{"name", i.Name}}, bson.M{"$set": i}, options.Update().SetUpsert(true))
+		ctx, bson.D{{Key: "name", Value: i.Name}}, bson.M{"$set": i}, options.Update().SetUpsert(true))
 
 	return err
 }
 
 func (p *Provider) Delete(i meta.Item) error {
 	ctx := context.Background()
-	_, err := p.getItemCollection().DeleteOne(ctx, bson.D{{"name", i.Name}})
+	_, err := p.getItemCollection().DeleteOne(ctx, bson.D{{Key: "name", Value: i.Name}})
 
 	return err
 }
 
 func (p *Provider) Read(name string) (i meta.Item, err error) {
 	ctx := context.Background()
-	result := p.getItemCollection().FindOne(ctx, bson.D{{"name", name}})
+	result := p.getItemCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
 	err = result.Decode(&i)
 
@@ -91,7 +90,7 @@ func (p *Provider) Read(name string) (i meta.Item, err error) {
 }
 func (p *Provider) Open(name string) (i meta.Item, err error) {
 	ctx := context.Background()
-	result := p.getItemCollection().FindOne(ctx, bson.D{{"name", name}})
+	result := p.getItemCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
 	err = result.Decode(&i)
 
@@ -124,8 +123,8 @@ func (p *Provider) Find(name string) (items []meta.Item, err error) {
 	regex := primitive.Regex{Pattern: pattern, Options: "i"}
 	cursor, err := p.getItemCollection().Find(ctx,
 		bson.D{{
-			"name",
-			bson.D{{"$regex", regex}},
+			Key:   "name",
+			Value: bson.D{{Key: "$regex", Value: regex}},
 		}},
 	)
 	if err != nil {
