@@ -9,19 +9,14 @@ import (
 	"path"
 	"time"
 
-	"github.com/wutipong/mangaweb/meta"
-	"github.com/wutipong/mangaweb/meta/mongo"
-
+	"github.com/go-co-op/gocron"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-
 	"github.com/labstack/gommon/log"
-
-	urlutil "github.com/wutipong/go-utils/url"
-
-	"github.com/go-co-op/gocron"
-
-	"github.com/joho/godotenv"
+	"github.com/wutipong/mangaweb/meta"
+	"github.com/wutipong/mangaweb/meta/mongo"
+	"github.com/wutipong/mangaweb/util"
 )
 
 // Recreate the static resource file.
@@ -76,7 +71,7 @@ func main() {
 			pattern: "/$1",
 		}))
 
-		urlutil.SetPrefix(*prefix)
+		util.SetPrefix(*prefix)
 	}
 
 	e.Pre(middleware.RemoveTrailingSlash())
@@ -124,7 +119,7 @@ func main() {
 
 // Handler
 func root(c echo.Context) error {
-	return c.Redirect(http.StatusPermanentRedirect, urlutil.CreateURL("/browse"))
+	return c.Redirect(http.StatusPermanentRedirect, util.CreateURL("/browse"))
 }
 
 func synchronizeMetaData() error {

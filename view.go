@@ -10,17 +10,15 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/labstack/gommon/log"
-
 	"github.com/labstack/echo/v4"
-
-	urlutil "github.com/wutipong/go-utils/url"
+	"github.com/labstack/gommon/log"
+	"github.com/wutipong/mangaweb/util"
 )
 
 func init() {
 	var err error
 	viewTemplate, err = template.New("view.gohtml").
-		Funcs(urlutil.HtmlTemplateFuncMap()).
+		Funcs(util.HtmlTemplateFuncMap()).
 		ParseFiles(
 			"template/view.gohtml",
 			"template/header.gohtml",
@@ -85,7 +83,7 @@ func view(c echo.Context) error {
 	data := viewData{
 		Name:      p,
 		Title:     fmt.Sprintf("Manga - Viewing [%s]", p),
-		BrowseURL: urlutil.CreateURL(fmt.Sprintf("/browse#%v", id)),
+		BrowseURL: util.CreateURL(fmt.Sprintf("/browse#%v", id)),
 		ImageURLs: createImageURLs(p, pages),
 		Favorite:  m.Favorite,
 	}
@@ -101,7 +99,7 @@ func view(c echo.Context) error {
 func createImageURLs(file string, pages []Page) []string {
 	output := make([]string, len(pages))
 	for i, p := range pages {
-		url := urlutil.CreateURL(fmt.Sprintf("/get_image/%s?i=%v", url.PathEscape(file), p.Index))
+		url := util.CreateURL(fmt.Sprintf("/get_image/%s?i=%v", url.PathEscape(file), p.Index))
 
 		output[i] = url
 	}

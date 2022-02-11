@@ -12,7 +12,16 @@ require (
 
 require github.com/joho/godotenv v1.4.0
 
-require golang.org/x/image v0.0.0-20211028202545-6944b10bf410
+require (
+	github.com/stretchr/testify v1.7.0
+	golang.org/x/image v0.0.0-20211028202545-6944b10bf410
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+)
 
 require (
 	github.com/go-stack/stack v1.8.1 // indirect
@@ -26,7 +35,6 @@ require (
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
-	github.com/wutipong/go-utils v0.0.1
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.0 // indirect
 	github.com/xdg-go/stringprep v1.0.2 // indirect

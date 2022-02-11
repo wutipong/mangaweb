@@ -11,19 +11,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/labstack/gommon/log"
-
-	"github.com/wutipong/mangaweb/meta"
-
 	"github.com/labstack/echo/v4"
-
-	urlutil "github.com/wutipong/go-utils/url"
+	"github.com/labstack/gommon/log"
+	"github.com/wutipong/mangaweb/meta"
+	"github.com/wutipong/mangaweb/util"
 )
 
 func init() {
 	var err error
 	broseTemplate, err = template.New("browse.gohtml").
-		Funcs(urlutil.HtmlTemplateFuncMap()).
+		Funcs(util.HtmlTemplateFuncMap()).
 		ParseFiles(
 			"template/browse.gohtml",
 			"template/header.gohtml",
@@ -60,8 +57,8 @@ func createItems(allMeta []meta.Item) (allItems []item, err error) {
 		var urlStr string
 		var thumbURL string
 
-		urlStr = urlutil.CreateURL("/view/", url.PathEscape(m.Name))
-		thumbURL = urlutil.CreateURL("/thumbnail/", url.PathEscape(m.Name))
+		urlStr = util.CreateURL("/view/", url.PathEscape(m.Name))
+		thumbURL = util.CreateURL("/thumbnail/", url.PathEscape(m.Name))
 
 		hash := fnv.New64()
 		hash.Write([]byte(m.Name))
