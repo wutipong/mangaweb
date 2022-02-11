@@ -48,6 +48,9 @@ func GetImage(c echo.Context) error {
 	}
 
 	m, err := provider.Read(p)
+	if err != nil {
+		return err
+	}
 	data, f, err := OpenZipEntry(m, index)
 
 	if width == 0 || height == 0 {
@@ -74,7 +77,9 @@ func GetImage(c echo.Context) error {
 
 	resized := image.Resize(img, uint(width), uint(height))
 	output, err := image.ToJPEG(resized)
-
+	if err != nil {
+		return err
+	}
 	return c.Blob(http.StatusOK, "image/jpeg", output)
 }
 
@@ -100,7 +105,9 @@ func OpenZipEntry(m meta.Item, index int) (content []byte, filename string, err 
 
 	filename = zf.Name
 	reader, err := zf.Open()
-
+	if err != nil {
+		return
+	}
 	defer reader.Close()
 	if content, err = ioutil.ReadAll(reader); err != nil {
 		content = nil

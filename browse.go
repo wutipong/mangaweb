@@ -77,21 +77,6 @@ func createItems(allMeta []meta.Item) (allItems []item, err error) {
 	return
 }
 
-func makeRows(items []item, col int) [][]item {
-	var rows [][]item
-
-	for i, it := range items {
-		if i%col == 0 {
-			rows = append(rows, make([]item, 0))
-		}
-
-		r := i / col
-		rows[r] = append(rows[r], it)
-	}
-
-	return rows
-}
-
 // Handler
 func browse(c echo.Context) error {
 	p, err := newProvider()
