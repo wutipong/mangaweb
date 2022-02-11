@@ -9,24 +9,45 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wutipong/mangaweb/image"
-
 	"bitbucket.org/zombiezen/cardcpx/natsort"
+	"github.com/wutipong/mangaweb/image"
 )
 
+// Item the meta data for each manga item.
+// Do not change the field type nor names. Add new field when necessary.
+// Also, when update the structure, if the new field is required, increment the CurrentItemVersion by one
+// and create a migration function.
 type Item struct {
-	Name        string      `json:"name" db:"name" bson:"name"`
-	CreateTime  time.Time   `json:"create_time" db:"create_time" bson:"create_time"`
-	Favorite    bool        `json:"favorite" db:"favorite" bson:"favorite"`
-	FileIndices []int       `json:"file_indices" bson:"file_indices"`
-	Thumbnail   []byte      `json:"thumbnail" db:"thumbnail" bson:"thumbnail"`
-	IsRead      bool        `json:"is_read" db:"read" bson:"is_read"`
-	Mutex       *sync.Mutex `json:"-" db:"-" bson:"-"`
+	Name        string    `json:"name" db:"name" bson:"name"`
+	CreateTime  time.Time `json:"create_time" db:"create_time" bson:"create_time"`
+	Favorite    bool      `json:"favorite" db:"favorite" bson:"favorite"`
+	FileIndices []int     `json:"file_indices" bson:"file_indices"`
+	Thumbnail   []byte    `json:"thumbnail" db:"thumbnail" bson:"thumbnail"`
+	IsRead      bool      `json:"is_read" db:"read" bson:"is_read"`
+	Version     int       `json:"version" db:"version" bson:"version"`
+}
+
+//CurrentItemVersion the current version of `Item` structure.
+const CurrentItemVersion = 0
+
+func NewItem(name string) (i Item, err error) {
+	i = Item{
+		Name:       name,
+		CreateTime: time.Now(),
+		Favorite:   false,
+		Version:    CurrentItemVersion,
+	}
+
+	i.GenerateImageIndices()
+	i.GenerateThumbnail()
+
+	return
 }
 
 func (m *Item) GenerateThumbnail() error {
-	m.Mutex.Lock()
-	defer m.Mutex.Unlock()
+	mutex := new(sync.Mutex)
+	mutex.Lock()
+	defer mutex.Unlock()
 
 	fullpath := filepath.Join(BaseDirectory, m.Name)
 
@@ -57,8 +78,9 @@ func (m *Item) GenerateThumbnail() error {
 }
 
 func (m *Item) GenerateImageIndices() error {
-	m.Mutex.Lock()
-	defer m.Mutex.Unlock()
+	mutex := new(sync.Mutex)
+	mutex.Lock()
+	defer mutex.Unlock()
 
 	fullpath := BaseDirectory + string(os.PathSeparator) + m.Name
 

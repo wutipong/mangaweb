@@ -7,6 +7,7 @@ import (
 	"net/url"
 
 	"github.com/labstack/echo/v4"
+	"github.com/wutipong/mangaweb/meta"
 )
 
 func thumbnail(c echo.Context) error {
@@ -23,7 +24,12 @@ func thumbnail(c echo.Context) error {
 
 	m, err := provider.Read(name)
 	if errors.Is(err, sql.ErrNoRows) {
-		m, _ = provider.New(name)
+		m, _ = meta.NewItem(name)
+		err = provider.Write(m)
+		if err != nil {
+			return err
+		}
+
 	} else if err != nil {
 		return err
 	}

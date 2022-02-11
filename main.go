@@ -153,9 +153,15 @@ func synchronizeMetaData() error {
 		}
 
 		log.Printf("Creating metadata for %s", file)
-		_, err := provider.New(file)
+
+		item, err := meta.NewItem(file)
 		if err != nil {
 			log.Printf("Failed to create meta data : %v", err)
+		}
+
+		err = provider.Write(item)
+		if err != nil {
+			log.Printf("Failed to write meta data : %v", err)
 		}
 	}
 

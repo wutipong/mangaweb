@@ -2,8 +2,6 @@ package mongo
 
 import (
 	"context"
-	"sync"
-	"time"
 
 	"github.com/wutipong/mangaweb/meta"
 
@@ -76,21 +74,6 @@ func (p *Provider) Write(i meta.Item) error {
 	return err
 }
 
-func (p *Provider) New(name string) (i meta.Item, err error) {
-	i = meta.Item{
-		Name:       name,
-		CreateTime: time.Now(),
-		Favorite:   false,
-		Mutex:      new(sync.Mutex),
-	}
-
-	i.GenerateImageIndices()
-	i.GenerateThumbnail()
-
-	err = p.Write(i)
-
-	return
-}
 func (p *Provider) Delete(i meta.Item) error {
 	ctx := context.Background()
 	_, err := p.getItemCollection().DeleteOne(ctx, bson.D{{"name", i.Name}})
@@ -123,9 +106,7 @@ func (p *Provider) ReadAll() (items []meta.Item, err error) {
 	}
 
 	for cursor.Next(ctx) {
-		i := meta.Item{
-			Mutex: new(sync.Mutex),
-		}
+		i := meta.Item{}
 		err = cursor.Decode(&i)
 		if err != nil {
 			return
@@ -152,9 +133,7 @@ func (p *Provider) Find(name string) (items []meta.Item, err error) {
 	}
 
 	for cursor.Next(ctx) {
-		i := meta.Item{
-			Mutex: new(sync.Mutex),
-		}
+		i := meta.Item{}
 		err = cursor.Decode(&i)
 		if err != nil {
 			return
