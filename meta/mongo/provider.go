@@ -117,16 +117,31 @@ func (p *Provider) ReadAll() (items []meta.Item, err error) {
 	return
 }
 
-func (p *Provider) Find(name string) (items []meta.Item, err error) {
+func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, order meta.SortOrder, pageSize int, page int) (items []meta.Item, err error) {
 	ctx := context.Background()
-	pattern := ".*" + name + ".*"
-	regex := primitive.Regex{Pattern: pattern, Options: "i"}
-	cursor, err := p.getItemCollection().Find(ctx,
-		bson.D{{
-			Key:   "name",
-			Value: bson.D{{Key: "$regex", Value: regex}},
-		}},
-	)
+
+	filter := createFilter(criteria)
+	opts := options.Find()
+
+	orderInt := 0
+	switch order {
+	case meta.SortOrderAscending:
+		orderInt = 1
+
+	case meta.SortOrderDescending:
+		orderInt = -1
+	}
+	switch sort {
+	case meta.SortFieldName:
+		opts.SetSort(bson.D{{"name", orderInt}})
+
+	case meta.SortFieldCreateTime:
+		opts.SetSort(bson.D{{"create_time", orderInt}})
+	}
+
+	opts.SetSkip(int64(pageSize * page)).SetLimit(int64(pageSize))
+
+	cursor, err := p.getItemCollection().Find(ctx, filter, opts)
 	if err != nil {
 		return
 	}
@@ -142,6 +157,44 @@ func (p *Provider) Find(name string) (items []meta.Item, err error) {
 	}
 
 	return
+}
+
+func (p *Provider) Count(criteria []meta.SearchCriteria) (count int64, err error) {
+	ctx := context.Background()
+
+	filter := createFilter(criteria)
+	count, err = p.getItemCollection().CountDocuments(ctx, filter)
+
+	return
+}
+
+func createNameRegex(name string) primitive.Regex {
+	pattern := ".*" + name + ".*"
+	regex := primitive.Regex{Pattern: pattern, Options: "i"}
+	return regex
+}
+
+func createFilter(criteria []meta.SearchCriteria) bson.D {
+	output := make(bson.D, 0)
+	for _, c := range criteria {
+		switch c.Field {
+		case meta.SearchFieldName:
+			{
+				name := c.Value.(string)
+				regex := createNameRegex(name)
+
+				output = append(output, bson.E{"name", regex})
+				break
+			}
+
+		case meta.SearchFieldFavorite:
+			{
+				output = append(output, bson.E{"favorite", c.Value})
+				break
+			}
+		}
+	}
+	return output
 }
 
 func (p *Provider) NeedSetup() (b bool, err error) {

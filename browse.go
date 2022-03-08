@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -15,6 +14,10 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/util"
+)
+
+const (
+	ItemPerPage = 10
 )
 
 func init() {
@@ -38,6 +41,9 @@ type browseData struct {
 	Version      string
 	FavoriteOnly bool
 	Items        []item
+	AllItemCount int64
+	ItemPerPage  int
+	PageIndex    int
 }
 
 type item struct {
@@ -102,18 +108,44 @@ func browse(c echo.Context) error {
 		descending = f
 	}
 
-	var allMeta []meta.Item
+	page := 0
+	if i, e := strconv.ParseInt(c.QueryParam("page"), 10, 0); e == nil {
+		page = int(i)
+	}
+
 	search := c.QueryParam("search")
-	if search == "" {
-		allMeta, err = p.ReadAll()
-		if err != nil {
-			return err
-		}
-	} else {
-		allMeta, err = p.Find(search)
-		if err != nil {
-			return err
-		}
+	searchCriteria := make([]meta.SearchCriteria, 0)
+	if search != "" {
+		searchCriteria = append(searchCriteria, meta.SearchCriteria{
+			Field: meta.SearchFieldName,
+			Value: search,
+		})
+	}
+
+	if favOnly {
+		searchCriteria = append(searchCriteria, meta.SearchCriteria{
+			Field: meta.SearchFieldFavorite,
+			Value: true,
+		})
+	}
+
+	var sort meta.SortField
+	switch sortBy {
+	case "name":
+		sort = meta.SortFieldName
+	case "date":
+		sort = meta.SortFieldCreateTime
+	}
+
+	order := meta.SortOrderAscending
+
+	if descending {
+		order = meta.SortOrderDescending
+	}
+
+	allMeta, err := p.Search(searchCriteria, sort, order, ItemPerPage, page)
+	if err != nil {
+		return err
 	}
 
 	items, err := createItems(allMeta)
@@ -121,39 +153,19 @@ func browse(c echo.Context) error {
 		return err
 	}
 
-	if favOnly {
-		var tempItems []item
-		for _, item := range items {
-			if item.Favorite {
-				tempItems = append(tempItems, item)
-			}
-		}
-		items = tempItems
-	}
-
-	switch sortBy {
-	case "name":
-		sort.Slice(items, func(i, j int) bool {
-			return items[i].Name < items[j].Name
-		})
-	case "date":
-		sort.Slice(items, func(i, j int) bool {
-			return items[j].CreateTime.Before(items[i].CreateTime)
-		})
-	}
-
-	if descending {
-		for i := len(items)/2 - 1; i >= 0; i-- {
-			opp := len(items) - 1 - i
-			items[i], items[opp] = items[opp], items[i]
-		}
+	count, err := p.Count(searchCriteria)
+	if err != nil {
+		return err
 	}
 
 	data := browseData{
 		Title:        "Manga - Browsing",
-		Version:      versionString,
+		Version:      "0", //TODO: versionString,
 		FavoriteOnly: favOnly,
 		Items:        items,
+		AllItemCount: count,
+		ItemPerPage:  ItemPerPage,
+		PageIndex:    page,
 	}
 	err = broseTemplate.Execute(&builder, data)
 	if err != nil {
