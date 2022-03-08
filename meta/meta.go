@@ -3,6 +3,7 @@ package meta
 import (
 	"archive/zip"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -31,9 +32,16 @@ type Item struct {
 const CurrentItemVersion = 0
 
 func NewItem(name string) (i Item, err error) {
+
+	createTime := time.Now()
+
+	if stat, e := fs.Stat(os.DirFS(BaseDirectory), name); e == nil {
+		createTime = stat.ModTime()
+	}
+
 	i = Item{
 		Name:       name,
-		CreateTime: time.Now(),
+		CreateTime: createTime,
 		Favorite:   false,
 		Version:    CurrentItemVersion,
 	}
