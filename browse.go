@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	ItemPerPage = 10
+	ItemPerPage = 40
 )
 
 func init() {
@@ -41,9 +41,7 @@ type browseData struct {
 	Version      string
 	FavoriteOnly bool
 	Items        []item
-	AllItemCount int64
-	ItemPerPage  int
-	PageIndex    int
+	Pages        []pageItem
 }
 
 type item struct {
@@ -54,6 +52,13 @@ type item struct {
 	CreateTime time.Time
 	Favorite   bool
 	IsRead     bool
+}
+
+type pageItem struct {
+	Content   string
+	LinkURL   url.URL
+	IsActive  bool
+	IsEnabled bool
 }
 
 func createItems(allMeta []meta.Item) (allItems []item, err error) {
@@ -158,14 +163,21 @@ func browse(c echo.Context) error {
 		return err
 	}
 
+	pageCount := int(count / ItemPerPage)
+	if count%ItemPerPage > 0 {
+		pageCount++
+	}
+
+	if page > pageCount || page < 0 {
+		page = 0
+	}
+
 	data := browseData{
 		Title:        "Manga - Browsing",
-		Version:      "0", //TODO: versionString,
+		Version:      versionString,
 		FavoriteOnly: favOnly,
 		Items:        items,
-		AllItemCount: count,
-		ItemPerPage:  ItemPerPage,
-		PageIndex:    page,
+		Pages:        createPageItems(page, pageCount, *c.Request().URL),
 	}
 	err = broseTemplate.Execute(&builder, data)
 	if err != nil {
@@ -174,4 +186,83 @@ func browse(c echo.Context) error {
 	}
 
 	return c.HTML(http.StatusOK, builder.String())
+}
+
+func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
+	const (
+		First    = "First"
+		Previous = "Previous"
+		Next     = "Next"
+		Last     = "Last"
+
+		DisplayPageCount     = 6
+		HalfDisplayPageCount = DisplayPageCount / 2
+	)
+
+	firstPage := 0
+	lastPage := count - 1
+	previousPage := current - 1
+	nextPage := current + 1
+
+	changePageParam := func(baseUrl url.URL, page int) url.URL {
+		query := baseUrl.Query()
+
+		if query.Has("page") {
+			query.Set("page", strconv.Itoa(page))
+		} else {
+			query.Add("page", strconv.Itoa(page))
+		}
+
+		baseUrl.RawQuery = query.Encode()
+		return baseUrl
+	}
+
+	output := make([]pageItem, 0)
+	output = append(output, pageItem{
+		Content:   First,
+		LinkURL:   changePageParam(baseUrl, firstPage),
+		IsActive:  false,
+		IsEnabled: true,
+	})
+
+	enablePrevious := previousPage >= firstPage
+	output = append(output, pageItem{
+		Content:   Previous,
+		LinkURL:   changePageParam(baseUrl, previousPage),
+		IsActive:  false,
+		IsEnabled: enablePrevious,
+	})
+
+	for i := current - HalfDisplayPageCount; i <= current+HalfDisplayPageCount; i++ {
+		if i < firstPage {
+			continue
+		}
+		if i > lastPage {
+			continue
+		}
+
+		output = append(output, pageItem{
+			Content:   strconv.Itoa(i),
+			LinkURL:   changePageParam(baseUrl, i),
+			IsActive:  i == current,
+			IsEnabled: true,
+		})
+	}
+
+	enableNext := nextPage < count
+	output = append(output, pageItem{
+		Content:   Next,
+		LinkURL:   changePageParam(baseUrl, nextPage),
+		IsActive:  false,
+		IsEnabled: enableNext,
+	})
+
+	output = append(output, pageItem{
+		Content:   Last,
+		LinkURL:   changePageParam(baseUrl, lastPage),
+		IsActive:  false,
+		IsEnabled: true,
+	})
+
+	return output
 }
