@@ -96,8 +96,6 @@ func browse(c echo.Context) error {
 	}
 	defer p.Close()
 
-	builder := strings.Builder{}
-
 	favOnly := false
 	if f, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
 		favOnly = f
@@ -179,6 +177,8 @@ func browse(c echo.Context) error {
 		Items:        items,
 		Pages:        createPageItems(page, pageCount, *c.Request().URL),
 	}
+
+	builder := strings.Builder{}
 	err = broseTemplate.Execute(&builder, data)
 	if err != nil {
 		log.Fatal(err)

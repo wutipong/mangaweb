@@ -41,8 +41,6 @@ type viewData struct {
 }
 
 func view(c echo.Context) error {
-	builder := strings.Builder{}
-
 	p, err := url.PathUnescape(c.Param("*"))
 	if err != nil {
 		return err
@@ -87,6 +85,8 @@ func view(c echo.Context) error {
 		ImageURLs: createImageURLs(p, pages),
 		Favorite:  m.Favorite,
 	}
+
+	builder := strings.Builder{}
 	err = viewTemplate.Execute(&builder, data)
 	if err != nil {
 		log.Fatal(err)

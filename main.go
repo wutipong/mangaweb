@@ -90,8 +90,8 @@ func main() {
 
 	e.GET("/thumbnail/*", thumbnail)
 
-	e.GET("/view", view)
-	e.GET("/view/*", view)
+	e.GET("/favorite", setFavorite)
+	e.GET("/favorite/*", setFavorite)
 
 	// Schedule the update metadata task to run every 30 minutes.
 	s := gocron.NewScheduler(time.UTC)
