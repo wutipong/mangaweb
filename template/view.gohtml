@@ -29,19 +29,19 @@
         <span class="navbar-brand mr-auto text-truncate h1 d-block d-sm-none" style="max-width: 50%;">View</span>
 
         <div class="btn-toolbar my-2 my-lg-0">
-                <div class="btn-group">
-                    {{if .Favorite}}
-                        <a id="favorite-btn" class="btn btn-pink active">
-                            <i class="bi bi-star-fill"></i>
-                            Favorite
-                        </a>
-                    {{end}}
+                <div class="btn-group">                
+                    <a id="favorite-btn" class="btn btn-pink active" onclick="toggleFavorite(); return false;">
+                        <i class="bi bi-star-fill"></i>
+                        Favorite
+                    </a>
+                    <!--
                     {{if not .Favorite}}
                         <a id="favorite-btn" class="btn btn-secondary">
                             <i class="bi bi-star"></i>
                             Favorite
                         </a>
                     {{end}}
+                    -->
                     <a id="download-btn" class="btn btn-primary" download> <i class="bi bi-download"></i> Download</a>
                 </div>
                 <div class="btn-group px-2">
@@ -52,6 +52,8 @@
 </nav>
 <script src='{{CreateURL "/static/index.js"}}'></script>
 <script>
+let favorite = {{.Favorite}};
+
 $(function() {
     if (window.location.search !== "")
         window.location.search = ""
@@ -66,20 +68,6 @@ $(function() {
 
     $('#carouselControl').on('slide.bs.carousel', function (e) {
         $('#download-btn').attr("href", imgUrls[e.to])
-        let favURL = new URL(window.location.toString())
-        favURL.hash = "" + (e.to +1)
-        let searchParams = new URLSearchParams(favURL.search);
-
-        {{if .Favorite}}
-            $('#favorite-btn').addClass('active')
-            searchParams.set("favorite", "false")
-        {{end}}
-        {{if not .Favorite}}
-            searchParams.set("favorite", "true")
-        {{end}}
-
-        favURL.search = searchParams.toString()
-        $('#favorite-btn').attr("href", favURL)
     })
 
 
@@ -93,13 +81,41 @@ $(function() {
 
     $('#download-btn').attr("href", imgUrls[index-1])
     
-    {{if .Favorite}}
-        $('#favorite-btn').addClass('active')
-        $('#favorite-btn').attr("href", window.location.href + "?favorite=false")
-    {{end}}
-    {{if not .Favorite}}
-        $('#favorite-btn').attr("href", window.location.href + "?favorite=true")
-    {{end}}
+    updateFavoriteButton(favorite)
 });
+
+function updateFavoriteButton(favorite){
+    if (favorite) {
+        $('#favorite-btn').removeClass()    
+        $('#favorite-btn').addClass('btn btn-pink active')
+    } else {
+        $('#favorite-btn').removeClass()
+        $('#favorite-btn').addClass('btn btn-secondary')
+    }
+}
+
+function toggleFavorite(){
+    let path = window.location.pathname;
+    const viewPath = {{CreateURL "/view"}}
+    if (path.startsWith(viewPath)){
+        path = path.slice(viewPath.length)
+    }
+
+    const url = new URL({{CreateURL "/favorite"}}, window.location.origin)
+    url.pathname += path
+
+    var params = new URLSearchParams()
+    params.set("favorite", !favorite)
+    url.search = params.toString()
+
+    $.ajax({
+        url: url.toString(),
+        dataType: "json",
+    }).done(function(data){
+        favorite = data.favorite
+        updateFavoriteButton(favorite);
+    })
+}
+
 </script>
 </body>
