@@ -78,10 +78,20 @@ func view(c echo.Context) error {
 		db.Write(m)
 	}
 
+	browseUrl := c.Request().Referer()
+	if browseUrl == "" {
+		util.CreateURL(fmt.Sprintf("/browse#%v", id))
+	} else {
+		if u, e := url.Parse(browseUrl); e == nil {
+			u.Fragment = strconv.FormatUint(id, 10)
+			browseUrl = u.String()
+		}
+	}
+
 	data := viewData{
 		Name:      p,
 		Title:     fmt.Sprintf("Manga - Viewing [%s]", p),
-		BrowseURL: util.CreateURL(fmt.Sprintf("/browse#%v", id)),
+		BrowseURL: browseUrl,
 		ImageURLs: createImageURLs(p, pages),
 		Favorite:  m.Favorite,
 	}
