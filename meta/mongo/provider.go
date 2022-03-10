@@ -121,7 +121,7 @@ func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, o
 	ctx := context.Background()
 
 	filter := createFilter(criteria)
-	opts := options.Find()
+	opts := options.Find().SetAllowDiskUse(true)
 
 	orderInt := 0
 	switch order {
@@ -162,8 +162,10 @@ func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, o
 func (p *Provider) Count(criteria []meta.SearchCriteria) (count int64, err error) {
 	ctx := context.Background()
 
+	opts := options.Count()
+
 	filter := createFilter(criteria)
-	count, err = p.getItemCollection().CountDocuments(ctx, filter)
+	count, err = p.getItemCollection().CountDocuments(ctx, filter, opts)
 
 	return
 }
