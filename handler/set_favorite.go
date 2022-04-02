@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"net/http"
@@ -12,7 +12,7 @@ type setFavoriteResponse struct {
 	Favorite bool `json:"favorite"`
 }
 
-func setFavorite(c echo.Context) error {
+func SetFavoriteHandler(c echo.Context) error {
 	p, err := url.PathUnescape(c.Param("*"))
 	if err != nil {
 		return err
