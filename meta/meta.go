@@ -28,6 +28,8 @@ type Item struct {
 	Version     int       `json:"version" db:"version" bson:"version"`
 }
 
+type MetaProviderFactory func() (p Provider, err error)
+
 //CurrentItemVersion the current version of `Item` structure.
 const CurrentItemVersion = 0
 
