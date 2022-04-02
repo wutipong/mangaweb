@@ -128,7 +128,7 @@ func Handler(c echo.Context) error {
 	}
 
 	sort := parseSortField(c.QueryParam("sort"))
-	order := parseSortOrder(c.QueryParam("order"), sort)
+	order := parseSortOrder(c.QueryParam("order"))
 
 	allMeta, err := p.Search(searchCriteria, sort, order, ItemPerPage, page)
 	if err != nil {
@@ -177,7 +177,7 @@ func Handler(c echo.Context) error {
 	return c.HTML(http.StatusOK, builder.String())
 }
 
-func parseSortOrder(orderStr string, sort meta.SortField) meta.SortOrder {
+func parseSortOrder(orderStr string) meta.SortOrder {
 	order := meta.SortOrder(orderStr)
 
 	switch order {
@@ -186,14 +186,6 @@ func parseSortOrder(orderStr string, sort meta.SortField) meta.SortOrder {
 	case meta.SortOrderDescending:
 		fmt.Println(order)
 		return order
-	}
-
-	switch sort {
-	case meta.SortFieldName:
-		return meta.SortOrderAscending
-
-	case meta.SortFieldCreateTime:
-		return meta.SortOrderDescending
 	}
 
 	return meta.SortOrderAscending
