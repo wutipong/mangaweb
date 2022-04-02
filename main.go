@@ -15,6 +15,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/wutipong/mangaweb/browse"
+	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/meta/mongo"
 	"github.com/wutipong/mangaweb/util"
@@ -95,12 +96,14 @@ func main() {
 
 	e.Static("/static", "static")
 
-	e.GET("/get_image/*", GetImage)
+	handler.Init(newProvider)
 
-	e.GET("/thumbnail/*", thumbnail)
+	e.GET("/get_image/*", handler.GetImage)
 
-	e.GET("/favorite", setFavorite)
-	e.GET("/favorite/*", setFavorite)
+	e.GET("/thumbnail/*", handler.ThumbnailHandler)
+
+	e.GET("/favorite", handler.SetFavoriteHandler)
+	e.GET("/favorite/*", handler.SetFavoriteHandler)
 
 	// Schedule the update metadata task to run every 30 minutes.
 	s := gocron.NewScheduler(time.UTC)
