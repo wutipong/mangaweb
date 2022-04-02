@@ -12,6 +12,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/util"
 )
@@ -20,15 +21,7 @@ const (
 	ItemPerPage = 40
 )
 
-var newProvider meta.MetaProviderFactory
-var versionString string
-
-type Options struct {
-	MetaProviderFactory meta.MetaProviderFactory
-	VersionString       string
-}
-
-func Init(options Options) {
+func init() {
 	var err error
 	broseTemplate, err = template.New("browse.gohtml").
 		Funcs(util.HtmlTemplateFuncMap()).
@@ -40,9 +33,6 @@ func Init(options Options) {
 		log.Panic(err)
 		os.Exit(-1)
 	}
-
-	newProvider = options.MetaProviderFactory
-	versionString = options.VersionString
 }
 
 var broseTemplate *template.Template
@@ -101,7 +91,7 @@ func createItems(allMeta []meta.Item) (allItems []item, err error) {
 
 // Handler
 func Handler(c echo.Context) error {
-	p, err := newProvider()
+	p, err := handler.CreateMetaProvider()
 	if err != nil {
 		return err
 	}
@@ -183,7 +173,7 @@ func Handler(c echo.Context) error {
 
 	data := browseData{
 		Title:        "Manga - Browsing",
-		Version:      versionString,
+		Version:      handler.VersionString,
 		FavoriteOnly: favOnly,
 		Items:        items,
 		Pages:        createPageItems(page, pageCount, *c.Request().URL),

@@ -18,7 +18,7 @@ func SetFavoriteHandler(c echo.Context) error {
 		return err
 	}
 
-	db, err := newProvider()
+	db, err := CreateMetaProvider()
 	if err != nil {
 		return err
 	}

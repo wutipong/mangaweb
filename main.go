@@ -14,12 +14,13 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
-	"github.com/wutipong/mangaweb/browse"
+
 	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/handler/browse"
+	"github.com/wutipong/mangaweb/handler/view"
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/meta/mongo"
 	"github.com/wutipong/mangaweb/util"
-	"github.com/wutipong/mangaweb/view"
 )
 
 // Recreate the static resource file.
@@ -77,26 +78,22 @@ func main() {
 		util.SetPrefix(*prefix)
 	}
 
-	e.Pre(middleware.RemoveTrailingSlash())
-
-	browse.Init(browse.Options{
+	handler.Init(handler.Options{
 		MetaProviderFactory: newProvider,
 		VersionString:       versionString,
 	})
+
+	e.Pre(middleware.RemoveTrailingSlash())
 
 	// Routes
 	e.GET("/", root)
 	e.GET("/browse", browse.Handler)
 	e.GET("/browse/*", browse.Handler)
 
-	view.Init(newProvider)
-
 	e.GET("/view", view.Handler)
 	e.GET("/view/*", view.Handler)
 
 	e.Static("/static", "static")
-
-	handler.Init(newProvider)
 
 	e.GET("/get_image/*", handler.GetImage)
 
