@@ -188,7 +188,7 @@ func parseSortOrder(orderStr string) meta.SortOrder {
 		return order
 	}
 
-	return meta.SortOrderAscending
+	return meta.SortOrderDescending
 }
 
 func parseSortField(sortBy string) meta.SortField {
