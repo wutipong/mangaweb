@@ -156,7 +156,7 @@
       </div>
       <div class="modal-body">
         <h6>Version {{.Version}} </h6>
-        <p>&copy; 2021 Wutipong Wongsakuldej. All rights reserved</p>
+        <p>&copy; 2021-2022 Wutipong Wongsakuldej. All rights reserved</p>
         <p>Licensed under MIT License</p>
         <p><a href="https://github.com/wutipong/mangaweb">Homepage</a></p>
       </div>
@@ -186,6 +186,14 @@ function changeSort(sortBy){
     let url = window.location
     let searchParams = new URLSearchParams(url.search);
     searchParams.set("sort", sortBy)
+
+    if (sortBy === "name") {
+        searchParams.set("order", "ascending")
+    } else if (sortBy === "createTime") {
+        searchParams.set("order", "descending")
+    }
+
+    searchParams.delete("page")
 
     url.search = searchParams.toString()
 }
