@@ -18,12 +18,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var newProvider meta.MetaProviderFactory
-
-func Init(factory meta.MetaProviderFactory) {
-	newProvider = factory
-}
-
 // GetImage returns an image with specific width/height while retains aspect ratio.
 func GetImage(c echo.Context) error {
 	p, err := url.PathUnescape(c.Param("*"))
@@ -31,7 +25,7 @@ func GetImage(c echo.Context) error {
 		return err
 	}
 
-	provider, err := newProvider()
+	provider, err := CreateMetaProvider()
 	if err != nil {
 		return err
 	}

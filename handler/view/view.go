@@ -12,13 +12,11 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
-	"github.com/wutipong/mangaweb/meta"
+	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/util"
 )
 
-var newProvider meta.MetaProviderFactory
-
-func Init(factory meta.MetaProviderFactory) {
+func init() {
 	var err error
 	viewTemplate, err = template.New("view.gohtml").
 		Funcs(util.HtmlTemplateFuncMap()).
@@ -30,8 +28,6 @@ func Init(factory meta.MetaProviderFactory) {
 		log.Panic(err)
 		os.Exit(-1)
 	}
-
-	newProvider = factory
 }
 
 var viewTemplate *template.Template
@@ -51,7 +47,7 @@ func Handler(c echo.Context) error {
 		return err
 	}
 
-	db, err := newProvider()
+	db, err := handler.CreateMetaProvider()
 	if err != nil {
 		return err
 	}

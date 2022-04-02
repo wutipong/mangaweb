@@ -16,7 +16,7 @@ func ThumbnailHandler(c echo.Context) error {
 		return err
 	}
 
-	provider, err := newProvider()
+	provider, err := CreateMetaProvider()
 	if err != nil {
 		return err
 	}
