@@ -14,6 +14,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"github.com/wutipong/mangaweb/browse"
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/meta/mongo"
 	"github.com/wutipong/mangaweb/util"
@@ -77,10 +78,15 @@ func main() {
 
 	e.Pre(middleware.RemoveTrailingSlash())
 
+	browse.Init(browse.Options{
+		MetaProviderFactory: newProvider,
+		VersionString:       versionString,
+	})
+
 	// Routes
 	e.GET("/", root)
-	e.GET("/browse", browse)
-	e.GET("/browse/*", browse)
+	e.GET("/browse", browse.Handler)
+	e.GET("/browse/*", browse.Handler)
 
 	view.Init(newProvider)
 
