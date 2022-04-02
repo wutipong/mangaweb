@@ -41,8 +41,11 @@ type browseData struct {
 	Title        string
 	Version      string
 	FavoriteOnly bool
-	Items        []item
-	Pages        []pageItem
+	SortBy       string
+	SortOrder    string
+
+	Items []item
+	Pages []pageItem
 }
 
 type item struct {
@@ -175,6 +178,8 @@ func Handler(c echo.Context) error {
 		Title:        "Manga - Browsing",
 		Version:      handler.VersionString,
 		FavoriteOnly: favOnly,
+		SortBy:       string(sort),
+		SortOrder:    string(order),
 		Items:        items,
 		Pages:        createPageItems(page, pageCount, *c.Request().URL),
 	}
