@@ -2,7 +2,7 @@ package meta
 
 type SearchField string
 type SortField string
-type SortOrder bool
+type SortOrder string
 
 const (
 	SearchFieldName     = SearchField("name")
@@ -11,8 +11,8 @@ const (
 	SortFieldName       = SortField("name")
 	SortFieldCreateTime = SortField("createTime")
 
-	SortOrderAscending  = SortOrder(true)
-	SortOrderDescending = SortOrder(false)
+	SortOrderAscending  = SortOrder("ascending")
+	SortOrderDescending = SortOrder("descending")
 )
 
 type SearchCriteria struct {

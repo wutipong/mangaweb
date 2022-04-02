@@ -55,12 +55,28 @@
                         Sort By
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {{if eq .SortBy "name"}}
+                        <button class="dropdown-item active" type="button" id="sort-by-name" onclick="changeSort('name')">Name</button>
+                    {{else}}
                         <button class="dropdown-item" type="button" id="sort-by-name" onclick="changeSort('name')">Name</button>
+                    {{end}}
+
+                    {{if eq .SortBy "createTime"}}
+                        <button class="dropdown-item active" type="button" id="sort-by-date" onclick="changeSort('date')">Added Date</button>
+                    {{else}}
                         <button class="dropdown-item" type="button" id="sort-by-date" onclick="changeSort('date')">Added Date</button>
-                        
+                    {{end}}
                         <div class="dropdown-divider"></div>
-                    
-                        <button class="dropdown-item" type="button" id="order-reverse" onclick="toggleOrder()">Reverse</button>
+                    {{if eq .SortOrder "ascending"}}
+                        <button class="dropdown-item active" type="button" onclick="changeOrder('ascending')">Ascending</button>
+                    {{else}}
+                        <button class="dropdown-item" type="button"onclick="changeOrder('ascending')">Ascending</button>
+                    {{end}}
+                    {{if eq .SortOrder "descending"}}
+                        <button class="dropdown-item active" type="button" onclick="changeOrder('descending')">Descending</button>
+                    {{else}}
+                        <button class="dropdown-item" type="button" onclick="changeOrder('descending')">Descending</button>
+                    {{end}}
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -159,30 +175,6 @@ const checkedClass = "dropdown-item-checked"
 $(function(){
     let url = window.location
     let searchParams = new URLSearchParams(url.search);
-    let sortBy = searchParams.get("sort")
-
-    if(sortBy === null) 
-        sortBy = "date"
-
-    switch(sortBy){
-    case "date": 
-        $("#sort-by-date").addClass(checkedClass)
-        break;
-
-    case "name":
-        $("#sort-by-name").addClass(checkedClass)
-        break;
-    }
-
-    let desc = searchParams.get("descending")
-    if(desc === "true") {
-        $("#order-reverse").addClass(checkedClass)
-    }
-
-    let favOnly = searchParams.get("favorite")
-    if(favOnly === "true"){
-        $("#filter-favorite").addClass(checkedClass)
-    }
 
     let search = searchParams.get("search")
     if (search !== "") {
@@ -198,12 +190,12 @@ function changeSort(sortBy){
     url.search = searchParams.toString()
 }
 
-function toggleOrder(){
+function changeOrder(order){
     let url = window.location
     let searchParams = new URLSearchParams(url.search);
 
-    let isDesc = $("#order-reverse").hasClass(checkedClass)
-    searchParams.set("descending", !isDesc)
+    let isDesc = order === 'descending'
+    searchParams.set("descending", isDesc)
 
     url.search = searchParams.toString()    
 }
