@@ -62,9 +62,9 @@
                     {{end}}
 
                     {{if eq .SortBy "createTime"}}
-                        <button class="dropdown-item active" type="button" id="sort-by-date" onclick="changeSort('date')">Added Date</button>
+                        <button class="dropdown-item active" type="button" id="sort-by-date" onclick="changeSort('createTime')">Added Date</button>
                     {{else}}
-                        <button class="dropdown-item" type="button" id="sort-by-date" onclick="changeSort('date')">Added Date</button>
+                        <button class="dropdown-item" type="button" id="sort-by-date" onclick="changeSort('createTime')">Added Date</button>
                     {{end}}
                         <div class="dropdown-divider"></div>
                     {{if eq .SortOrder "ascending"}}
@@ -194,8 +194,7 @@ function changeOrder(order){
     let url = window.location
     let searchParams = new URLSearchParams(url.search);
 
-    let isDesc = order === 'descending'
-    searchParams.set("descending", isDesc)
+    searchParams.set("order", order)
 
     url.search = searchParams.toString()    
 }

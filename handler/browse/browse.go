@@ -1,6 +1,7 @@
 package browse
 
 import (
+	"fmt"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -105,16 +106,6 @@ func Handler(c echo.Context) error {
 		favOnly = f
 	}
 
-	sortBy := c.QueryParam("sort")
-	if sortBy == "" {
-		sortBy = "date"
-	}
-
-	descending := false
-	if f, e := strconv.ParseBool(c.QueryParam("descending")); e == nil {
-		descending = f
-	}
-
 	page := 0
 	if i, e := strconv.ParseInt(c.QueryParam("page"), 10, 0); e == nil {
 		page = int(i)
@@ -136,19 +127,8 @@ func Handler(c echo.Context) error {
 		})
 	}
 
-	var sort meta.SortField
-	switch sortBy {
-	case "name":
-		sort = meta.SortFieldName
-	case "date":
-		sort = meta.SortFieldCreateTime
-	}
-
-	order := meta.SortOrderAscending
-
-	if descending {
-		order = meta.SortOrderDescending
-	}
+	sort := parseSortField(c.QueryParam("sort"))
+	order := parseSortOrder(c.QueryParam("order"), sort)
 
 	allMeta, err := p.Search(searchCriteria, sort, order, ItemPerPage, page)
 	if err != nil {
@@ -174,6 +154,9 @@ func Handler(c echo.Context) error {
 		page = 0
 	}
 
+	fmt.Println(sort)
+	fmt.Println(order)
+
 	data := browseData{
 		Title:        "Manga - Browsing",
 		Version:      handler.VersionString,
@@ -192,6 +175,42 @@ func Handler(c echo.Context) error {
 	}
 
 	return c.HTML(http.StatusOK, builder.String())
+}
+
+func parseSortOrder(orderStr string, sort meta.SortField) meta.SortOrder {
+	order := meta.SortOrder(orderStr)
+
+	switch order {
+	case meta.SortOrderAscending:
+		return order
+	case meta.SortOrderDescending:
+		fmt.Println(order)
+		return order
+	}
+
+	switch sort {
+	case meta.SortFieldName:
+		return meta.SortOrderAscending
+
+	case meta.SortFieldCreateTime:
+		return meta.SortOrderDescending
+	}
+
+	return meta.SortOrderAscending
+}
+
+func parseSortField(sortBy string) meta.SortField {
+	sort := meta.SortField(sortBy)
+
+	switch sort {
+	case meta.SortFieldName:
+		return sort
+	case meta.SortFieldCreateTime:
+		return sort
+
+	default:
+		return meta.SortFieldCreateTime
+	}
 }
 
 func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
