@@ -17,6 +17,7 @@ import (
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/meta/mongo"
 	"github.com/wutipong/mangaweb/util"
+	"github.com/wutipong/mangaweb/view"
 )
 
 // Recreate the static resource file.
@@ -81,8 +82,10 @@ func main() {
 	e.GET("/browse", browse)
 	e.GET("/browse/*", browse)
 
-	e.GET("/view", view)
-	e.GET("/view/*", view)
+	view.Init(newProvider)
+
+	e.GET("/view", view.Handler)
+	e.GET("/view/*", view.Handler)
 
 	e.Static("/static", "static")
 
