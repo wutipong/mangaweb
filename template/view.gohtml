@@ -23,6 +23,19 @@
     </div>
 </div>
 
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <img src="..." class="rounded me-2" alt="...">
+            <strong class="me-auto" id="toast-header"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toast-content">
+            Hello, world! This is a toast message.
+        </div>
+    </div>
+</div>
+
 <nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
     <div class="container-fluid">
         <span class="navbar-brand mr-auto text-truncate h1 d-none d-sm-block" style="max-width: 50%;">{{.Name}}</span>
@@ -34,7 +47,7 @@
                         <i class="bi bi-star-fill"></i>
                         Favorite
                     </a>
-                    <a id="download-btn" class="btn" download> <i class="bi bi-download"></i> Download</a>
+                    <a id="download-btn" class="btn" download> <i class="bi bi-download"></i> Download Current Page</a>
                     <a id="update-cover-btn" class="btn"> <i class="bi bi-journal-arrow-up"></i> Update Cover</a>
                 </div>
                 <div class="btn-group px-2">
@@ -89,7 +102,7 @@ function updateFavoriteButton(favorite){
         $('#favorite-btn').addClass('btn btn-pink active')
     } else {
         $('#favorite-btn').removeClass()
-        $('#favorite-btn').addClass('btn btn-secondary')
+        $('#favorite-btn').addClass('btn')
     }
 }
 
@@ -127,8 +140,17 @@ function updateCover(index){
         url: url.toString(),
         dataType: "json",
     }).done(function(data){
-        //TODO: add dialog.
+        showToast('Update Cover', 'The cover image is updated successfully.')
     })
+}
+
+function showToast(header, content){
+    $('#toast-header').text(header);
+    $('#toast-content').text(content);
+
+    let toast = new bootstrap.Toast($('#toast'));
+    
+    toast.show()
 }
 
 </script>
