@@ -41,20 +41,34 @@
         <span class="navbar-brand mr-auto text-truncate h1 d-none d-sm-block" style="max-width: 50%;">{{.Name}}</span>
         <span class="navbar-brand mr-auto text-truncate h1 d-block d-sm-none" style="max-width: 50%;">View</span>
 
-        <div class="btn-toolbar my-2 my-lg-0">
-                <div class="btn-group">                
-                    <a id="favorite-btn" class="btn btn-pink active" onclick="toggleFavorite(); return false;">
-                        <i class="bi bi-star-fill"></i>
-                        Favorite
-                    </a>
-                    <a id="download-btn" class="btn" download> <i class="bi bi-download"></i> Download Current Page</a>
-                    <a class="btn" download href="{{.DownloadURL}}"> <i class="bi bi-download"></i> Download Manga</a>
-                    <a id="update-cover-btn" class="btn"> <i class="bi bi-journal-arrow-up"></i> Update Cover</a>
+        <ul class="navbar-nav mb-2 mb-lg-0 flex-row">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
+                    role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="d-inline d-sm-none"><i class="bi bi-list"></i></span>
+                    <span class="d-none d-sm-inline" ><i class="bi bi-list"></i> Menu</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">   
+                    <a class="dropdown-item" id="download-btn" download> <i class="bi bi-download"></i> Download Current Page</a>
+                    <a class="dropdown-item" download href="{{.DownloadURL}}"> <i class="bi bi-download"></i> Download Manga</a>  
+                    <div class="dropdown-divider"></div>         
+                    <a class="dropdown-item" id="update-cover-btn" class="btn"> <i class="bi bi-journal-arrow-up"></i> Update Cover</a>
                 </div>
-                <div class="btn-group px-2">
-                    <a id="close-btn" class="btn btn-danger" href="{{.BrowseURL}}"><i class="bi bi-x-circle-fill"></i> Close</a>
-                </div>
-            </div>
+            </li>
+
+            <li class="nav-item">                
+                <a id="favorite-btn" class="btn btn-pink active" onclick="toggleFavorite(); return false;">
+                    <span class="d-inline d-sm-none"><i class="bi bi-star-fill"></i></span>
+                    <span class="d-none d-sm-inline"><i class="bi bi-star-fill"></i> Favorite</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="close-btn" class="btn btn-danger" href="{{.BrowseURL}}">
+                    <span class="d-inline d-sm-none"><i class="bi bi-x-circle-fill"></i></span>
+                    <span class="d-none d-sm-inline"><i class="bi bi-x-circle-fill"></i> Close</span>  
+                </a>
+            </li>
+        </ul>
     </div>
 </nav>
 <script src='{{CreateURL "/static/index.js"}}'></script>
