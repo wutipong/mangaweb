@@ -41,7 +41,10 @@
     <div class="container-fluid">
         <span class="navbar-brand text-truncate">Browse</span>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
+            aria-expanded="false" aria-label="Toggle navigation">
+
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -51,40 +54,41 @@
                     <a class="nav-link" href="#">Top</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Sort By
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    {{if eq .SortBy "name"}}
-                        <button class="dropdown-item active" type="button" id="sort-by-name" onclick="changeSort('name')">Name</button>
-                    {{else}}
-                        <button class="dropdown-item" type="button" id="sort-by-name" onclick="changeSort('name')">Name</button>
-                    {{end}}
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
+                        role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
-                    {{if eq .SortBy "createTime"}}
-                        <button class="dropdown-item active" type="button" id="sort-by-date" onclick="changeSort('createTime')">Added Date</button>
-                    {{else}}
-                        <button class="dropdown-item" type="button" id="sort-by-date" onclick="changeSort('createTime')">Added Date</button>
-                    {{end}}
+                        Sort By
+                    </a>    
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <button class='dropdown-item 
+                            {{if eq .SortBy "name"}} active {{end}}' 
+                            type="button" onclick="changeSort('name')">Name</button>
+
+                        <button class='dropdown-item 
+                            {{if eq .SortBy "createTime"}} active {{end}}' 
+                            type="button" onclick="changeSort('createTime')">Added Date</button>
+                    
                         <div class="dropdown-divider"></div>
-                    {{if eq .SortOrder "ascending"}}
-                        <button class="dropdown-item active" type="button" onclick="changeOrder('ascending')">Ascending</button>
-                    {{else}}
-                        <button class="dropdown-item" type="button"onclick="changeOrder('ascending')">Ascending</button>
-                    {{end}}
-                    {{if eq .SortOrder "descending"}}
-                        <button class="dropdown-item active" type="button" onclick="changeOrder('descending')">Descending</button>
-                    {{else}}
-                        <button class="dropdown-item" type="button" onclick="changeOrder('descending')">Descending</button>
-                    {{end}}
+
+                        <button class='dropdown-item 
+                            {{if eq .SortOrder "ascending"}} active {{end}}' 
+                            type="button" onclick="changeOrder('ascending')">Ascending</button>
+                   
+                        <button class='dropdown-item 
+                            {{if eq .SortOrder "descending"}} active {{end}}' 
+                            type="button" onclick="changeOrder('descending')">Descending</button>
+
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
                         Filter
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <button class="dropdown-item" type="button" id="filter-favorite" onclick="toggleFavorite()">Favorite</button>
+                        <button class="dropdown-item" type="button" id="filter-favorite" 
+                            onclick="toggleFavorite()">Favorite</button>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -111,32 +115,15 @@
     </div>
 </div>
 
-{{define "page-item"}}
-    {{if .IsEnabled}}
-        {{if .IsActive}}
-            <li class="page-item active">
-                <a class="page-link" href="{{.LinkURL.String}}">
-                    {{.Content}}
-                </a>
-            </li>
-        {{end}}
-
-        {{if not .IsActive}}
-            <li class="page-item">
-                <a class="page-link" href="{{.LinkURL.String}}">
-                    {{.Content}}
-                </a>
-            </li>
-        {{end}}
-    {{end}}
-
-    {{if not .IsEnabled}}
-        <li class="page-item disabled">
-            <a class="page-link" href="{{.LinkURL.String}}">
-                {{.Content}}
-            </a>
-        </li>
-    {{end}}
+{{define "page-item"}} 
+    <li class="page-item 
+        {{if .IsActive}} active {{end}}
+        {{if not .IsEnabled}} disabled {{end}}
+        ">
+        <a class="page-link" href="{{.LinkURL.String}}">
+            {{.Content}}
+        </a>
+    </li>
 {{end}}
 
 <nav aria-label="Page navigation">
