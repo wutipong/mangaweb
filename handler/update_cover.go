@@ -39,5 +39,10 @@ func UpdateCover(c echo.Context) error {
 		return err
 	}
 
+	err = provider.Write(m)
+	if err != nil {
+		return err
+	}
+
 	return c.JSON(http.StatusOK, "success")
 }
