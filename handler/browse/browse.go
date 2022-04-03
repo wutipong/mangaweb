@@ -1,7 +1,6 @@
 package browse
 
 import (
-	"fmt"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -154,9 +153,6 @@ func Handler(c echo.Context) error {
 		page = 0
 	}
 
-	fmt.Println(sort)
-	fmt.Println(order)
-
 	data := browseData{
 		Title:        "Manga - Browsing",
 		Version:      handler.VersionString,
@@ -184,7 +180,6 @@ func parseSortOrder(orderStr string) meta.SortOrder {
 	case meta.SortOrderAscending:
 		return order
 	case meta.SortOrderDescending:
-		fmt.Println(order)
 		return order
 	}
 

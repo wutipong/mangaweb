@@ -49,12 +49,12 @@ func NewItem(name string) (i Item, err error) {
 	}
 
 	i.GenerateImageIndices()
-	i.GenerateThumbnail()
+	i.GenerateThumbnail(0)
 
 	return
 }
 
-func (m *Item) GenerateThumbnail() error {
+func (m *Item) GenerateThumbnail(fileIndex int) error {
 	mutex := new(sync.Mutex)
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -71,7 +71,7 @@ func (m *Item) GenerateThumbnail() error {
 		return fmt.Errorf("file list is empty")
 	}
 
-	img, err := image.CreateCover(m.FileIndices, r)
+	img, err := image.CreateCover(fileIndex, r)
 	if err != nil {
 		return err
 	}

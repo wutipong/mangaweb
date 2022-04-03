@@ -34,15 +34,8 @@
                         <i class="bi bi-star-fill"></i>
                         Favorite
                     </a>
-                    <!--
-                    {{if not .Favorite}}
-                        <a id="favorite-btn" class="btn btn-secondary">
-                            <i class="bi bi-star"></i>
-                            Favorite
-                        </a>
-                    {{end}}
-                    -->
-                    <a id="download-btn" class="btn btn-primary" download> <i class="bi bi-download"></i> Download</a>
+                    <a id="download-btn" class="btn" download> <i class="bi bi-download"></i> Download</a>
+                    <a id="update-cover-btn" class="btn"> <i class="bi bi-journal-arrow-up"></i> Update Cover</a>
                 </div>
                 <div class="btn-group px-2">
                     <a id="close-btn" class="btn btn-danger" href="{{.BrowseURL}}"><i class="bi bi-x-circle-fill"></i> Close</a>
@@ -66,8 +59,13 @@ $(function() {
         "{{.}}",
     {{end}}]
 
+    let updateCoverUrls = [{{range .UpdateCoverURLs}}
+        '{{.}}',
+    {{end}}]
+
     $('#carouselControl').on('slide.bs.carousel', function (e) {
         $('#download-btn').attr("href", imgUrls[e.to])
+        $('#update-cover-btn').attr("onclick", `updateCover(${e.to}); return false;`)
     })
 
 
@@ -80,6 +78,7 @@ $(function() {
     $(sel).addClass('active');
 
     $('#download-btn').attr("href", imgUrls[index-1])
+    $('#update-cover-btn').attr("onclick", `updateCover(${index -1}); return false;` )
     
     updateFavoriteButton(favorite)
 });
@@ -114,6 +113,21 @@ function toggleFavorite(){
     }).done(function(data){
         favorite = data.favorite
         updateFavoriteButton(favorite);
+    })
+}
+
+function updateCover(index){
+    const updateCoverUrls = [{{range .UpdateCoverURLs}}
+        '{{.}}',
+    {{end}}]
+
+    const url = updateCoverUrls[index]
+
+    $.ajax({
+        url: url.toString(),
+        dataType: "json",
+    }).done(function(data){
+        //TODO: add dialog.
     })
 }
 
