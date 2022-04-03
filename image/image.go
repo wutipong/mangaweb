@@ -17,8 +17,8 @@ func Create(reader io.Reader) (output image.Image, err error) {
 	return
 }
 
-func CreateCover(items []int, r *zip.ReadCloser) (output image.Image, err error) {
-	reader, err := r.File[0].Open()
+func CreateCover(fileIndex int, r *zip.ReadCloser) (output image.Image, err error) {
+	reader, err := r.File[fileIndex].Open()
 	if err != nil {
 		return
 	}

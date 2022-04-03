@@ -96,6 +96,7 @@ func main() {
 	e.Static("/static", "static")
 
 	e.GET("/get_image/*", handler.GetImage)
+	e.GET("/update_cover/*", handler.UpdateCover)
 
 	e.GET("/thumbnail/*", handler.ThumbnailHandler)
 
@@ -210,7 +211,7 @@ func rebuildThumbnail() error {
 	}
 
 	for _, m := range allMeta {
-		e := m.GenerateThumbnail()
+		e := m.GenerateThumbnail(0)
 		log.Printf("Generating new thumbnail for %s", m.Name)
 		if e != nil {
 			log.Printf("Failed to generate thumbnail for %s", m.Name)

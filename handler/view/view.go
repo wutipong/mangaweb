@@ -33,12 +33,13 @@ func init() {
 var viewTemplate *template.Template
 
 type viewData struct {
-	Name       string
-	Title      string
-	BrowseURL  string
-	ImageURLs  []string
-	StartIndex int64
-	Favorite   bool
+	Name            string
+	Title           string
+	BrowseURL       string
+	ImageURLs       []string
+	UpdateCoverURLs []string
+	StartIndex      int64
+	Favorite        bool
 }
 
 func Handler(c echo.Context) error {
@@ -90,11 +91,12 @@ func Handler(c echo.Context) error {
 	}
 
 	data := viewData{
-		Name:      p,
-		Title:     fmt.Sprintf("Manga - Viewing [%s]", p),
-		BrowseURL: browseUrl,
-		ImageURLs: createImageURLs(p, pages),
-		Favorite:  m.Favorite,
+		Name:            p,
+		Title:           fmt.Sprintf("Manga - Viewing [%s]", p),
+		BrowseURL:       browseUrl,
+		ImageURLs:       createImageURLs(p, pages),
+		UpdateCoverURLs: createUpdateCoverURLs(p, pages),
+		Favorite:        m.Favorite,
 	}
 
 	builder := strings.Builder{}
@@ -111,6 +113,16 @@ func createImageURLs(file string, pages []Page) []string {
 	output := make([]string, len(pages))
 	for i, p := range pages {
 		url := util.CreateURL(fmt.Sprintf("/get_image/%s?i=%v", url.PathEscape(file), p.Index))
+
+		output[i] = url
+	}
+	return output
+}
+
+func createUpdateCoverURLs(file string, pages []Page) []string {
+	output := make([]string, len(pages))
+	for i, p := range pages {
+		url := util.CreateURL(fmt.Sprintf("/update_cover/%s?i=%v", url.PathEscape(file), p.Index))
 
 		output[i] = url
 	}
