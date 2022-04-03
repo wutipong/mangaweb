@@ -3,6 +3,7 @@ package meta
 import (
 	"archive/zip"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -51,6 +52,17 @@ func NewItem(name string) (i Item, err error) {
 	i.GenerateImageIndices()
 	i.GenerateThumbnail(0)
 
+	return
+}
+
+func (m *Item) Open() (reader io.ReadCloser, err error) {
+	mutex := new(sync.Mutex)
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	fullpath := filepath.Join(BaseDirectory, m.Name)
+
+	reader, err = os.Open(fullpath)
 	return
 }
 

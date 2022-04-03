@@ -103,6 +103,8 @@ func main() {
 	e.GET("/favorite", handler.SetFavoriteHandler)
 	e.GET("/favorite/*", handler.SetFavoriteHandler)
 
+	e.GET("/download/*", handler.Download)
+
 	// Schedule the update metadata task to run every 30 minutes.
 	s := gocron.NewScheduler(time.UTC)
 	s.Every(30).Minutes().Do(func() {

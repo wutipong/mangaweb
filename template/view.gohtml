@@ -48,6 +48,7 @@
                         Favorite
                     </a>
                     <a id="download-btn" class="btn" download> <i class="bi bi-download"></i> Download Current Page</a>
+                    <a class="btn" download href="{{.DownloadURL}}"> <i class="bi bi-download"></i> Download Manga</a>
                     <a id="update-cover-btn" class="btn"> <i class="bi bi-journal-arrow-up"></i> Update Cover</a>
                 </div>
                 <div class="btn-group px-2">
@@ -107,17 +108,10 @@ function updateFavoriteButton(favorite){
 }
 
 function toggleFavorite(){
-    let path = window.location.pathname;
-    const viewPath = {{CreateURL "/view"}}
-    if (path.startsWith(viewPath)){
-        path = path.slice(viewPath.length)
-    }
-
-    const url = new URL({{CreateURL "/favorite"}}, window.location.origin)
-    url.pathname += path
-
     var params = new URLSearchParams()
     params.set("favorite", !favorite)
+
+    const url = new URL({{.SetFavoriteURL}}, window.location.origin)
     url.search = params.toString()
 
     $.ajax({
