@@ -40,6 +40,8 @@ type viewData struct {
 	UpdateCoverURLs []string
 	StartIndex      int64
 	Favorite        bool
+	DownloadURL     string
+	SetFavoriteURL  string
 }
 
 func Handler(c echo.Context) error {
@@ -97,6 +99,8 @@ func Handler(c echo.Context) error {
 		ImageURLs:       createImageURLs(p, pages),
 		UpdateCoverURLs: createUpdateCoverURLs(p, pages),
 		Favorite:        m.Favorite,
+		DownloadURL:     createDownloadURL(p),
+		SetFavoriteURL:  createSetFavoriteURL(p),
 	}
 
 	builder := strings.Builder{}
@@ -127,4 +131,12 @@ func createUpdateCoverURLs(file string, pages []Page) []string {
 		output[i] = url
 	}
 	return output
+}
+
+func createDownloadURL(file string) string {
+	return util.CreateURL(fmt.Sprintf("/download/%s", url.PathEscape(file)))
+}
+
+func createSetFavoriteURL(file string) string {
+	return util.CreateURL(fmt.Sprintf("/favorite/%s", url.PathEscape(file)))
 }
