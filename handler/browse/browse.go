@@ -59,10 +59,11 @@ type item struct {
 }
 
 type pageItem struct {
-	Content   string
-	LinkURL   url.URL
-	IsActive  bool
-	IsEnabled bool
+	Content         string
+	LinkURL         url.URL
+	IsActive        bool
+	IsEnabled       bool
+	IsHiddenOnSmall bool
 }
 
 func createItems(allMeta []meta.Item) (allItems []item, err error) {
@@ -92,7 +93,6 @@ func createItems(allMeta []meta.Item) (allItems []item, err error) {
 	return
 }
 
-// Handler
 func Handler(c echo.Context) error {
 	p, err := handler.CreateMetaProvider()
 	if err != nil {
@@ -231,18 +231,20 @@ func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
 
 	output := make([]pageItem, 0)
 	output = append(output, pageItem{
-		Content:   First,
-		LinkURL:   changePageParam(baseUrl, firstPage),
-		IsActive:  false,
-		IsEnabled: true,
+		Content:         First,
+		LinkURL:         changePageParam(baseUrl, firstPage),
+		IsActive:        false,
+		IsEnabled:       true,
+		IsHiddenOnSmall: false,
 	})
 
 	enablePrevious := previousPage >= firstPage
 	output = append(output, pageItem{
-		Content:   Previous,
-		LinkURL:   changePageParam(baseUrl, previousPage),
-		IsActive:  false,
-		IsEnabled: enablePrevious,
+		Content:         Previous,
+		LinkURL:         changePageParam(baseUrl, previousPage),
+		IsActive:        false,
+		IsEnabled:       enablePrevious,
+		IsHiddenOnSmall: false,
 	})
 
 	for i := current - HalfDisplayPageCount; i <= current+HalfDisplayPageCount; i++ {
@@ -254,26 +256,29 @@ func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
 		}
 
 		output = append(output, pageItem{
-			Content:   strconv.Itoa(i),
-			LinkURL:   changePageParam(baseUrl, i),
-			IsActive:  i == current,
-			IsEnabled: true,
+			Content:         strconv.Itoa(i),
+			LinkURL:         changePageParam(baseUrl, i),
+			IsActive:        i == current,
+			IsEnabled:       true,
+			IsHiddenOnSmall: !(i == current),
 		})
 	}
 
 	enableNext := nextPage < count
 	output = append(output, pageItem{
-		Content:   Next,
-		LinkURL:   changePageParam(baseUrl, nextPage),
-		IsActive:  false,
-		IsEnabled: enableNext,
+		Content:         Next,
+		LinkURL:         changePageParam(baseUrl, nextPage),
+		IsActive:        false,
+		IsEnabled:       enableNext,
+		IsHiddenOnSmall: false,
 	})
 
 	output = append(output, pageItem{
-		Content:   Last,
-		LinkURL:   changePageParam(baseUrl, lastPage),
-		IsActive:  false,
-		IsEnabled: true,
+		Content:         Last,
+		LinkURL:         changePageParam(baseUrl, lastPage),
+		IsActive:        false,
+		IsEnabled:       true,
+		IsHiddenOnSmall: false,
 	})
 
 	return output
