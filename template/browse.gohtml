@@ -19,7 +19,6 @@
             </span>
         {{end}}
 
-
         <div class="row g-0">
             <div class="col-md-4">
                 <a href="{{.LinkURL}}" class="thumb-link">
@@ -50,9 +49,6 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Top</a>
-                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
                         role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -121,6 +117,7 @@
     <li class="page-item 
         {{if .IsActive}} active {{end}}
         {{if not .IsEnabled}} disabled {{end}}
+        {{if .IsHiddenOnSmall}} d-none d-sm-block {{end}}
         ">
         <a class="page-link" href="{{.LinkURL.String}}">
             {{.Content}}
@@ -136,6 +133,13 @@
         {{template "page-item" .}}
     {{end}}
   </ul>
+</nav>
+
+<nav aria-label="Move to top navigation" class="position-fixed bottom-0 end-0 p-3">
+    <a class="btn btn-secondary" href="#">
+        <i class="bi bi-chevron-double-up"></i>
+        <span class="d-none d-sm-block">Top</span>
+    </a>
 </nav>
 
 <div class="modal fade" id="aboutModal" tabindex="-1">
