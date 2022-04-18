@@ -3,17 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/wutipong/mangaweb/scheduler"
 
-	"net/http"
-	"os"
-	"path"
-	"time"
-
-	"github.com/go-co-op/gocron"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"net/http"
+	"os"
+	"path"
 
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/handler/browse"
@@ -48,7 +46,6 @@ func main() {
 	dataPath := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
 	database := setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
 	prefix := setupFlag("prefix", "", "MANGAWEB_PREFIX", "URL prefix")
-	rebuild := setupFlag("rebuild_thumbnail", "false", "MANGAWEB_REBUILD_THUMBNAIL", "force rebuild all thumbnail.")
 
 	flag.Parse()
 
@@ -83,6 +80,8 @@ func main() {
 		VersionString:       versionString,
 	})
 
+	scheduler.Init(newProvider)
+
 	e.Pre(middleware.RemoveTrailingSlash())
 
 	// Routes
@@ -105,125 +104,21 @@ func main() {
 
 	e.GET("/download/*", handler.Download)
 
-	// Schedule the update metadata task to run every 30 minutes.
-	s := gocron.NewScheduler(time.UTC)
-	s.Every(30).Minutes().Do(func() {
-		log.Info("Update metadata set.")
-		synchronizeMetaData()
-	})
+	e.GET("/rescan_library", handler.RescanLibraryHandler)
 
-	if *rebuild == "true" {
-		s.Every(1).Millisecond().LimitRunsTo(1).Do(func() {
-			log.Info("Force updating thumbnail")
-			rebuildThumbnail()
-		})
-	}
-
-	s.StartAsync()
+	scheduler.Start()
 
 	log.Info("Server starts.")
 	if err := e.Start(*address); err != http.ErrServerClosed {
 		log.Error(err)
 	}
 	log.Info("shutting down the server")
-	s.Stop()
+	scheduler.Stop()
 }
 
 // Handler
 func root(c echo.Context) error {
 	return c.Redirect(http.StatusPermanentRedirect, util.CreateURL("/browse"))
-}
-
-func synchronizeMetaData() error {
-	provider, err := newProvider()
-
-	if err != nil {
-		return err
-	}
-	defer provider.Close()
-
-	allMeta, err := provider.ReadAll()
-	if err != nil {
-		return err
-	}
-
-	files, err := meta.ListDir("")
-	if err != nil {
-		return err
-	}
-
-	for _, file := range files {
-		found := false
-		for _, m := range allMeta {
-			if m.Name == file {
-				found = true
-				break
-			}
-		}
-		if found {
-			continue
-		}
-
-		log.Printf("Creating metadata for %s", file)
-
-		item, err := meta.NewItem(file)
-		if err != nil {
-			log.Printf("Failed to create meta data : %v", err)
-		}
-
-		err = provider.Write(item)
-		if err != nil {
-			log.Printf("Failed to write meta data : %v", err)
-		}
-	}
-
-	for _, m := range allMeta {
-		found := false
-		for _, file := range files {
-			if m.Name == file {
-				found = true
-				break
-			}
-		}
-		if found {
-			continue
-		}
-
-		log.Printf("Deleting metadata for %s", m.Name)
-		if err := provider.Delete(m); err != nil {
-			log.Printf("Failed to delete meta for %s", m.Name)
-		}
-
-	}
-
-	return nil
-}
-
-func rebuildThumbnail() error {
-	provider, err := newProvider()
-
-	if err != nil {
-		return err
-	}
-	defer provider.Close()
-
-	allMeta, err := provider.ReadAll()
-	if err != nil {
-		return err
-	}
-
-	for _, m := range allMeta {
-		e := m.GenerateThumbnail(0)
-		log.Printf("Generating new thumbnail for %s", m.Name)
-		if e != nil {
-			log.Printf("Failed to generate thumbnail for %s", m.Name)
-			continue
-		}
-
-		provider.Write(m)
-	}
-
-	return nil
 }
 
 func newProvider() (p meta.Provider, err error) {
