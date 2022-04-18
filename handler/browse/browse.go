@@ -19,6 +19,7 @@ import (
 
 const (
 	ItemPerPage = 40
+	RescanURL   = "/rescan_library"
 )
 
 func init() {
@@ -38,11 +39,12 @@ func init() {
 var broseTemplate *template.Template
 
 type browseData struct {
-	Title        string
-	Version      string
-	FavoriteOnly bool
-	SortBy       string
-	SortOrder    string
+	Title            string
+	Version          string
+	FavoriteOnly     bool
+	SortBy           string
+	SortOrder        string
+	RescanLibraryURL string
 
 	Items []item
 	Pages []pageItem
@@ -154,13 +156,14 @@ func Handler(c echo.Context) error {
 	}
 
 	data := browseData{
-		Title:        "Manga - Browsing",
-		Version:      handler.VersionString,
-		FavoriteOnly: favOnly,
-		SortBy:       string(sort),
-		SortOrder:    string(order),
-		Items:        items,
-		Pages:        createPageItems(page, pageCount, *c.Request().URL),
+		Title:            "Manga - Browsing",
+		Version:          handler.VersionString,
+		FavoriteOnly:     favOnly,
+		SortBy:           string(sort),
+		SortOrder:        string(order),
+		RescanLibraryURL: RescanURL,
+		Items:            items,
+		Pages:            createPageItems(page, pageCount, *c.Request().URL),
 	}
 
 	builder := strings.Builder{}

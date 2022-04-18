@@ -5,7 +5,7 @@
     <div class="card mb-3 
         {{if .Favorite}}border border-pink {{end}} 
         {{if not .IsRead}}border border-yellow {{end}}"
-        id="{{.ID}}">
+         id="{{.ID}}">
 
         {{if .Favorite}}
             <span class="position-absolute bottom-0 end-0 p-2 badge bg-pink">
@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 {{end}}
 
@@ -40,9 +40,9 @@
     <div class="container-fluid">
         <span class="navbar-brand text-truncate">Browse</span>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
-            aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
 
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -50,43 +50,62 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
-                        role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
                         Sort By
-                    </a>    
+                    </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <button class='dropdown-item 
-                            {{if eq .SortBy "name"}} active {{end}}' 
-                            type="button" onclick="changeSort('name')"><i class="bi bi-type"></i> Name</button>
+                            {{if eq .SortBy "name"}} active {{end}}'
+                                type="button" onclick="changeSort('name')"><i class="bi bi-type"></i> Name
+                        </button>
 
                         <button class='dropdown-item 
-                            {{if eq .SortBy "createTime"}} active {{end}}' 
-                            type="button" onclick="changeSort('createTime')"><i class="bi bi-clock"></i> Added Date</button>
-                    
+                            {{if eq .SortBy "createTime"}} active {{end}}'
+                                type="button" onclick="changeSort('createTime')"><i class="bi bi-clock"></i> Added Date
+                        </button>
+
                         <div class="dropdown-divider"></div>
 
                         <button class='dropdown-item 
-                            {{if eq .SortOrder "ascending"}} active {{end}}' 
-                            type="button" onclick="changeOrder('ascending')"><i class="bi bi-sort-down-alt"></i> Ascending</button>
-                   
+                            {{if eq .SortOrder "ascending"}} active {{end}}'
+                                type="button" onclick="changeOrder('ascending')"><i class="bi bi-sort-down-alt"></i>
+                            Ascending
+                        </button>
+
                         <button class='dropdown-item 
-                            {{if eq .SortOrder "descending"}} active {{end}}' 
-                            type="button" onclick="changeOrder('descending')"><i class="bi bi-sort-down"></i> Descending</button>
+                            {{if eq .SortOrder "descending"}} active {{end}}'
+                                type="button" onclick="changeOrder('descending')"><i class="bi bi-sort-down"></i>
+                            Descending
+                        </button>
 
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
                         Filter
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <button class='dropdown-item
-                            {{if .FavoriteOnly}} active {{end}}' 
-                            type="button" id="filter-favorite" onclick="toggleFavorite()">
-                            <i class="bi bi-star-fill"></i> Favorite</button>
+                            {{if .FavoriteOnly}} active {{end}}'
+                                type="button" id="filter-favorite" onclick="toggleFavorite()">
+                            <i class="bi bi-star-fill"></i> Favorite
+                        </button>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                        Tools
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <button class='dropdown-item' type="button" onclick="rescanLibrary()">
+                            <i class="bi bi-arrow-clockwise"></i> Re-scan library
+                        </button>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -113,7 +132,7 @@
     </div>
 </div>
 
-{{define "page-item"}} 
+{{define "page-item"}}
     <li class="page-item 
         {{if .IsActive}} active {{end}}
         {{if not .IsEnabled}} disabled {{end}}
@@ -128,11 +147,11 @@
 <div style="height: 100px;"></div>
 
 <nav aria-label="Page navigation" class="position-fixed bottom-0 start-50 p-3 translate-middle-x">
-  <ul class="pagination justify-content-center">
-    {{range .Pages}}
-        {{template "page-item" .}}
-    {{end}}
-  </ul>
+    <ul class="pagination justify-content-center">
+        {{range .Pages}}
+            {{template "page-item" .}}
+        {{end}}
+    </ul>
 </nav>
 
 <nav aria-label="Move to top navigation" class="position-fixed bottom-0 end-0 p-3">
@@ -142,84 +161,117 @@
     </a>
 </nav>
 
-<div class="modal fade" id="aboutModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">MangaWeb</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <h6>Version {{.Version}} </h6>
-        <p>&copy; 2021-2022 Wutipong Wongsakuldej. All rights reserved</p>
-        <p>Licensed under MIT License</p>
-        <p><a href="https://github.com/wutipong/mangaweb">Homepage</a></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <img src="..." class="rounded me-2" alt="...">
+            <strong class="me-auto" id="toast-header"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toast-content">
+            Hello, world! This is a toast message.
+        </div>
     </div>
-  </div>
+</div>
+
+<div class="modal fade" id="aboutModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">MangaWeb</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Version {{.Version}} </h6>
+                <p>&copy; 2021-2022 Wutipong Wongsakuldej. All rights reserved</p>
+                <p>Licensed under MIT License</p>
+                <p><a href="https://github.com/wutipong/mangaweb">Homepage</a></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src='{{CreateURL "/static/index.js"}}'></script>
 <script>
 
-const checkedClass = "dropdown-item-checked"
+    const checkedClass = "dropdown-item-checked"
 
-$(function(){
-    let url = window.location
-    let searchParams = new URLSearchParams(url.search);
+    $(function () {
+        let url = window.location
+        let searchParams = new URLSearchParams(url.search);
 
-    let search = searchParams.get("search")
-    if (search !== "") {
-        $("#search-text").val(search)
+        let search = searchParams.get("search")
+        if (search !== "") {
+            $("#search-text").val(search)
+        }
+    })
+
+    function changeSort(sortBy) {
+        let url = window.location
+        let searchParams = new URLSearchParams(url.search);
+        searchParams.set("sort", sortBy)
+
+        if (sortBy === "name") {
+            searchParams.set("order", "ascending")
+        } else if (sortBy === "createTime") {
+            searchParams.set("order", "descending")
+        }
+
+        searchParams.delete("page")
+
+        url.search = searchParams.toString()
     }
-})
 
-function changeSort(sortBy){
-    let url = window.location
-    let searchParams = new URLSearchParams(url.search);
-    searchParams.set("sort", sortBy)
+    function changeOrder(order) {
+        let url = window.location
+        let searchParams = new URLSearchParams(url.search);
 
-    if (sortBy === "name") {
-        searchParams.set("order", "ascending")
-    } else if (sortBy === "createTime") {
-        searchParams.set("order", "descending")
+        searchParams.set("order", order)
+
+        url.search = searchParams.toString()
     }
 
-    searchParams.delete("page")
+    function toggleFavorite() {
+        let url = window.location
+        let searchParams = new URLSearchParams(url.search);
 
-    url.search = searchParams.toString()
-}
+        let isFavorite = {{.FavoriteOnly}} ;
+        searchParams.set("favorite", !isFavorite)
 
-function changeOrder(order){
-    let url = window.location
-    let searchParams = new URLSearchParams(url.search);
+        url.search = searchParams.toString()
+    }
 
-    searchParams.set("order", order)
+    function onSearchClick() {
+        let searchText = $("#search-text").val()
+        let url = window.location
+        let searchParams = new URLSearchParams(url.search);
+        searchParams.set("search", searchText)
 
-    url.search = searchParams.toString()    
-}
+        url.search = searchParams.toString()
+    }
 
-function toggleFavorite(){
-    let url = window.location
-    let searchParams = new URLSearchParams(url.search);
+    function rescanLibrary() {
+        const url = '{{.RescanLibraryURL}}'
 
-    let isFavorite = {{.FavoriteOnly}} ;
-    searchParams.set("favorite", !isFavorite)
+        $.ajax({
+            url: url.toString(),
+            dataType: "json",
+        }).done(function(data){
+            showToast('Re-scan Library', 'Library re-Scan in progress. Please refresh after a few minutes.')
+        })
+    }
 
-    url.search = searchParams.toString()    
-}
+    function showToast(header, content) {
+        $('#toast-header').text(header);
+        $('#toast-content').text(content);
 
-function onSearchClick(){
-    let searchText = $("#search-text").val()
-    let url = window.location
-    let searchParams = new URLSearchParams(url.search);
-     searchParams.set("search", searchText)
+        let toast = new bootstrap.Toast($('#toast'));
 
-    url.search = searchParams.toString()
-}
+        toast.show()
+    }
 
 </script>
 </body>
