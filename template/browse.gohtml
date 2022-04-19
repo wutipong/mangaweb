@@ -1,33 +1,32 @@
 {{template "html-head" .}}
 
 {{define "item-card"}}
-
-    <div class="card mb-3 
+    <div class='card mb-3
         {{if .Favorite}}border border-pink {{end}} 
-        {{if not .IsRead}}border border-yellow {{end}}"
-         id="{{.ID}}">
+        {{if not .IsRead}}border border-yellow {{end}}'
+         id='{{.ID}}'>
 
         {{if .Favorite}}
-            <span class="position-absolute bottom-0 end-0 p-2 badge bg-pink">
-                <span><i class="bi bi-star-fill"></i> Favorite</span>
+            <span class='position-absolute bottom-0 end-0 p-2 badge bg-pink'>
+                <span><i class='bi bi-star-fill'></i> Favorite</span>
             </span>
         {{end}}
 
         {{if not .IsRead}}
-            <span class="position-absolute bottom-0 end-0 p-2 badge bg-yellow">
-                <span><i class="bi bi-lightning-fill"></i> New </span>
+            <span class='position-absolute bottom-0 end-0 p-2 badge bg-yellow'>
+                <span><i class='bi bi-lightning-fill'></i> New </span>
             </span>
         {{end}}
 
-        <div class="row g-0">
-            <div class="col-md-4">
-                <a href="{{.LinkURL}}" class="thumb-link">
-                    <img class="img-fluid lazy rounded thumb-img" loading="lazy" src="{{.ThumbURL}}" alt="{{.Name}}">
+        <div class='row g-0'>
+            <div class='col-md-4'>
+                <a href='{{.LinkURL}}' class='thumb-link'>
+                    <img class='img-fluid lazy rounded thumb-img' loading='lazy' src='{{.ThumbURL}}' alt='{{.Name}}'>
                 </a>
             </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title"><a href="{{.LinkURL}}">{{.Name}}</a></h5>
+            <div class='col-md-8'>
+                <div class='card-body'>
+                    <h5 class='card-title'><a href='{{.LinkURL}}'>{{.Name}}</a></h5>
                 </div>
             </div>
         </div>
@@ -36,87 +35,84 @@
 {{end}}
 
 <body>
-<nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
-    <div class="container-fluid">
-        <span class="navbar-brand text-truncate">Browse</span>
+<nav class='navbar navbar-dark bg-dark fixed-top navbar-expand-lg'>
+    <div class='container-fluid'>
+        <span class='navbar-brand text-truncate'>Browse</span>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
+        <button class='navbar-toggler' type='button' data-bs-toggle='collapse'
+                data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent'
+                aria-expanded='false' aria-label='Toggle navigation'>
 
-            <span class="navbar-toggler-icon"></span>
+            <span class='navbar-toggler-icon'></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                       role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div class='collapse navbar-collapse' id='navbarSupportedContent'>
+            <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
+                <li class='nav-item dropdown'>
+                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown'
+                       role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
 
                         Sort By
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <button class='dropdown-item 
-                            {{if eq .SortBy "name"}} active {{end}}'
-                                type="button" onclick="changeSort('name')"><i class="bi bi-type"></i> Name
+                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
+                        <button class='dropdown-item {{if eq .SortBy "name"}} active {{end}}'
+                                type='button' onclick='changeSort("name")'>
+                            <i class='bi bi-type'></i> Name
                         </button>
 
-                        <button class='dropdown-item 
-                            {{if eq .SortBy "createTime"}} active {{end}}'
-                                type="button" onclick="changeSort('createTime')"><i class="bi bi-clock"></i> Added Date
+                        <button class='dropdown-item {{if eq .SortBy "createTime"}} active {{end}}'
+                                type='button' onclick='changeSort("createTime")'>
+                            <i class='bi bi-clock'></i> Added Date
                         </button>
 
-                        <div class="dropdown-divider"></div>
+                        <div class='dropdown-divider'></div>
 
-                        <button class='dropdown-item 
-                            {{if eq .SortOrder "ascending"}} active {{end}}'
-                                type="button" onclick="changeOrder('ascending')"><i class="bi bi-sort-down-alt"></i>
+                        <button class='dropdown-item {{if eq .SortOrder "ascending"}} active {{end}}'
+                                type='button' onclick='changeOrder("ascending")'>
+                            <i class='bi bi-sort-down-alt'></i>
                             Ascending
                         </button>
 
-                        <button class='dropdown-item 
-                            {{if eq .SortOrder "descending"}} active {{end}}'
-                                type="button" onclick="changeOrder('descending')"><i class="bi bi-sort-down"></i>
+                        <button class='dropdown-item {{if eq .SortOrder "descending"}} active {{end}}'
+                                type='button' onclick='changeOrder("descending")'>
+                            <i class='bi bi-sort-down'></i>
                             Descending
                         </button>
 
                     </div>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
+                <li class='nav-item dropdown'>
+                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button'
+                       data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                         Filter
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <button class='dropdown-item
-                            {{if .FavoriteOnly}} active {{end}}'
-                                type="button" id="filter-favorite" onclick="toggleFavorite()">
-                            <i class="bi bi-star-fill"></i> Favorite
+                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
+                        <button class='dropdown-item {{if .FavoriteOnly}} active {{end}}' type='button'
+                                id='filter-favorite' onclick='toggleFavorite()'>
+                            <i class='bi bi-star-fill'></i> Favorite
                         </button>
                     </div>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
+                <li class='nav-item dropdown'>
+                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button'
+                       data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                         Tools
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <button class='dropdown-item' type="button" onclick="rescanLibrary()">
-                            <i class="bi bi-arrow-clockwise"></i> Re-scan library
+                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
+                        <button class='dropdown-item' type='button' onclick='rescanLibrary()'>
+                            <i class='bi bi-arrow-clockwise'></i> Re-scan library
                         </button>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">About</a>
+                <li class='nav-item'>
+                    <a class='nav-link' href='#' data-bs-toggle='modal' data-bs-target='#aboutModal'>About</a>
                 </li>
             </ul>
-            <form class="d-flex">
-                <div class="input-group mb-3">
-                    <input class="form-control" type="search" placeholder="Search" aria-label="Search" id="search-text">
-                    <button class="btn btn-outline-success" type="button" id="search-button" onclick="onSearchClick()">
-                        <i class="bi bi-search"></i>
+            <form class='d-flex'>
+                <div class='input-group mb-3'>
+                    <input class='form-control' type='search' placeholder='Search' aria-label='Search' id='search-text'>
+                    <button class='btn btn-outline-success' type='button' id='search-button' onclick='onSearchClick()'>
+                        <i class='bi bi-search'></i>
                     </button>
                 </div>
             </form>
@@ -124,8 +120,8 @@
     </div>
 </nav>
 
-<div class="container-fluid" style="padding-top:100px;">
-    <div class="grid-container">
+<div class='container-fluid' style='padding-top:100px;'>
+    <div class='grid-container'>
         {{range .Items}}
             {{template "item-card" .}}
         {{end}}
@@ -133,62 +129,62 @@
 </div>
 
 {{define "page-item"}}
-    <li class="page-item 
+    <li class='page-item
         {{if .IsActive}} active {{end}}
         {{if not .IsEnabled}} disabled {{end}}
         {{if .IsHiddenOnSmall}} d-none d-sm-block {{end}}
-        ">
-        <a class="page-link" href="{{.LinkURL.String}}">
+        '>
+        <a class='page-link' href='{{.LinkURL.String}}'>
             {{.Content}}
         </a>
     </li>
 {{end}}
 
-<div style="height: 100px;"></div>
+<div style='height: 100px;'></div>
 
-<nav aria-label="Page navigation" class="position-fixed bottom-0 start-50 p-3 translate-middle-x">
-    <ul class="pagination justify-content-center">
+<nav aria-label='Page navigation' class='position-fixed bottom-0 start-50 p-3 translate-middle-x'>
+    <ul class='pagination justify-content-center'>
         {{range .Pages}}
             {{template "page-item" .}}
         {{end}}
     </ul>
 </nav>
 
-<nav aria-label="Move to top navigation" class="position-fixed bottom-0 end-0 p-3">
-    <a class="btn btn-secondary" href="#">
-        <i class="bi bi-chevron-double-up"></i>
-        <span class="d-none d-sm-block">Top</span>
+<nav aria-label='Move to top navigation' class='position-fixed bottom-0 end-0 p-3'>
+    <a class='btn btn-secondary' href='#'>
+        <i class='bi bi-chevron-double-up'></i>
+        <span class='d-none d-sm-block'>Top</span>
     </a>
 </nav>
 
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <img src="..." class="rounded me-2" alt="...">
-            <strong class="me-auto" id="toast-header"></strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+<div class='position-fixed bottom-0 end-0 p-3' style='z-index: 11'>
+    <div id='toast' class='toast' role='alert' aria-live='assertive' aria-atomic='true'>
+        <div class='toast-header'>
+            <img src='...' class='rounded me-2' alt='...'>
+            <strong class='me-auto' id='toast-header'></strong>
+            <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='Close'></button>
         </div>
-        <div class="toast-body" id="toast-content">
+        <div class='toast-body' id='toast-content'>
             Hello, world! This is a toast message.
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="aboutModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">MangaWeb</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class='modal fade' id='aboutModal' tabindex='-1'>
+    <div class='modal-dialog'>
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h5 class='modal-title'>MangaWeb</h5>
+                <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
             </div>
-            <div class="modal-body">
+            <div class='modal-body'>
                 <h6>Version {{.Version}} </h6>
                 <p>&copy; 2021-2022 Wutipong Wongsakuldej. All rights reserved</p>
                 <p>Licensed under MIT License</p>
-                <p><a href="https://github.com/wutipong/mangaweb">Homepage</a></p>
+                <p><a href='https://github.com/wutipong/mangaweb'>Homepage</a></p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class='modal-footer'>
+                <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>Close</button>
             </div>
         </div>
     </div>
@@ -197,58 +193,58 @@
 <script src='{{CreateURL "/static/index.js"}}'></script>
 <script>
 
-    const checkedClass = "dropdown-item-checked"
+    const checkedClass = 'dropdown-item-checked'
 
     $(function () {
         let url = window.location
-        let searchParams = new URLSearchParams(url.search);
+        let searchParams = new URLSearchParams(url.search)
 
-        let search = searchParams.get("search")
-        if (search !== "") {
-            $("#search-text").val(search)
+        let search = searchParams.get('search')
+        if (search !== '') {
+            $('#search-text').val(search)
         }
     })
 
     function changeSort(sortBy) {
         let url = window.location
-        let searchParams = new URLSearchParams(url.search);
-        searchParams.set("sort", sortBy)
+        let searchParams = new URLSearchParams(url.search)
+        searchParams.set('sort', sortBy)
 
-        if (sortBy === "name") {
-            searchParams.set("order", "ascending")
-        } else if (sortBy === "createTime") {
-            searchParams.set("order", "descending")
+        if (sortBy === 'name') {
+            searchParams.set('order', 'ascending')
+        } else if (sortBy === 'createTime') {
+            searchParams.set('order', 'descending')
         }
 
-        searchParams.delete("page")
+        searchParams.delete('page')
 
         url.search = searchParams.toString()
     }
 
     function changeOrder(order) {
         let url = window.location
-        let searchParams = new URLSearchParams(url.search);
+        let searchParams = new URLSearchParams(url.search)
 
-        searchParams.set("order", order)
+        searchParams.set('order', order)
 
         url.search = searchParams.toString()
     }
 
     function toggleFavorite() {
         let url = window.location
-        let searchParams = new URLSearchParams(url.search);
+        let searchParams = new URLSearchParams(url.search)
 
-        let isFavorite = {{.FavoriteOnly}} ;
-        searchParams.set("favorite", !isFavorite)
+        let isFavorite = {{.FavoriteOnly}}
+        searchParams.set('favorite', !isFavorite)
 
         url.search = searchParams.toString()
     }
 
     function onSearchClick() {
-        let searchText = $("#search-text").val()
+        let searchText = $('#search-text').val()
         let url = window.location
-        let searchParams = new URLSearchParams(url.search);
-        searchParams.set("search", searchText)
+        let searchParams = new URLSearchParams(url.search)
+        searchParams.set('search', searchText)
 
         url.search = searchParams.toString()
     }
@@ -258,17 +254,17 @@
 
         $.ajax({
             url: url.toString(),
-            dataType: "json",
-        }).done(function(data){
-            showToast('Re-scan Library', 'Library re-Scan in progress. Please refresh after a few minutes.')
+            dataType: 'json',
+        }).done(function (data) {
+            showToast('Re-scan Library', 'Library re-scanning in progress. Please refresh after a few minutes.')
         })
     }
 
     function showToast(header, content) {
-        $('#toast-header').text(header);
-        $('#toast-content').text(content);
+        $('#toast-header').text(header)
+        $('#toast-content').text(content)
 
-        let toast = new bootstrap.Toast($('#toast'));
+        let toast = new bootstrap.Toast($('#toast'))
 
         toast.show()
     }
