@@ -7,7 +7,6 @@ import (
 	_ "image/png"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -20,10 +19,7 @@ import (
 
 // GetImage returns an image with specific width/height while retains aspect ratio.
 func GetImage(c echo.Context) error {
-	p, err := url.PathUnescape(c.Param("*"))
-	if err != nil {
-		return err
-	}
+	filename := c.Param("*")
 
 	provider, err := CreateMetaProvider()
 	if err != nil {
@@ -46,7 +42,7 @@ func GetImage(c echo.Context) error {
 		index = i
 	}
 
-	m, err := provider.Read(p)
+	m, err := provider.Read(filename)
 	if err != nil {
 		return err
 	}
