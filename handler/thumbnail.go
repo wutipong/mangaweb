@@ -3,18 +3,13 @@ package handler
 import (
 	"database/sql"
 	"errors"
-	"net/http"
-	"net/url"
-
 	"github.com/labstack/echo/v4"
 	"github.com/wutipong/mangaweb/meta"
+	"net/http"
 )
 
 func ThumbnailHandler(c echo.Context) error {
-	name, err := url.PathUnescape(c.Param("*"))
-	if err != nil {
-		return err
-	}
+	filename := c.Param("*")
 
 	provider, err := CreateMetaProvider()
 	if err != nil {
@@ -22,9 +17,9 @@ func ThumbnailHandler(c echo.Context) error {
 	}
 	defer provider.Close()
 
-	m, err := provider.Read(name)
+	m, err := provider.Read(filename)
 	if errors.Is(err, sql.ErrNoRows) {
-		m, _ = meta.NewItem(name)
+		m, _ = meta.NewItem(filename)
 		err = provider.Write(m)
 		if err != nil {
 			return err
