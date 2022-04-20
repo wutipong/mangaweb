@@ -1,18 +1,13 @@
 package handler
 
 import (
+	"github.com/labstack/echo/v4"
 	"io/ioutil"
 	"net/http"
-	"net/url"
-
-	"github.com/labstack/echo/v4"
 )
 
 func Download(c echo.Context) error {
-	p, err := url.PathUnescape(c.Param("*"))
-	if err != nil {
-		return err
-	}
+	filename := c.Param("*")
 
 	db, err := CreateMetaProvider()
 	if err != nil {
@@ -20,7 +15,7 @@ func Download(c echo.Context) error {
 	}
 	defer db.Close()
 
-	m, err := db.Read(p)
+	m, err := db.Read(filename)
 	if err != nil {
 		return err
 	}

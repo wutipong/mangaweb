@@ -45,10 +45,7 @@ type viewData struct {
 }
 
 func Handler(c echo.Context) error {
-	p, err := url.PathUnescape(c.Param("*"))
-	if err != nil {
-		return err
-	}
+	fileName := c.Param("*")
 
 	db, err := handler.CreateMetaProvider()
 	if err != nil {
@@ -56,7 +53,7 @@ func Handler(c echo.Context) error {
 	}
 	defer db.Close()
 
-	m, err := db.Read(p)
+	m, err := db.Read(fileName)
 	if err != nil {
 		return err
 	}
@@ -67,7 +64,7 @@ func Handler(c echo.Context) error {
 	}
 
 	hash := fnv.New64()
-	hash.Write([]byte(p))
+	hash.Write([]byte(fileName))
 	id := hash.Sum64()
 
 	if fav, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
@@ -93,14 +90,14 @@ func Handler(c echo.Context) error {
 	}
 
 	data := viewData{
-		Name:            p,
-		Title:           fmt.Sprintf("Manga - Viewing [%s]", p),
+		Name:            fileName,
+		Title:           fmt.Sprintf("Manga - Viewing [%s]", fileName),
 		BrowseURL:       browseUrl,
-		ImageURLs:       createImageURLs(p, pages),
-		UpdateCoverURLs: createUpdateCoverURLs(p, pages),
+		ImageURLs:       createImageURLs(fileName, pages),
+		UpdateCoverURLs: createUpdateCoverURLs(fileName, pages),
 		Favorite:        m.Favorite,
-		DownloadURL:     createDownloadURL(p),
-		SetFavoriteURL:  createSetFavoriteURL(p),
+		DownloadURL:     createDownloadURL(fileName),
+		SetFavoriteURL:  createSetFavoriteURL(fileName),
 	}
 
 	builder := strings.Builder{}
