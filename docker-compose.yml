@@ -13,7 +13,7 @@ services:
       MANGAWEB_DB: "mongodb://root:password@mongo"
       MANGAWEB_DATA_PATH: /data
     volumes:
-      - ./data-private:/data
+      - ./data:/data
     ports:
       - "8080:80"
     networks:
