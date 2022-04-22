@@ -6,10 +6,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/wutipong/mangaweb/meta"
 	"net/http"
+	"path/filepath"
 )
 
 func ThumbnailHandler(c echo.Context) error {
 	filename := c.Param("*")
+	filename = filepath.FromSlash(filename)
 
 	provider, err := CreateMetaProvider()
 	if err != nil {

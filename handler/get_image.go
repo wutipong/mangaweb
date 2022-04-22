@@ -20,6 +20,7 @@ import (
 // GetImage returns an image with specific width/height while retains aspect ratio.
 func GetImage(c echo.Context) error {
 	filename := c.Param("*")
+	filename = filepath.FromSlash(filename)
 
 	provider, err := CreateMetaProvider()
 	if err != nil {

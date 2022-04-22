@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -46,7 +47,7 @@ type viewData struct {
 
 func Handler(c echo.Context) error {
 	fileName := c.Param("*")
-
+	fileName = filepath.FromSlash(fileName)
 	db, err := handler.CreateMetaProvider()
 	if err != nil {
 		return err
