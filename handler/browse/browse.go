@@ -72,11 +72,11 @@ func createItems(allMeta []meta.Item) (allItems []item, err error) {
 	allItems = make([]item, len(allMeta))
 
 	for i, m := range allMeta {
-		var urlStr string
-		var thumbURL string
+		urlStr := util.CreateFilePathURL(m.Name)
+		urlStr = util.CreateURL("/view/", urlStr)
 
-		urlStr = util.CreateURL("/view/", url.PathEscape(m.Name))
-		thumbURL = util.CreateURL("/thumbnail/", url.PathEscape(m.Name))
+		thumbURL := util.CreateFilePathURL(m.Name)
+		thumbURL = util.CreateURL("/thumbnail/", thumbURL)
 
 		hash := fnv.New64()
 		hash.Write([]byte(m.Name))
