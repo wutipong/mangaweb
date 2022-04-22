@@ -113,7 +113,8 @@ func Handler(c echo.Context) error {
 func createImageURLs(file string, pages []Page) []string {
 	output := make([]string, len(pages))
 	for i, p := range pages {
-		url := util.CreateURL(fmt.Sprintf("/get_image/%s?i=%v", url.PathEscape(file), p.Index))
+		filePart := util.CreateFilePathURL(file)
+		url := util.CreateURL(fmt.Sprintf("/get_image/%s?i=%v", filePart, p.Index))
 
 		output[i] = url
 	}
@@ -123,7 +124,8 @@ func createImageURLs(file string, pages []Page) []string {
 func createUpdateCoverURLs(file string, pages []Page) []string {
 	output := make([]string, len(pages))
 	for i, p := range pages {
-		url := util.CreateURL(fmt.Sprintf("/update_cover/%s?i=%v", url.PathEscape(file), p.Index))
+		filePart := util.CreateFilePathURL(file)
+		url := util.CreateURL(fmt.Sprintf("/update_cover/%s?i=%v", filePart, p.Index))
 
 		output[i] = url
 	}
@@ -131,9 +133,11 @@ func createUpdateCoverURLs(file string, pages []Page) []string {
 }
 
 func createDownloadURL(file string) string {
-	return util.CreateURL(fmt.Sprintf("/download/%s", url.PathEscape(file)))
+	filePart := util.CreateFilePathURL(file)
+	return util.CreateURL(fmt.Sprintf("/download/%s", filePart))
 }
 
 func createSetFavoriteURL(file string) string {
-	return util.CreateURL(fmt.Sprintf("/favorite/%s", url.PathEscape(file)))
+	filePart := util.CreateFilePathURL(file)
+	return util.CreateURL(fmt.Sprintf("/favorite/%s", filePart))
 }
