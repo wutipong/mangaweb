@@ -3,21 +3,21 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/wutipong/mangaweb/scheduler"
+	"net/http"
+	"os"
+	"path"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
-	"net/http"
-	"os"
-	"path"
 
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/handler/browse"
 	"github.com/wutipong/mangaweb/handler/view"
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/meta/mongo"
+	"github.com/wutipong/mangaweb/scheduler"
 	"github.com/wutipong/mangaweb/util"
 )
 
@@ -35,6 +35,19 @@ func setupFlag(flagName, defValue, variable, description string) *string {
 }
 
 var versionString string = "development"
+
+const (
+	pathRoot          = "/"
+	pathBrowse        = "/browse"
+	pathView          = "/view"
+	pathStatic        = "/static"
+	pathGetImage      = "/get_image"
+	pathUpdateCover   = "/update_cover"
+	pathThumbnail     = "/thumbnail"
+	pathFavorite      = "/favorite"
+	pathDownload      = "/download"
+	pathRescanLibrary = "/rescan_library"
+)
 
 func main() {
 	err := godotenv.Load()
@@ -85,27 +98,18 @@ func main() {
 	e.Pre(middleware.RemoveTrailingSlash())
 
 	// Routes
-	e.GET("/", root)
-	e.GET("/browse", browse.Handler)
-	e.GET("/browse/*", browse.Handler)
+	e.GET(pathRoot, root)
+	e.GET(pathBrowse, browse.Handler)
+	e.GET(path.Join(pathView, "*"), view.Handler)
+	e.GET(path.Join(pathGetImage, "*"), handler.GetImage)
+	e.GET(path.Join(pathUpdateCover, "*"), handler.UpdateCover)
+	e.GET(path.Join(pathThumbnail, "*"), handler.ThumbnailHandler)
+	e.GET(path.Join(pathFavorite, "*"), handler.SetFavoriteHandler)
+	e.GET(path.Join(pathFavorite, "*"), handler.SetFavoriteHandler)
+	e.GET(path.Join(pathDownload, "*"), handler.Download)
+	e.GET(pathRescanLibrary, handler.RescanLibraryHandler)
 
-	e.GET("/view", view.Handler)
-	e.GET("/view/*", view.Handler)
-
-	e.Static("/static", "static")
-
-	e.GET("/get_image/*", handler.GetImage)
-	e.GET("/update_cover/*", handler.UpdateCover)
-
-	e.GET("/thumbnail/*", handler.ThumbnailHandler)
-
-	e.GET("/favorite", handler.SetFavoriteHandler)
-	e.GET("/favorite/*", handler.SetFavoriteHandler)
-
-	e.GET("/download/*", handler.Download)
-
-	e.GET("/rescan_library", handler.RescanLibraryHandler)
-
+	e.Static(pathStatic, "static")
 	scheduler.Start()
 
 	log.Info("Server starts.")
@@ -118,7 +122,7 @@ func main() {
 
 // Handler
 func root(c echo.Context) error {
-	return c.Redirect(http.StatusPermanentRedirect, util.CreateURL("/browse"))
+	return c.Redirect(http.StatusPermanentRedirect, util.CreateURL(pathBrowse))
 }
 
 func newProvider() (p meta.Provider, err error) {
