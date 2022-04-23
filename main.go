@@ -88,15 +88,36 @@ func main() {
 		util.SetPrefix(*prefix)
 	}
 
-	handler.Init(handler.Options{
-		MetaProviderFactory: newProvider,
-		VersionString:       versionString,
-	})
-
 	scheduler.Init(newProvider)
 
 	e.Pre(middleware.RemoveTrailingSlash())
 
+	RegisterHandler(e)
+	scheduler.Start()
+
+	log.Info("Server starts.")
+	if err := e.Start(*address); err != http.ErrServerClosed {
+		log.Error(err)
+	}
+	log.Info("shutting down the server")
+	scheduler.Stop()
+}
+
+func RegisterHandler(e *echo.Echo) {
+	handler.Init(handler.Options{
+		MetaProviderFactory: newProvider,
+		VersionString:       versionString,
+		PathRoot:            pathRoot,
+		PathBrowse:          pathBrowse,
+		PathView:            pathView,
+		PathStatic:          pathStatic,
+		PathGetImage:        pathGetImage,
+		PathUpdateCover:     pathUpdateCover,
+		PathThumbnail:       pathThumbnail,
+		PathFavorite:        pathFavorite,
+		PathDownload:        pathDownload,
+		PathRescanLibrary:   pathRescanLibrary,
+	})
 	// Routes
 	e.GET(pathRoot, root)
 	e.GET(pathBrowse, browse.Handler)
@@ -110,14 +131,6 @@ func main() {
 	e.GET(pathRescanLibrary, handler.RescanLibraryHandler)
 
 	e.Static(pathStatic, "static")
-	scheduler.Start()
-
-	log.Info("Server starts.")
-	if err := e.Start(*address); err != http.ErrServerClosed {
-		log.Error(err)
-	}
-	log.Info("shutting down the server")
-	scheduler.Stop()
 }
 
 // Handler
