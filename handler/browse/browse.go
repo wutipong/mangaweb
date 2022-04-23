@@ -37,12 +37,11 @@ func init() {
 var broseTemplate *template.Template
 
 type browseData struct {
-	Title            string
-	Version          string
-	FavoriteOnly     bool
-	SortBy           string
-	SortOrder        string
-	RescanLibraryURL string
+	Title        string
+	Version      string
+	FavoriteOnly bool
+	SortBy       string
+	SortOrder    string
 
 	Items []item
 	Pages []pageItem
@@ -51,8 +50,6 @@ type browseData struct {
 type item struct {
 	ID         uint64
 	Name       string
-	LinkURL    string
-	ThumbURL   string
 	CreateTime time.Time
 	Favorite   bool
 	IsRead     bool
@@ -70,9 +67,6 @@ func createItems(allMeta []meta.Item) (allItems []item, err error) {
 	allItems = make([]item, len(allMeta))
 
 	for i, m := range allMeta {
-		urlStr := handler.CreateViewURL(m.Name)
-		thumbURL := handler.CreateThumbnailURL(m.Name)
-
 		hash := fnv.New64()
 		hash.Write([]byte(m.Name))
 		id := hash.Sum64()
@@ -80,8 +74,6 @@ func createItems(allMeta []meta.Item) (allItems []item, err error) {
 		allItems[i] = item{
 			ID:         id,
 			Name:       m.Name,
-			LinkURL:    urlStr,
-			ThumbURL:   thumbURL,
 			CreateTime: m.CreateTime,
 			Favorite:   m.Favorite,
 			IsRead:     m.IsRead,
@@ -151,14 +143,13 @@ func Handler(c echo.Context) error {
 	}
 
 	data := browseData{
-		Title:            "Manga - Browsing",
-		Version:          handler.CreateVersionString(),
-		FavoriteOnly:     favOnly,
-		SortBy:           string(sort),
-		SortOrder:        string(order),
-		RescanLibraryURL: handler.CreateRescanURL(),
-		Items:            items,
-		Pages:            createPageItems(page, pageCount, *c.Request().URL),
+		Title:        "Manga - Browsing",
+		Version:      handler.CreateVersionString(),
+		FavoriteOnly: favOnly,
+		SortBy:       string(sort),
+		SortOrder:    string(order),
+		Items:        items,
+		Pages:        createPageItems(page, pageCount, *c.Request().URL),
 	}
 
 	builder := strings.Builder{}

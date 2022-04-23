@@ -48,6 +48,13 @@ func CreateGetImageURL(filepath string, index int) string {
 	return url
 }
 
+func CreateGetImageWithSizeURL(filepath string, index int, width int, height int) string {
+	filePart := CreateFilePathURL(filepath)
+	url := CreateURL(options.PathGetImage, fmt.Sprintf("%s?i=%v&width=%v&height=%v", filePart, index, width, height))
+
+	return url
+}
+
 func CreateUpdateCoverURL(filepath string, index int) string {
 	filePart := CreateFilePathURL(filepath)
 	baseURL := path.Join(options.PathUpdateCover, filePart)

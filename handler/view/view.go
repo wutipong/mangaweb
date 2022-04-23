@@ -16,6 +16,11 @@ import (
 	"github.com/wutipong/mangaweb/handler"
 )
 
+const (
+	maxPageWidth  = 1600
+	maxPageHeight = 1600
+)
+
 func init() {
 	var err error
 	viewTemplate, err = template.New("view.gohtml").
@@ -40,8 +45,6 @@ type viewData struct {
 	UpdateCoverURLs []string
 	StartIndex      int64
 	Favorite        bool
-	DownloadURL     string
-	SetFavoriteURL  string
 }
 
 func Handler(c echo.Context) error {
@@ -96,8 +99,6 @@ func Handler(c echo.Context) error {
 		ImageURLs:       createImageURLs(fileName, pages),
 		UpdateCoverURLs: createUpdateCoverURLs(fileName, pages),
 		Favorite:        m.Favorite,
-		DownloadURL:     handler.CreateDownloadURL(fileName),
-		SetFavoriteURL:  handler.CreateSetFavoriteURL(fileName),
 	}
 
 	builder := strings.Builder{}
@@ -113,7 +114,7 @@ func Handler(c echo.Context) error {
 func createImageURLs(file string, pages []Page) []string {
 	output := make([]string, len(pages))
 	for i, p := range pages {
-		output[i] = handler.CreateGetImageURL(file, p.Index)
+		output[i] = handler.CreateGetImageWithSizeURL(file, p.Index, maxPageWidth, maxPageHeight)
 	}
 	return output
 }
