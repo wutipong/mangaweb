@@ -4,10 +4,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 )
 
 func Download(c echo.Context) error {
 	filename := c.Param("*")
+	filename = filepath.FromSlash(filename)
 
 	db, err := CreateMetaProvider()
 	if err != nil {
