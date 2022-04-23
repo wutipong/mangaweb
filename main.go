@@ -18,7 +18,6 @@ import (
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/meta/mongo"
 	"github.com/wutipong/mangaweb/scheduler"
-	"github.com/wutipong/mangaweb/util"
 )
 
 // Recreate the static resource file.
@@ -84,15 +83,13 @@ func main() {
 			*prefix: "/",
 			pattern: "/$1",
 		}))
-
-		util.SetPrefix(*prefix)
 	}
 
 	scheduler.Init(newProvider)
 
 	e.Pre(middleware.RemoveTrailingSlash())
 
-	RegisterHandler(e)
+	RegisterHandler(e, *prefix)
 	scheduler.Start()
 
 	log.Info("Server starts.")
@@ -103,10 +100,11 @@ func main() {
 	scheduler.Stop()
 }
 
-func RegisterHandler(e *echo.Echo) {
+func RegisterHandler(e *echo.Echo, pathPrefix string) {
 	handler.Init(handler.Options{
 		MetaProviderFactory: newProvider,
 		VersionString:       versionString,
+		PathPrefix:          pathPrefix,
 		PathRoot:            pathRoot,
 		PathBrowse:          pathBrowse,
 		PathView:            pathView,
@@ -135,7 +133,7 @@ func RegisterHandler(e *echo.Echo) {
 
 // Handler
 func root(c echo.Context) error {
-	return c.Redirect(http.StatusPermanentRedirect, util.CreateURL(pathBrowse))
+	return c.Redirect(http.StatusPermanentRedirect, handler.CreateBrowseURL(""))
 }
 
 func newProvider() (p meta.Provider, err error) {
