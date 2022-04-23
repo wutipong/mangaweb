@@ -3,6 +3,7 @@ package handler
 import (
 	_ "image/png"
 	"net/http"
+	"path/filepath"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -11,6 +12,7 @@ import (
 // UpdateCover a handler to update the cover to specific image
 func UpdateCover(c echo.Context) error {
 	filename := c.Param("*")
+	filename = filepath.FromSlash(filename)
 
 	provider, err := CreateMetaProvider()
 	if err != nil {

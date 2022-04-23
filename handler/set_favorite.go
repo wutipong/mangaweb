@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"path/filepath"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -13,6 +14,7 @@ type setFavoriteResponse struct {
 
 func SetFavoriteHandler(c echo.Context) error {
 	filename := c.Param("*")
+	filename = filepath.FromSlash(filename)
 
 	db, err := CreateMetaProvider()
 	if err != nil {
