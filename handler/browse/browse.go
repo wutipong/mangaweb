@@ -14,18 +14,16 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/meta"
-	"github.com/wutipong/mangaweb/util"
 )
 
 const (
 	ItemPerPage = 40
-	RescanURL   = "/rescan_library"
 )
 
 func init() {
 	var err error
 	broseTemplate, err = template.New("browse.gohtml").
-		Funcs(util.HtmlTemplateFuncMap()).
+		Funcs(handler.HtmlTemplateFuncMap()).
 		ParseFiles(
 			"template/browse.gohtml",
 			"template/header.gohtml",
@@ -72,11 +70,8 @@ func createItems(allMeta []meta.Item) (allItems []item, err error) {
 	allItems = make([]item, len(allMeta))
 
 	for i, m := range allMeta {
-		urlStr := util.CreateFilePathURL(m.Name)
-		urlStr = util.CreateURL("/view/", urlStr)
-
-		thumbURL := util.CreateFilePathURL(m.Name)
-		thumbURL = util.CreateURL("/thumbnail/", thumbURL)
+		urlStr := handler.CreateViewURL(m.Name)
+		thumbURL := handler.CreateThumbnailURL(m.Name)
 
 		hash := fnv.New64()
 		hash.Write([]byte(m.Name))
@@ -157,11 +152,11 @@ func Handler(c echo.Context) error {
 
 	data := browseData{
 		Title:            "Manga - Browsing",
-		Version:          handler.VersionString,
+		Version:          handler.CreateVersionString(),
 		FavoriteOnly:     favOnly,
 		SortBy:           string(sort),
 		SortOrder:        string(order),
-		RescanLibraryURL: RescanURL,
+		RescanLibraryURL: handler.CreateRescanURL(),
 		Items:            items,
 		Pages:            createPageItems(page, pageCount, *c.Request().URL),
 	}

@@ -14,13 +14,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"github.com/wutipong/mangaweb/handler"
-	"github.com/wutipong/mangaweb/util"
 )
 
 func init() {
 	var err error
 	viewTemplate, err = template.New("view.gohtml").
-		Funcs(util.HtmlTemplateFuncMap()).
+		Funcs(handler.HtmlTemplateFuncMap()).
 		ParseFiles(
 			"template/view.gohtml",
 			"template/header.gohtml",
@@ -82,7 +81,7 @@ func Handler(c echo.Context) error {
 
 	browseUrl := c.Request().Referer()
 	if browseUrl == "" {
-		util.CreateURL(fmt.Sprintf("/browse#%v", id))
+		browseUrl = handler.CreateBrowseURL(strconv.FormatUint(id, 16))
 	} else {
 		if u, e := url.Parse(browseUrl); e == nil {
 			u.Fragment = strconv.FormatUint(id, 10)
@@ -97,8 +96,8 @@ func Handler(c echo.Context) error {
 		ImageURLs:       createImageURLs(fileName, pages),
 		UpdateCoverURLs: createUpdateCoverURLs(fileName, pages),
 		Favorite:        m.Favorite,
-		DownloadURL:     createDownloadURL(fileName),
-		SetFavoriteURL:  createSetFavoriteURL(fileName),
+		DownloadURL:     handler.CreateDownloadURL(fileName),
+		SetFavoriteURL:  handler.CreateSetFavoriteURL(fileName),
 	}
 
 	builder := strings.Builder{}
@@ -114,10 +113,7 @@ func Handler(c echo.Context) error {
 func createImageURLs(file string, pages []Page) []string {
 	output := make([]string, len(pages))
 	for i, p := range pages {
-		filePart := util.CreateFilePathURL(file)
-		url := util.CreateURL(fmt.Sprintf("/get_image/%s?i=%v", filePart, p.Index))
-
-		output[i] = url
+		output[i] = handler.CreateGetImageURL(file, p.Index)
 	}
 	return output
 }
@@ -125,20 +121,7 @@ func createImageURLs(file string, pages []Page) []string {
 func createUpdateCoverURLs(file string, pages []Page) []string {
 	output := make([]string, len(pages))
 	for i, p := range pages {
-		filePart := util.CreateFilePathURL(file)
-		url := util.CreateURL(fmt.Sprintf("/update_cover/%s?i=%v", filePart, p.Index))
-
-		output[i] = url
+		output[i] = handler.CreateUpdateCoverURL(file, p.Index)
 	}
 	return output
-}
-
-func createDownloadURL(file string) string {
-	filePart := util.CreateFilePathURL(file)
-	return util.CreateURL(fmt.Sprintf("/download/%s", filePart))
-}
-
-func createSetFavoriteURL(file string) string {
-	filePart := util.CreateFilePathURL(file)
-	return util.CreateURL(fmt.Sprintf("/favorite/%s", filePart))
 }

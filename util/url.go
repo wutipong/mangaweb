@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	html_template "html/template"
-	text_template "text/template"
 )
 
 var prefix string
@@ -33,12 +32,6 @@ func CreateURL(p ...string) string {
 
 func HtmlTemplateFuncMap() html_template.FuncMap {
 	return html_template.FuncMap{
-		"CreateURL": CreateURL,
-	}
-}
-
-func TextTemplateFuncMap() text_template.FuncMap {
-	return text_template.FuncMap{
 		"CreateURL": CreateURL,
 	}
 }
