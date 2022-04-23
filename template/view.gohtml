@@ -8,7 +8,7 @@
                 <div class='carousel-item w-100 h-100 {{if eq $i 0}}active{{end}}'>
                     <div class='w-100 h-100 d-flex flex-col'>
                         <img class='ms-auto me-auto' loading='lazy' alt='page {{$i}}'
-                             src='{{$url}}&width=1600&height=1600'
+                             src='{{$url}}'
                              style='object-fit:contain;max-width:100%;max-height:100%'>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                         <i class='bi bi-download'></i>
                         Download Current Page
                     </a>
-                    <a class='dropdown-item' download href='{{.DownloadURL}}'>
+                    <a class='dropdown-item' download href='{{CreateDownloadURL .Name}}'>
                         <i class='bi bi-download'></i>
                         Download Manga
                     </a>
@@ -122,7 +122,7 @@
         const params = new URLSearchParams()
         params.set('favorite', (!favorite).toString())
 
-        const url = new URL({{.SetFavoriteURL}}, window.location.origin)
+        const url = new URL({{ CreateSetFavoriteURL .Name}}, window.location.origin)
         url.search = params.toString()
 
         $.ajax({
@@ -131,7 +131,7 @@
         }).done(function (data) {
             favorite = data.favorite
             updateFavoriteButton(favorite);
-            if(favorite) {
+            if (favorite) {
                 showToast('Favorite', 'The current manga is now your favorite.')
             } else {
                 showToast('Favorite', 'The current manga is no longer your favorite.')
