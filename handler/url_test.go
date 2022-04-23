@@ -2,7 +2,6 @@ package handler
 
 import (
 	"github.com/stretchr/testify/suite"
-	"github.com/wutipong/mangaweb/util"
 	"path/filepath"
 	"testing"
 )
@@ -27,7 +26,18 @@ func (suite *URLTestSuite) SetupSuite() {
 	})
 
 	suite.FilePath = filepath.Join("同人マンガ", "エロいまんが.zip")
-	util.SetPrefix("")
+}
+
+func (suite *URLTestSuite) TestCreateURL() {
+	u := CreateURL("/browse/?abcdefg")
+
+	suite.Assert().Equal("/browse/?abcdefg", u)
+}
+
+func (suite *URLTestSuite) TestCreateURLTwoParam() {
+	u := CreateURL("/browse", "abcdefg")
+
+	suite.Assert().Equal(u, "/browse/abcdefg")
 }
 
 func (suite *URLTestSuite) TestCreateViewURL() {

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"github.com/stretchr/testify/suite"
-	"github.com/wutipong/mangaweb/util"
 	"path/filepath"
 	"testing"
 )
@@ -13,8 +12,9 @@ type URLPrefixTestSuite struct {
 }
 
 func (suite *URLPrefixTestSuite) SetupSuite() {
-	util.SetPrefix("/manga")
+
 	Init(Options{
+		PathPrefix:        "/manga",
 		PathRoot:          "/",
 		PathBrowse:        "/browse",
 		PathView:          "/view",
@@ -28,8 +28,18 @@ func (suite *URLPrefixTestSuite) SetupSuite() {
 	})
 
 	suite.FilePath = filepath.Join("同人マンガ", "エロいまんが.zip")
+}
 
-	util.SetPrefix("/manga")
+func (suite *URLPrefixTestSuite) TestCreateURL() {
+	u := CreateURL("/browse/?abcdefg")
+
+	suite.Assert().Equal("/manga/browse/?abcdefg", u)
+}
+
+func (suite *URLPrefixTestSuite) TestCreateURLTwoParam() {
+	u := CreateURL("/browse", "abcdefg")
+
+	suite.Assert().Equal(u, "/manga/browse/abcdefg")
 }
 
 func (suite *URLPrefixTestSuite) TestCreateViewURL() {

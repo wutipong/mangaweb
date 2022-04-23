@@ -2,12 +2,18 @@ package handler
 
 import (
 	"html/template"
-
-	"github.com/wutipong/mangaweb/util"
 )
 
 func HtmlTemplateFuncMap() template.FuncMap {
 	return template.FuncMap{
-		"CreateURL": util.CreateURL,
+		"CreateURL":            CreateURL,
+		"CreateViewURL":        CreateViewURL,
+		"CreateThumbnailURL":   CreateThumbnailURL,
+		"CreateRescanURL":      CreateRescanURL,
+		"CreateGetImageURL":    CreateGetImageURL,
+		"CreateUpdateCoverURL": CreateUpdateCoverURL,
+		"CreateDownloadURL":    CreateDownloadURL,
+		"CreateSetFavoriteURL": CreateSetFavoriteURL,
+		"CreateBrowseURL":      CreateBrowseURL,
 	}
 }
