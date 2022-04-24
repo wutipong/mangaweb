@@ -1,6 +1,6 @@
 module github.com/wutipong/mangaweb
 
-go 1.17
+go 1.18
 
 require (
 	bitbucket.org/zombiezen/cardcpx v0.0.0-20150417151802-902f68ff43ef
@@ -12,7 +12,10 @@ require (
 
 require github.com/joho/godotenv v1.4.0
 
-require golang.org/x/image v0.0.0-20220302094943-723b81ca9867
+require (
+	golang.org/x/exp v0.0.0-20220414153411-bcd21879b8fd
+	golang.org/x/image v0.0.0-20220302094943-723b81ca9867
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/wutipong/mangaweb/tag"
+
 	"net/http"
 	"os"
 	"path"
@@ -16,8 +18,9 @@ import (
 	"github.com/wutipong/mangaweb/handler/browse"
 	"github.com/wutipong/mangaweb/handler/view"
 	"github.com/wutipong/mangaweb/meta"
-	"github.com/wutipong/mangaweb/meta/mongo"
+	metamongo "github.com/wutipong/mangaweb/meta/mongo"
 	"github.com/wutipong/mangaweb/scheduler"
+	tagmongo "github.com/wutipong/mangaweb/tag/mongo"
 )
 
 // Recreate the static resource file.
@@ -57,6 +60,7 @@ func main() {
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
 	dataPath := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
 	database := setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
+	dbName := setupFlag("database_name", "manga", "MANGAWEB_DB_NAME", "Specify the database name")
 	prefix := setupFlag("prefix", "", "MANGAWEB_PREFIX", "URL prefix")
 
 	flag.Parse()
@@ -66,7 +70,11 @@ func main() {
 	log.Infof("MangaWeb version:%s", versionString)
 
 	log.Infof("Data source Path: %s", *dataPath)
-	if err := mongo.Init(*database); err != nil {
+	if err := metamongo.Init(*database, *dbName); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := tagmongo.Init(*database, *dbName); err != nil {
 		log.Fatal(err)
 	}
 
@@ -85,7 +93,7 @@ func main() {
 		}))
 	}
 
-	scheduler.Init(newProvider)
+	scheduler.Init(newMetaProvider)
 
 	e.Pre(middleware.RemoveTrailingSlash())
 
@@ -102,7 +110,7 @@ func main() {
 
 func RegisterHandler(e *echo.Echo, pathPrefix string) {
 	handler.Init(handler.Options{
-		MetaProviderFactory: newProvider,
+		MetaProviderFactory: newMetaProvider,
 		VersionString:       versionString,
 		PathPrefix:          pathPrefix,
 		PathRoot:            pathRoot,
@@ -136,8 +144,15 @@ func root(c echo.Context) error {
 	return c.Redirect(http.StatusPermanentRedirect, handler.CreateBrowseURL(""))
 }
 
-func newProvider() (p meta.Provider, err error) {
-	mp, e := mongo.New()
+func newMetaProvider() (p meta.Provider, err error) {
+	mp, e := metamongo.New()
+	p = &mp
+	err = e
+	return
+}
+
+func newTagProvider() (p tag.Provider, err error) {
+	mp, e := tagmongo.New()
 	p = &mp
 	err = e
 	return
