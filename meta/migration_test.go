@@ -9,28 +9,28 @@ import (
 
 func TestDoMigrateFromZero(t *testing.T) {
 	funcs := make(map[int]MigrateFunction)
-	funcs[0] = func(m Item) (out Item, err error) {
+	funcs[0] = func(m Meta) (out Meta, err error) {
 		out = m
 		out.Name += "1"
 
 		return
 	}
 
-	funcs[1] = func(m Item) (out Item, err error) {
+	funcs[1] = func(m Meta) (out Meta, err error) {
 		out = m
 		out.Name += "2"
 
 		return
 	}
 
-	funcs[2] = func(m Item) (out Item, err error) {
+	funcs[2] = func(m Meta) (out Meta, err error) {
 		out = m
 		out.Name += "3"
 
 		return
 	}
 
-	m := Item{
+	m := Meta{
 		Name:    "",
 		Version: 0,
 	}
@@ -46,28 +46,28 @@ func TestDoMigrateFromZero(t *testing.T) {
 
 func TestDoMigrateFromNonZero(t *testing.T) {
 	funcs := make(map[int]MigrateFunction)
-	funcs[0] = func(m Item) (out Item, err error) {
+	funcs[0] = func(m Meta) (out Meta, err error) {
 		out = m
 		out.Name += "1"
 
 		return
 	}
 
-	funcs[1] = func(m Item) (out Item, err error) {
+	funcs[1] = func(m Meta) (out Meta, err error) {
 		out = m
 		out.Name += "2"
 
 		return
 	}
 
-	funcs[2] = func(m Item) (out Item, err error) {
+	funcs[2] = func(m Meta) (out Meta, err error) {
 		out = m
 		out.Name += "3"
 
 		return
 	}
 
-	m := Item{
+	m := Meta{
 		Name:    "",
 		Version: 1,
 	}
@@ -83,26 +83,26 @@ func TestDoMigrateFromNonZero(t *testing.T) {
 
 func TestDoMigrateWithError(t *testing.T) {
 	funcs := make(map[int]MigrateFunction)
-	funcs[0] = func(m Item) (out Item, err error) {
+	funcs[0] = func(m Meta) (out Meta, err error) {
 		out = m
 		out.Name += "1"
 
 		return
 	}
 
-	funcs[1] = func(m Item) (out Item, err error) {
+	funcs[1] = func(m Meta) (out Meta, err error) {
 		err = fmt.Errorf("test error")
 		return
 	}
 
-	funcs[2] = func(m Item) (out Item, err error) {
+	funcs[2] = func(m Meta) (out Meta, err error) {
 		out = m
 		out.Name += "3"
 
 		return
 	}
 
-	m := Item{
+	m := Meta{
 		Name:    "",
 		Version: 1,
 	}

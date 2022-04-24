@@ -63,7 +63,7 @@ type pageItem struct {
 	IsHiddenOnSmall bool
 }
 
-func createItems(allMeta []meta.Item) (allItems []item, err error) {
+func createItems(allMeta []meta.Meta) (allItems []item, err error) {
 	allItems = make([]item, len(allMeta))
 
 	for i, m := range allMeta {

@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-var metaProviderFactory meta.MetaProviderFactory
+var metaProviderFactory meta.ProviderFactory
 var scheduler *gocron.Scheduler
 
-func Init(factory meta.MetaProviderFactory) {
+func Init(factory meta.ProviderFactory) {
 	metaProviderFactory = factory
 
 	scheduler = gocron.NewScheduler(time.UTC)
