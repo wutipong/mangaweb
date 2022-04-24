@@ -25,7 +25,7 @@ type Options struct {
 	PathRescanLibrary string
 	PathTagFavorite   string
 	PathTagList       string
-	PathTagThumb      string
+	PathTagThumbnail  string
 }
 
 func Init(o Options) {
