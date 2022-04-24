@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"golang.org/x/exp/slices"
 
 	"github.com/wutipong/mangaweb/meta"
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,16 +12,17 @@ import (
 )
 
 var uri string
+var databaseName string
 
 const CollectionName = "items"
-const DatabaseName = "manga"
 
 type Provider struct {
 	client *mongo.Client
 }
 
-func Init(con string) error {
+func Init(con string, db string) error {
 	uri = con
+	databaseName = db
 
 	p, err := New()
 	if err != nil {
@@ -50,7 +52,7 @@ func New() (p Provider, err error) {
 }
 
 func (p *Provider) getItemCollection() *mongo.Collection {
-	return p.client.Database(DatabaseName).Collection(CollectionName)
+	return p.client.Database(databaseName).Collection(CollectionName)
 }
 
 func (p *Provider) IsItemExist(name string) bool {
@@ -201,9 +203,9 @@ func createFilter(criteria []meta.SearchCriteria) bson.D {
 
 func (p *Provider) NeedSetup() (b bool, err error) {
 	ctx := context.Background()
-	collectionNames, err := p.client.Database(DatabaseName).ListCollectionNames(ctx, bson.D{})
+	collectionNames, err := p.client.Database(databaseName).ListCollectionNames(ctx, bson.D{})
 
-	b = len(collectionNames) == 0
+	b = slices.Contains(collectionNames, CollectionName)
 
 	return
 }
