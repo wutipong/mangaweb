@@ -79,7 +79,7 @@ func GetImage(c echo.Context) error {
 	return c.Blob(http.StatusOK, "image/jpeg", output)
 }
 
-func OpenZipEntry(m meta.Item, index int) (content []byte, filename string, err error) {
+func OpenZipEntry(m meta.Meta, index int) (content []byte, filename string, err error) {
 	if len(m.FileIndices) == 0 {
 		err = fmt.Errorf("image file not found")
 	}

@@ -5,7 +5,7 @@ import "github.com/wutipong/mangaweb/meta"
 var options Options
 
 type Options struct {
-	MetaProviderFactory meta.MetaProviderFactory
+	MetaProviderFactory meta.ProviderFactory
 	VersionString       string
 
 	PathPrefix        string

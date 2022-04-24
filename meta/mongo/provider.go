@@ -59,14 +59,14 @@ func (p *Provider) IsItemExist(name string) bool {
 	ctx := context.Background()
 	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
-	var item meta.Item
+	var item meta.Meta
 
 	err := result.Decode(&item)
 
 	return err != nil
 }
 
-func (p *Provider) Write(i meta.Item) error {
+func (p *Provider) Write(i meta.Meta) error {
 	ctx := context.Background()
 
 	_, err := p.getCollection().UpdateOne(
@@ -75,14 +75,14 @@ func (p *Provider) Write(i meta.Item) error {
 	return err
 }
 
-func (p *Provider) Delete(i meta.Item) error {
+func (p *Provider) Delete(i meta.Meta) error {
 	ctx := context.Background()
 	_, err := p.getCollection().DeleteOne(ctx, bson.D{{Key: "name", Value: i.Name}})
 
 	return err
 }
 
-func (p *Provider) Read(name string) (i meta.Item, err error) {
+func (p *Provider) Read(name string) (i meta.Meta, err error) {
 	ctx := context.Background()
 	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
@@ -90,7 +90,7 @@ func (p *Provider) Read(name string) (i meta.Item, err error) {
 
 	return
 }
-func (p *Provider) Open(name string) (i meta.Item, err error) {
+func (p *Provider) Open(name string) (i meta.Meta, err error) {
 	ctx := context.Background()
 	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
@@ -99,7 +99,7 @@ func (p *Provider) Open(name string) (i meta.Item, err error) {
 	return
 }
 
-func (p *Provider) ReadAll() (items []meta.Item, err error) {
+func (p *Provider) ReadAll() (items []meta.Meta, err error) {
 	ctx := context.Background()
 	cursor, err := p.getCollection().Find(ctx, bson.D{})
 	if err != nil {
@@ -107,7 +107,7 @@ func (p *Provider) ReadAll() (items []meta.Item, err error) {
 	}
 
 	for cursor.Next(ctx) {
-		i := meta.Item{}
+		i := meta.Meta{}
 		err = cursor.Decode(&i)
 		if err != nil {
 			return
@@ -119,7 +119,7 @@ func (p *Provider) ReadAll() (items []meta.Item, err error) {
 	return
 }
 
-func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, order meta.SortOrder, pageSize int, page int) (items []meta.Item, err error) {
+func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, order meta.SortOrder, pageSize int, page int) (items []meta.Meta, err error) {
 	ctx := context.Background()
 
 	filter := createFilter(criteria)
@@ -149,7 +149,7 @@ func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, o
 	}
 
 	for cursor.Next(ctx) {
-		i := meta.Item{}
+		i := meta.Meta{}
 		err = cursor.Decode(&i)
 		if err != nil {
 			return
