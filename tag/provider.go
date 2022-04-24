@@ -8,3 +8,5 @@ type Provider interface {
 	ReadAll() (tags []Tag, err error)
 	Write(t Tag) error
 }
+
+type ProviderFactory func() (p Provider, err error)

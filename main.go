@@ -93,7 +93,10 @@ func main() {
 		}))
 	}
 
-	scheduler.Init(newMetaProvider)
+	scheduler.Init(scheduler.Options{
+		MetaProviderFactory: newMetaProvider,
+		TagProviderFactory:  newTagProvider,
+	})
 
 	e.Pre(middleware.RemoveTrailingSlash())
 
