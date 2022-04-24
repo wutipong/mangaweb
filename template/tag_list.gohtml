@@ -3,7 +3,7 @@
 <body>
 <ul>
 {{range .Tags}}
-    <li> {{.Name}}</li>
+    <li> <a href='{{CreateBrowseTagURL .Name}}'>{{.Name}}</a></li>
 {{end}}
 </ul>
 </body>

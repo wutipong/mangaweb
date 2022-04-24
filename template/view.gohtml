@@ -51,7 +51,7 @@
                 </a>
                 <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
                     {{range .Tags}}
-                    <a class='dropdown-item' href="#">
+                    <a class='dropdown-item' href='{{CreateBrowseTagURL .}}'>
                         {{.}}
                     </a>
                     {{end}}

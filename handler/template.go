@@ -17,5 +17,6 @@ func HtmlTemplateFuncMap() template.FuncMap {
 		"CreateBrowseURL":         CreateBrowseURL,
 		"CreateSetTagFavoriteURL": CreateSetTagFavoriteURL,
 		"CreateTagListURL":        CreateTagListURL,
+		"CreateBrowseTagURL":      CreateBrowseTagURL,
 	}
 }
