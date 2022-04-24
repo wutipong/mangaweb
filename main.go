@@ -114,6 +114,7 @@ func main() {
 func RegisterHandler(e *echo.Echo, pathPrefix string) {
 	handler.Init(handler.Options{
 		MetaProviderFactory: newMetaProvider,
+		TagProviderFactory:  newTagProvider,
 		VersionString:       versionString,
 		PathPrefix:          pathPrefix,
 		PathRoot:            pathRoot,
@@ -130,6 +131,7 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 	// Routes
 	e.GET(pathRoot, root)
 	e.GET(pathBrowse, browse.Handler)
+	e.GET(path.Join(pathBrowse, "*"), browse.Handler)
 	e.GET(path.Join(pathView, "*"), view.Handler)
 	e.GET(path.Join(pathGetImage, "*"), handler.GetImage)
 	e.GET(path.Join(pathUpdateCover, "*"), handler.UpdateCover)

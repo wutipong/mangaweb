@@ -83,6 +83,7 @@ func createItems(allMeta []meta.Meta) (allItems []item, err error) {
 }
 
 func Handler(c echo.Context) error {
+	tag := c.Param("*")
 	p, err := handler.CreateMetaProvider()
 	if err != nil {
 		return err
@@ -112,6 +113,13 @@ func Handler(c echo.Context) error {
 		searchCriteria = append(searchCriteria, meta.SearchCriteria{
 			Field: meta.SearchFieldFavorite,
 			Value: true,
+		})
+	}
+
+	if tag != "" {
+		searchCriteria = append(searchCriteria, meta.SearchCriteria{
+			Field: meta.SearchFieldTag,
+			Value: tag,
 		})
 	}
 

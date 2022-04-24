@@ -1,11 +1,15 @@
 package handler
 
-import "github.com/wutipong/mangaweb/meta"
+import (
+	"github.com/wutipong/mangaweb/meta"
+	"github.com/wutipong/mangaweb/tag"
+)
 
 var options Options
 
 type Options struct {
 	MetaProviderFactory meta.ProviderFactory
+	TagProviderFactory  tag.ProviderFactory
 	VersionString       string
 
 	PathPrefix        string
