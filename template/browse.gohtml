@@ -37,7 +37,7 @@
 <body>
 <nav class='navbar navbar-dark bg-dark fixed-top navbar-expand-lg'>
     <div class='container-fluid'>
-        <span class='navbar-brand text-truncate'>Browse</span>
+        <span class='navbar-brand text-truncate'>{{.Title}}</span>
 
         <button class='navbar-toggler' type='button' data-bs-toggle='collapse'
                 data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent'
@@ -49,9 +49,23 @@
         <div class='collapse navbar-collapse' id='navbarSupportedContent'>
             <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
                 <li class='nav-item dropdown'>
+                    <a class='nav-link dropdown-toggle' href='#' id='navbarBrowseDropdown'
+                       role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        Browse
+                    </a>
+                    <div class='dropdown-menu' aria-labelledby='navbarBrowseDropdown'>
+                        <a class='dropdown-item' type='button' href='{{CreateBrowseURL ""}}'>
+                            <i class='bi bi-list-ul'></i> All items
+                        </a>
+
+                        <a class='dropdown-item' type='button' href='{{CreateBrowseURL ""}}'>
+                            <i class="bi bi-tags-fill"></i> Tag list
+                        </a>
+                    </div>
+                </li>
+                <li class='nav-item dropdown'>
                     <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown'
                        role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-
                         Sort By
                     </a>
                     <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
@@ -106,6 +120,14 @@
                 </li>
                 <li class='nav-item'>
                     <a class='nav-link' href='#' data-bs-toggle='modal' data-bs-target='#aboutModal'>About</a>
+                </li>
+            </ul>
+            <ul class='navbar-nav mb-2 mb-lg-0 flex-row  {{if eq .Tag "" }}d-none{{end}}'>
+                <li class='nav-item'>
+                    <a id='favorite-btn' class='btn {{if .TagFavorite}}btn-pink active{{end}}'
+                       onclick='toggleFavorite(); return false;'>
+                        <i class='bi bi-star-fill'></i> Favorite tag
+                    </a>
                 </li>
             </ul>
             <form class='d-flex'>
@@ -193,6 +215,7 @@
 <script>
 
     const checkedClass = 'dropdown-item-checked'
+    let favorite = {{.TagFavorite}};
 
     $(function () {
         let url = window.location
@@ -256,6 +279,38 @@
             dataType: 'json',
         }).done(function (data) {
             showToast('Re-scan Library', 'Library re-scanning in progress. Please refresh after a few minutes.')
+        })
+    }
+
+    function updateFavoriteButton(favorite) {
+        const btn = $('#favorite-btn')
+        if (favorite) {
+            btn.removeClass()
+            btn.addClass('btn btn-pink active')
+        } else {
+            btn.removeClass()
+            btn.addClass('btn')
+        }
+    }
+
+    function toggleFavorite() {
+        const params = new URLSearchParams()
+        params.set('favorite', (!favorite).toString())
+
+        const url = new URL({{ CreateSetTagFavoriteURL .Tag}}, window.location.origin)
+        url.search = params.toString()
+
+        $.ajax({
+            url: url.toString(),
+            dataType: 'json',
+        }).done(function (data) {
+            favorite = data.favorite
+            updateFavoriteButton(favorite);
+            if (favorite) {
+                showToast('Favorite', 'The tag "{{.Tag}}" is now your favorite.')
+            } else {
+                showToast('Favorite', 'The tag "{{.Tag}}" is no longer your favorite.')
+            }
         })
     }
 
