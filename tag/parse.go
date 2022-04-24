@@ -4,13 +4,19 @@ import (
 	"regexp"
 )
 
-func ParseTag(name string) []string {
-	const pattern = "\\[(.*?)\\]"
+var regex *regexp.Regexp
 
-	regex, err := regexp.Compile(pattern)
+func init() {
+	const pattern = "\\[(.*?)\\]"
+	var err error
+	regex, err = regexp.Compile(pattern)
+
 	if err != nil {
 		panic(err)
 	}
+}
+
+func ParseTag(name string) []string {
 	matches := regex.FindAllStringSubmatch(name, -1)
 	output := make([]string, len(matches))
 
