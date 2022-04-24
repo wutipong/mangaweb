@@ -38,7 +38,7 @@ func Init(con string, db string) error {
 	}
 
 	ctx := context.Background()
-	p.getItemCollection().Indexes().CreateOne(ctx, model)
+	p.getCollection().Indexes().CreateOne(ctx, model)
 
 	return nil
 }
@@ -51,13 +51,13 @@ func New() (p Provider, err error) {
 	return
 }
 
-func (p *Provider) getItemCollection() *mongo.Collection {
+func (p *Provider) getCollection() *mongo.Collection {
 	return p.client.Database(databaseName).Collection(CollectionName)
 }
 
 func (p *Provider) IsItemExist(name string) bool {
 	ctx := context.Background()
-	result := p.getItemCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
+	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
 	var item meta.Item
 
@@ -69,7 +69,7 @@ func (p *Provider) IsItemExist(name string) bool {
 func (p *Provider) Write(i meta.Item) error {
 	ctx := context.Background()
 
-	_, err := p.getItemCollection().UpdateOne(
+	_, err := p.getCollection().UpdateOne(
 		ctx, bson.D{{Key: "name", Value: i.Name}}, bson.M{"$set": i}, options.Update().SetUpsert(true))
 
 	return err
@@ -77,14 +77,14 @@ func (p *Provider) Write(i meta.Item) error {
 
 func (p *Provider) Delete(i meta.Item) error {
 	ctx := context.Background()
-	_, err := p.getItemCollection().DeleteOne(ctx, bson.D{{Key: "name", Value: i.Name}})
+	_, err := p.getCollection().DeleteOne(ctx, bson.D{{Key: "name", Value: i.Name}})
 
 	return err
 }
 
 func (p *Provider) Read(name string) (i meta.Item, err error) {
 	ctx := context.Background()
-	result := p.getItemCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
+	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
 	err = result.Decode(&i)
 
@@ -92,7 +92,7 @@ func (p *Provider) Read(name string) (i meta.Item, err error) {
 }
 func (p *Provider) Open(name string) (i meta.Item, err error) {
 	ctx := context.Background()
-	result := p.getItemCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
+	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
 	err = result.Decode(&i)
 
@@ -101,7 +101,7 @@ func (p *Provider) Open(name string) (i meta.Item, err error) {
 
 func (p *Provider) ReadAll() (items []meta.Item, err error) {
 	ctx := context.Background()
-	cursor, err := p.getItemCollection().Find(ctx, bson.D{})
+	cursor, err := p.getCollection().Find(ctx, bson.D{})
 	if err != nil {
 		return
 	}
@@ -143,7 +143,7 @@ func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, o
 
 	opts.SetSkip(int64(pageSize * page)).SetLimit(int64(pageSize))
 
-	cursor, err := p.getItemCollection().Find(ctx, filter, opts)
+	cursor, err := p.getCollection().Find(ctx, filter, opts)
 	if err != nil {
 		return
 	}
@@ -167,7 +167,7 @@ func (p *Provider) Count(criteria []meta.SearchCriteria) (count int64, err error
 	opts := options.Count()
 
 	filter := createFilter(criteria)
-	count, err = p.getItemCollection().CountDocuments(ctx, filter, opts)
+	count, err = p.getCollection().CountDocuments(ctx, filter, opts)
 
 	return
 }
