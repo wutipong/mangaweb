@@ -187,13 +187,31 @@ func createFilter(criteria []meta.SearchCriteria) bson.D {
 				name := c.Value.(string)
 				regex := createNameRegex(name)
 
-				output = append(output, bson.E{"name", regex})
+				output = append(output, bson.E{Key: "name", Value: regex})
 				break
 			}
 
 		case meta.SearchFieldFavorite:
 			{
-				output = append(output, bson.E{"favorite", c.Value})
+				output = append(output, bson.E{Key: "favorite", Value: c.Value})
+				break
+			}
+
+		case meta.SearchFieldTag:
+			{
+				output = append(
+					output,
+					bson.E{
+						Key: "tags",
+						Value: bson.E{
+							Key: "$elemMatch",
+							Value: bson.E{
+								Key:   "$eq",
+								Value: c.Value,
+							},
+						},
+					},
+				)
 				break
 			}
 		}

@@ -7,6 +7,7 @@ type SortOrder string
 const (
 	SearchFieldName     = SearchField("name")
 	SearchFieldFavorite = SearchField("favorite")
+	SearchFieldTag      = SearchField("tag")
 
 	SortFieldName       = SortField("name")
 	SortFieldCreateTime = SortField("createTime")
