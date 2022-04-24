@@ -6,7 +6,7 @@ import (
 )
 
 func ScanLibrary() error {
-	provider, err := metaProviderFactory()
+	provider, err := createMetaProvider()
 
 	if err != nil {
 		return err
