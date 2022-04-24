@@ -87,3 +87,7 @@ func CreateSetTagFavoriteURL(filepath string) string {
 
 	return urlStr
 }
+
+func CreateTagListURL() string {
+	return CreateURL(options.PathTagList)
+}

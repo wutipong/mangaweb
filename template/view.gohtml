@@ -46,6 +46,20 @@
             <li class='nav-item dropdown'>
                 <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown'
                    role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                    <span class='d-inline d-sm-none'><i class="bi bi-tags-fill"></i></span>
+                    <span class='d-none d-sm-inline'><i class="bi bi-tags-fill"></i> Tags</span>
+                </a>
+                <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
+                    {{range .Tags}}
+                    <a class='dropdown-item' href="#">
+                        {{.}}
+                    </a>
+                    {{end}}
+                </div>
+            </li>
+            <li class='nav-item dropdown'>
+                <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown'
+                   role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                     <span class='d-inline d-sm-none'><i class='bi bi-list'></i></span>
                     <span class='d-none d-sm-inline'><i class='bi bi-list'></i> Menu</span>
                 </a>
