@@ -1,6 +1,7 @@
-package handler
+package view
 
 import (
+	"github.com/wutipong/mangaweb/handler"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -8,15 +9,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type setTagFavoriteResponse struct {
+type setFavoriteResponse struct {
 	Favorite bool `json:"favorite"`
 }
 
-func SetTagFavoriteHandler(c echo.Context) error {
+func SetFavoriteHandler(c echo.Context) error {
 	filename := c.Param("*")
 	filename = filepath.FromSlash(filename)
 
-	db, err := CreateTagProvider()
+	db, err := handler.CreateMetaProvider()
 	if err != nil {
 		return err
 	}
@@ -34,7 +35,7 @@ func SetTagFavoriteHandler(c echo.Context) error {
 		}
 	}
 
-	response := setTagFavoriteResponse{
+	response := setFavoriteResponse{
 		Favorite: m.Favorite,
 	}
 	return c.JSON(http.StatusOK, response)
