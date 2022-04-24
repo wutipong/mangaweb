@@ -52,6 +52,7 @@ const (
 	pathRescanLibrary = "/rescan_library"
 	pathTagFavorite   = "/tag_favorite"
 	pathTagList       = "/tag_list"
+	pathTagThumb      = "/tag_thumb"
 )
 
 func main() {
@@ -132,6 +133,7 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 		PathRescanLibrary:   pathRescanLibrary,
 		PathTagFavorite:     pathTagFavorite,
 		PathTagList:         pathTagList,
+		PathTagThumb:        pathTagThumb,
 	})
 	// Routes
 	e.GET(pathRoot, root)
@@ -147,6 +149,7 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 	e.GET(pathRescanLibrary, handler.RescanLibraryHandler)
 	e.GET(path.Join(pathTagFavorite, "*"), handler.SetTagFavoriteHandler)
 	e.GET(pathTagList, handlertag.Handler)
+	e.GET(path.Join(pathTagThumb, "*"), handlertag.ThumbnailHandler)
 
 	e.Static(pathStatic, "static")
 }
