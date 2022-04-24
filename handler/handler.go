@@ -23,6 +23,7 @@ type Options struct {
 	PathFavorite      string
 	PathDownload      string
 	PathRescanLibrary string
+	PathTagFavorite   string
 }
 
 func Init(o Options) {
@@ -31,6 +32,10 @@ func Init(o Options) {
 
 func CreateMetaProvider() (provider meta.Provider, err error) {
 	return options.MetaProviderFactory()
+}
+
+func CreateTagProvider() (provider tag.Provider, err error) {
+	return options.TagProviderFactory()
 }
 
 func CreateVersionString() string {

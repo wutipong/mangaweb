@@ -49,6 +49,7 @@ const (
 	pathFavorite      = "/favorite"
 	pathDownload      = "/download"
 	pathRescanLibrary = "/rescan_library"
+	pathTagFavorite   = "/tag_favorite"
 )
 
 func main() {
@@ -127,6 +128,7 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 		PathFavorite:        pathFavorite,
 		PathDownload:        pathDownload,
 		PathRescanLibrary:   pathRescanLibrary,
+		PathTagFavorite:     pathTagFavorite,
 	})
 	// Routes
 	e.GET(pathRoot, root)
@@ -140,6 +142,7 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 	e.GET(path.Join(pathFavorite, "*"), handler.SetFavoriteHandler)
 	e.GET(path.Join(pathDownload, "*"), handler.Download)
 	e.GET(pathRescanLibrary, handler.RescanLibraryHandler)
+	e.GET(path.Join(pathTagFavorite, "*"), handler.SetTagFavoriteHandler)
 
 	e.Static(pathStatic, "static")
 }

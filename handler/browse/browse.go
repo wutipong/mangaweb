@@ -1,6 +1,7 @@
 package browse
 
 import (
+	"fmt"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -42,6 +43,8 @@ type browseData struct {
 	FavoriteOnly bool
 	SortBy       string
 	SortOrder    string
+	Tag          string
+	TagFavorite  bool
 
 	Items []item
 	Pages []pageItem
@@ -83,7 +86,7 @@ func createItems(allMeta []meta.Meta) (allItems []item, err error) {
 }
 
 func Handler(c echo.Context) error {
-	tag := c.Param("*")
+	tagStr := c.Param("*")
 	p, err := handler.CreateMetaProvider()
 	if err != nil {
 		return err
@@ -116,10 +119,10 @@ func Handler(c echo.Context) error {
 		})
 	}
 
-	if tag != "" {
+	if tagStr != "" {
 		searchCriteria = append(searchCriteria, meta.SearchCriteria{
 			Field: meta.SearchFieldTag,
-			Value: tag,
+			Value: tagStr,
 		})
 	}
 
@@ -151,13 +154,30 @@ func Handler(c echo.Context) error {
 	}
 
 	data := browseData{
-		Title:        "Manga - Browsing",
+		Title:        "Browse",
 		Version:      handler.CreateVersionString(),
 		FavoriteOnly: favOnly,
 		SortBy:       string(sort),
 		SortOrder:    string(order),
 		Items:        items,
 		Pages:        createPageItems(page, pageCount, *c.Request().URL),
+	}
+
+	if tagStr != "" {
+		data.Title = fmt.Sprintf("Browse - %s", tagStr)
+		data.Tag = tagStr
+
+		tagProvider, err := handler.CreateTagProvider()
+		if err != nil {
+			return err
+		}
+
+		tagObj, err := tagProvider.Read(tagStr)
+		if err != nil {
+			return err
+		}
+
+		data.TagFavorite = tagObj.Favorite
 	}
 
 	builder := strings.Builder{}
