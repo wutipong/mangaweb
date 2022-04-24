@@ -45,6 +45,7 @@ type viewData struct {
 	UpdateCoverURLs []string
 	StartIndex      int64
 	Favorite        bool
+	Tags            []string
 }
 
 func Handler(c echo.Context) error {
@@ -91,6 +92,24 @@ func Handler(c echo.Context) error {
 			browseUrl = u.String()
 		}
 	}
+	tagProvider, err := handler.CreateTagProvider()
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	tags := make([]string, 0)
+	for _, tagStr := range m.Tags {
+		t, err := tagProvider.Read(tagStr)
+		if err != nil {
+			log.Fatal(err)
+			return err
+		}
+
+		if !t.Hidden {
+			tags = append(tags, t.Name)
+		}
+	}
 
 	data := viewData{
 		Name:            fileName,
@@ -99,6 +118,7 @@ func Handler(c echo.Context) error {
 		ImageURLs:       createImageURLs(fileName, pages),
 		UpdateCoverURLs: createUpdateCoverURLs(fileName, pages),
 		Favorite:        m.Favorite,
+		Tags:            tags,
 	}
 
 	builder := strings.Builder{}

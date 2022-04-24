@@ -16,6 +16,7 @@ import (
 
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/handler/browse"
+	handlertag "github.com/wutipong/mangaweb/handler/tag"
 	"github.com/wutipong/mangaweb/handler/view"
 	"github.com/wutipong/mangaweb/meta"
 	metamongo "github.com/wutipong/mangaweb/meta/mongo"
@@ -50,6 +51,7 @@ const (
 	pathDownload      = "/download"
 	pathRescanLibrary = "/rescan_library"
 	pathTagFavorite   = "/tag_favorite"
+	pathTagList       = "/tag_list"
 )
 
 func main() {
@@ -129,6 +131,7 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 		PathDownload:        pathDownload,
 		PathRescanLibrary:   pathRescanLibrary,
 		PathTagFavorite:     pathTagFavorite,
+		PathTagList:         pathTagList,
 	})
 	// Routes
 	e.GET(pathRoot, root)
@@ -143,6 +146,7 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 	e.GET(path.Join(pathDownload, "*"), handler.Download)
 	e.GET(pathRescanLibrary, handler.RescanLibraryHandler)
 	e.GET(path.Join(pathTagFavorite, "*"), handler.SetTagFavoriteHandler)
+	e.GET(pathTagList, handlertag.Handler)
 
 	e.Static(pathStatic, "static")
 }
