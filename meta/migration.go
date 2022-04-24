@@ -9,6 +9,7 @@ func init() {
 }
 
 func migrateV0(m Meta) (out Meta, err error) {
+	m.PopulateTags()
 	out = m
 	return
 }

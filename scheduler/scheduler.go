@@ -29,6 +29,7 @@ func Init(options Options) {
 		log.Info("Update tag list.")
 		UpdateTags()
 	})
+	ScheduleMigrateMeta()
 }
 
 func Start() {
