@@ -96,3 +96,10 @@ func CreateSetTagFavoriteURL(filepath string) string {
 func CreateTagListURL() string {
 	return CreateURL(options.PathTagList)
 }
+
+func CreateTagThumbnailURL(filepath string) string {
+	urlStr := CreateFilePathURL(filepath)
+	urlStr = CreateURL(options.PathTagThumbnail, urlStr)
+
+	return urlStr
+}

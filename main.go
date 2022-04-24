@@ -133,7 +133,7 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 		PathRescanLibrary:   pathRescanLibrary,
 		PathTagFavorite:     pathTagFavorite,
 		PathTagList:         pathTagList,
-		PathTagThumb:        pathTagThumb,
+		PathTagThumbnail:    pathTagThumb,
 	})
 	// Routes
 	e.GET(pathRoot, root)
