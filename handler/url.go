@@ -81,6 +81,11 @@ func CreateBrowseURL(id string) string {
 	return CreateURL(fmt.Sprintf("%s#%v", options.PathBrowse, id))
 }
 
+func CreateBrowseTagURL(tag string) string {
+	tagUrl := CreateFilePathURL(tag)
+	return CreateURL(options.PathBrowse, tagUrl)
+}
+
 func CreateSetTagFavoriteURL(filepath string) string {
 	urlStr := CreateFilePathURL(filepath)
 	urlStr = CreateURL(options.PathTagFavorite, urlStr)
