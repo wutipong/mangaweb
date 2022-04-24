@@ -3,6 +3,7 @@ package meta
 import (
 	"archive/zip"
 	"fmt"
+	"github.com/wutipong/mangaweb/tag"
 	"io"
 	"io/fs"
 	"os"
@@ -26,16 +27,17 @@ type Meta struct {
 	FileIndices []int     `json:"file_indices" bson:"file_indices"`
 	Thumbnail   []byte    `json:"thumbnail" db:"thumbnail" bson:"thumbnail"`
 	IsRead      bool      `json:"is_read" db:"read" bson:"is_read"`
-	Version     int       `json:"version" db:"version" bson:"version"`
+	Tags        []string  `json:"tags" db:"tags" bson:"tags"`
+
+	Version int `json:"version" db:"version" bson:"version"`
 }
 
 type ProviderFactory func() (p Provider, err error)
 
 //CurrentVersion the current version of `Meta` structure.
-const CurrentVersion = 0
+const CurrentVersion = 1
 
 func NewItem(name string) (i Meta, err error) {
-
 	createTime := time.Now()
 
 	if stat, e := fs.Stat(os.DirFS(BaseDirectory), name); e == nil {
@@ -51,6 +53,7 @@ func NewItem(name string) (i Meta, err error) {
 
 	i.GenerateImageIndices()
 	i.GenerateThumbnail(0)
+	i.PopulateTags()
 
 	return
 }
@@ -137,4 +140,8 @@ func (m *Meta) GenerateImageIndices() error {
 	}
 
 	return nil
+}
+
+func (m *Meta) PopulateTags() {
+	m.Tags = tag.ParseTag(m.Name)
 }
