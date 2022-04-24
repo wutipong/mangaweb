@@ -203,13 +203,10 @@ func createFilter(criteria []meta.SearchCriteria) bson.D {
 					output,
 					bson.E{
 						Key: "tags",
-						Value: bson.E{
-							Key: "$elemMatch",
-							Value: bson.E{
-								Key:   "$eq",
-								Value: c.Value,
-							},
-						},
+						Value: bson.D{{
+							Key:   "$eq",
+							Value: c.Value,
+						}},
 					},
 				)
 				break
