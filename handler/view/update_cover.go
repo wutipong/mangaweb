@@ -1,6 +1,7 @@
-package handler
+package view
 
 import (
+	"github.com/wutipong/mangaweb/handler"
 	_ "image/png"
 	"net/http"
 	"path/filepath"
@@ -14,7 +15,7 @@ func UpdateCover(c echo.Context) error {
 	filename := c.Param("*")
 	filename = filepath.FromSlash(filename)
 
-	provider, err := CreateMetaProvider()
+	provider, err := handler.CreateMetaProvider()
 	if err != nil {
 		return err
 	}
