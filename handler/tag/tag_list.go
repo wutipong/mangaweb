@@ -95,7 +95,7 @@ func TagListHandler(c echo.Context) error {
 	tagData := createItems(allTags, favOnly)
 
 	data := PageData{
-		Title: "Manga - Tag List",
+		Title: "Tag list",
 		Tags:  tagData,
 	}
 
