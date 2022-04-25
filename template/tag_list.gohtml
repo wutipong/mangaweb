@@ -42,18 +42,22 @@
             <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
                 <li class='nav-item dropdown'>
                     <a class='nav-link dropdown-toggle' href='#' id='navbarBrowseDropdown'
-                       role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                       role='button' data-bs-toggle='dropdown' aria-expanded='false'>
                         Browse
                     </a>
-                    <div class='dropdown-menu' aria-labelledby='navbarBrowseDropdown'>
-                        <a class='dropdown-item' type='button' href='{{CreateBrowseURL ""}}'>
-                            <i class='bi bi-list-ul'></i> All items
-                        </a>
+                    <ul class='dropdown-menu' aria-labelledby='navbarBrowseDropdown'>
+                        <li>
+                            <a class='dropdown-item' href='{{CreateBrowseURL ""}}'>
+                                <i class='bi bi-list-ul'></i> All items
+                            </a>
+                        </li>
 
-                        <a class='dropdown-item' type='button' href='{{CreateTagListURL}}'>
-                            <i class="bi bi-tags-fill"></i> Tag list
-                        </a>
-                    </div>
+                        <li>
+                            <a class='dropdown-item' href='{{CreateTagListURL}}'>
+                                <i class="bi bi-tags-fill"></i> Tag list
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
@@ -69,3 +73,5 @@
 </div>
 
 </body>
+
+<script src='{{CreateURL "/static/index.js"}}'></script>
