@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -66,10 +67,14 @@ func createItems(allTags []tag.Tag, favoriteOnly bool) []ItemData {
 			}
 		}
 	}
+
+	sort.Slice(allItems, func(i, j int) bool {
+		return allItems[i].Name < allItems[j].Name
+	})
 	return allItems
 }
 
-func Handler(c echo.Context) error {
+func TagListHandler(c echo.Context) error {
 	favOnly := false
 	if f, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
 		favOnly = f
