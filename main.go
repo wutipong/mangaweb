@@ -148,13 +148,13 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 	e.GET(path.Join(pathDownload, "*"), view.Download)
 	e.GET(pathRescanLibrary, handler.RescanLibraryHandler)
 	e.GET(path.Join(pathTagFavorite, "*"), handlertag.SetFavoriteHandler)
-	e.GET(pathTagList, handlertag.Handler)
+	e.GET(pathTagList, handlertag.TagListHandler)
 	e.GET(path.Join(pathTagThumb, "*"), handlertag.ThumbnailHandler)
 
 	e.Static(pathStatic, "static")
 }
 
-// Handler
+// TagListHandler
 func root(c echo.Context) error {
 	return c.Redirect(http.StatusPermanentRedirect, handler.CreateBrowseURL(""))
 }
