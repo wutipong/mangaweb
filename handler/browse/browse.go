@@ -154,7 +154,7 @@ func Handler(c echo.Context) error {
 	}
 
 	data := browseData{
-		Title:        "Browse",
+		Title:        "Browse - All items",
 		Version:      handler.CreateVersionString(),
 		FavoriteOnly: favOnly,
 		SortBy:       string(sort),
