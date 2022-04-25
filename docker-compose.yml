@@ -11,7 +11,7 @@ services:
         buildno: 1
     environment:
       MANGAWEB_DB: "mongodb://root:password@mongo"
-      MANGAWEB_DATA_PATH: /data
+      MANGAWEB_DATA_PATH: "/data"
     volumes:
       - ./data:/data
     ports:
@@ -24,24 +24,23 @@ services:
     networks:
       - backend
     ports:
-      - 27017:27017
+      - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: "root"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
 
   mongo-express:
     image: mongo-express
     ports:
-      - 8081:8081
+      - "8081:8081"
     networks:
       - backend
     environment:
-      ME_CONFIG_BASICAUTH_USERNAME: root
-      ME_CONFIG_BASICAUTH_PASSWORD: password
+      ME_CONFIG_BASICAUTH_USERNAME: "root"
+      ME_CONFIG_BASICAUTH_PASSWORD: "password"
       ME_CONFIG_MONGODB_URL: "mongodb://root:password@mongo:27017/"
     depends_on:
       - mongo
-    restart: unless-stopped
 
 networks:
   backend:
