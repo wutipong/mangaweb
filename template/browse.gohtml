@@ -102,7 +102,7 @@
                     </a>
                     <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
                         <button class='dropdown-item {{if .FavoriteOnly}} active {{end}}' type='button'
-                                id='filter-favorite' onclick='toggleFavorite()'>
+                                id='filter-favorite' onclick='toggleFavoriteFilter()'>
                             <i class='bi bi-star-fill'></i> Favorite
                         </button>
                     </div>
@@ -252,12 +252,12 @@
         url.search = searchParams.toString()
     }
 
-    function toggleFavorite() {
+    function toggleFavoriteFilter() {
         let url = window.location
         let searchParams = new URLSearchParams(url.search)
 
         let isFavorite = {{.FavoriteOnly}}
-        searchParams.set('favorite', !isFavorite)
+        searchParams.set('favorite', (!isFavorite).toString())
 
         url.search = searchParams.toString()
     }
