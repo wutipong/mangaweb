@@ -1,47 +1,52 @@
 package view
 
 import (
+	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/handler"
 	_ "image/png"
 	"net/http"
 	"path/filepath"
 	"strconv"
-
-	"github.com/labstack/echo/v4"
 )
 
 // UpdateCover a handler to update the cover to specific image
-func UpdateCover(c echo.Context) error {
-	filename := c.Param("*")
-	filename = filepath.FromSlash(filename)
+func UpdateCover(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	item := handler.ParseParam(params, "item")
+	item = filepath.FromSlash(item)
+
+	query := r.URL.Query()
 
 	provider, err := handler.CreateMetaProvider()
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 	defer provider.Close()
 
 	var index = 0
-	if i, err := strconv.Atoi(c.QueryParam("i")); err == nil {
+	if i, err := strconv.Atoi(query.Get("i")); err == nil {
 		index = i
 	}
 
-	m, err := provider.Read(filename)
+	m, err := provider.Read(item)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	entryIndex := m.FileIndices[index]
 	err = m.GenerateThumbnail(entryIndex)
 
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	err = provider.Write(m)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
-	return c.JSON(http.StatusOK, "success")
+	handler.WriteJson(w, "success")
 }

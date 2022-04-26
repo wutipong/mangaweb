@@ -1,38 +1,46 @@
 package view
 
 import (
-	"github.com/labstack/echo/v4"
+	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/handler"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"strconv"
 )
 
-func Download(c echo.Context) error {
-	filename := c.Param("*")
-	filename = filepath.FromSlash(filename)
+func Download(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	item := handler.ParseParam(params, "item")
+	item = filepath.FromSlash(item)
 
 	db, err := handler.CreateMetaProvider()
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 	defer db.Close()
 
-	m, err := db.Read(filename)
+	m, err := db.Read(item)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	reader, err := m.Open()
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 	defer reader.Close()
 
 	bytes, err := ioutil.ReadAll(reader)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
-	return c.Blob(http.StatusOK, "application/zip", bytes)
+	w.WriteHeader(http.StatusOK)
+	w.Write(bytes)
+	w.Header().Set("Content-Type", "application/zip")
+	w.Header().Set("Content-Length", strconv.Itoa(len(bytes)))
 }

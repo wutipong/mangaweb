@@ -1,34 +1,37 @@
 package tag
 
 import (
+	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/handler"
 	"net/http"
 	"path/filepath"
 	"strconv"
-
-	"github.com/labstack/echo/v4"
 )
 
 type setTagFavoriteResponse struct {
 	Favorite bool `json:"favorite"`
 }
 
-func SetFavoriteHandler(c echo.Context) error {
-	filename := c.Param("*")
-	filename = filepath.FromSlash(filename)
+func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	tag := handler.ParseParam(params, "tag")
+	tag = filepath.FromSlash(tag)
+
+	query := r.URL.Query()
 
 	db, err := handler.CreateTagProvider()
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 	defer db.Close()
 
-	m, err := db.Read(filename)
+	m, err := db.Read(tag)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
-	if fav, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
+	if fav, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		if fav != m.Favorite {
 			m.Favorite = fav
 			db.Write(m)
@@ -38,5 +41,6 @@ func SetFavoriteHandler(c echo.Context) error {
 	response := setTagFavoriteResponse{
 		Favorite: m.Favorite,
 	}
-	return c.JSON(http.StatusOK, response)
+
+	handler.WriteJson(w, response)
 }

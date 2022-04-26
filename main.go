@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/tag"
 
 	"net/http"
@@ -10,8 +11,6 @@ import (
 	"path"
 
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 
 	"github.com/wutipong/mangaweb/handler"
@@ -82,40 +81,24 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Echo instance
-	e := echo.New()
-
-	// Middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-
-	if *prefix != "" {
-		pattern := path.Join(*prefix, "*")
-		e.Pre(middleware.Rewrite(map[string]string{
-			*prefix: "/",
-			pattern: "/$1",
-		}))
-	}
+	router := httprouter.New()
 
 	scheduler.Init(scheduler.Options{
 		MetaProviderFactory: newMetaProvider,
 		TagProviderFactory:  newTagProvider,
 	})
 
-	e.Pre(middleware.RemoveTrailingSlash())
-
-	RegisterHandler(e, *prefix)
+	RegisterHandler(router, *prefix)
 	scheduler.Start()
 
 	log.Info("Server starts.")
-	if err := e.Start(*address); err != http.ErrServerClosed {
-		log.Error(err)
-	}
+	log.Fatal(http.ListenAndServe(*address, router))
+
 	log.Info("shutting down the server")
 	scheduler.Stop()
 }
 
-func RegisterHandler(e *echo.Echo, pathPrefix string) {
+func RegisterHandler(router *httprouter.Router, pathPrefix string) {
 	handler.Init(handler.Options{
 		MetaProviderFactory: newMetaProvider,
 		TagProviderFactory:  newTagProvider,
@@ -136,27 +119,24 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 		PathTagThumbnail:    pathTagThumb,
 	})
 	// Routes
-	e.GET(pathRoot, root)
-	e.GET(pathBrowse, browse.Handler)
-	e.GET(path.Join(pathBrowse, "*"), browse.Handler)
-	e.GET(path.Join(pathView, "*"), view.Handler)
-	e.GET(path.Join(pathGetImage, "*"), handler.GetImage)
-	e.GET(path.Join(pathUpdateCover, "*"), view.UpdateCover)
-	e.GET(path.Join(pathThumbnail, "*"), browse.ThumbnailHandler)
-	e.GET(path.Join(pathFavorite, "*"), view.SetFavoriteHandler)
-	e.GET(path.Join(pathFavorite, "*"), view.SetFavoriteHandler)
-	e.GET(path.Join(pathDownload, "*"), view.Download)
-	e.GET(pathRescanLibrary, handler.RescanLibraryHandler)
-	e.GET(path.Join(pathTagFavorite, "*"), handlertag.SetFavoriteHandler)
-	e.GET(pathTagList, handlertag.TagListHandler)
-	e.GET(path.Join(pathTagThumb, "*"), handlertag.ThumbnailHandler)
+	router.GET(pathRoot, root)
+	router.GET(path.Join(pathBrowse, "*tag"), browse.Handler)
+	router.GET(path.Join(pathView, "*item"), view.Handler)
+	router.GET(path.Join(pathGetImage, "*item"), handler.GetImage)
+	router.GET(path.Join(pathUpdateCover, "*item"), view.UpdateCover)
+	router.GET(path.Join(pathThumbnail, "*item"), browse.ThumbnailHandler)
+	router.GET(path.Join(pathFavorite, "*item"), view.SetFavoriteHandler)
+	router.GET(path.Join(pathDownload, "*item"), view.Download)
+	router.GET(pathRescanLibrary, handler.RescanLibraryHandler)
+	router.GET(path.Join(pathTagFavorite, "*tag"), handlertag.SetFavoriteHandler)
+	router.GET(pathTagList, handlertag.TagListHandler)
+	router.GET(path.Join(pathTagThumb, "*tag"), handlertag.ThumbnailHandler)
 
-	e.Static(pathStatic, "static")
+	router.ServeFiles(path.Join(pathStatic, "*filepath"), http.Dir("static"))
 }
 
-// TagListHandler
-func root(c echo.Context) error {
-	return c.Redirect(http.StatusPermanentRedirect, handler.CreateBrowseURL(""))
+func root(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	http.Redirect(w, r, handler.CreateBrowseTagURL(""), http.StatusPermanentRedirect)
 }
 
 func newMetaProvider() (p meta.Provider, err error) {

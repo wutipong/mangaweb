@@ -1,7 +1,7 @@
 package tag
 
 import (
-	"github.com/labstack/echo/v4"
+	"github.com/julienschmidt/httprouter"
 	"github.com/labstack/gommon/log"
 	"github.com/wutipong/mangaweb/handler"
 	"hash/fnv"
@@ -74,22 +74,24 @@ func createItems(allTags []tag.Tag, favoriteOnly bool) []ItemData {
 	return allItems
 }
 
-func TagListHandler(c echo.Context) error {
+func TagListHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	query := r.URL.Query()
+
 	favOnly := false
-	if f, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
+	if f, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		favOnly = f
 	}
 
 	tagProvider, err := handler.CreateTagProvider()
 	if err != nil {
-		log.Error(err)
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	allTags, err := tagProvider.ReadAll()
 	if err != nil {
-		log.Error(err)
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	tagData := createItems(allTags, favOnly)
@@ -102,9 +104,9 @@ func TagListHandler(c echo.Context) error {
 	builder := strings.Builder{}
 	err = templateObj.Execute(&builder, data)
 	if err != nil {
-		log.Fatal(err)
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
-	return c.HTML(http.StatusOK, builder.String())
+	handler.WriteHtml(w, builder.String())
 }
