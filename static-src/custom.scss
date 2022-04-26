@@ -64,6 +64,10 @@
     @include button-variant($pink, $pink);
 }
 
+.btn-outline-pink {
+    @include button-outline-variant($pink);
+}
+
 .thumb-link {
     display: flex;
     width: 200px;
