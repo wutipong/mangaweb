@@ -2,6 +2,7 @@ package browse
 
 import (
 	"fmt"
+	"github.com/julienschmidt/httprouter"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -11,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/meta"
@@ -85,25 +85,30 @@ func createItems(allMeta []meta.Meta) (allItems []item, err error) {
 	return
 }
 
-func Handler(c echo.Context) error {
-	tagStr := c.Param("*")
+func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	query := r.URL.Query()
+	tagStr := handler.ParseParam(params, "tag")
+
 	p, err := handler.CreateMetaProvider()
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 	defer p.Close()
 
+	query.Get("favorite")
+
 	favOnly := false
-	if f, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
+	if f, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		favOnly = f
 	}
 
 	page := 0
-	if i, e := strconv.ParseInt(c.QueryParam("page"), 10, 0); e == nil {
+	if i, e := strconv.ParseInt(query.Get("page"), 10, 0); e == nil {
 		page = int(i)
 	}
 
-	search := c.QueryParam("search")
+	search := query.Get("search")
 	searchCriteria := make([]meta.SearchCriteria, 0)
 	if search != "" {
 		searchCriteria = append(searchCriteria, meta.SearchCriteria{
@@ -126,22 +131,25 @@ func Handler(c echo.Context) error {
 		})
 	}
 
-	sort := parseSortField(c.QueryParam("sort"))
-	order := parseSortOrder(c.QueryParam("order"))
+	sort := parseSortField(query.Get("sort"))
+	order := parseSortOrder(query.Get("order"))
 
 	allMeta, err := p.Search(searchCriteria, sort, order, ItemPerPage, page)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	items, err := createItems(allMeta)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	count, err := p.Count(searchCriteria)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	pageCount := int(count / ItemPerPage)
@@ -160,7 +168,7 @@ func Handler(c echo.Context) error {
 		SortBy:       string(sort),
 		SortOrder:    string(order),
 		Items:        items,
-		Pages:        createPageItems(page, pageCount, *c.Request().URL),
+		Pages:        createPageItems(page, pageCount, *r.URL),
 	}
 
 	if tagStr != "" {
@@ -169,12 +177,14 @@ func Handler(c echo.Context) error {
 
 		tagProvider, err := handler.CreateTagProvider()
 		if err != nil {
-			return err
+			handler.WriteError(w, err)
+			return
 		}
 
 		tagObj, err := tagProvider.Read(tagStr)
 		if err != nil {
-			return err
+			handler.WriteError(w, err)
+			return
 		}
 
 		data.TagFavorite = tagObj.Favorite
@@ -183,11 +193,11 @@ func Handler(c echo.Context) error {
 	builder := strings.Builder{}
 	err = broseTemplate.Execute(&builder, data)
 	if err != nil {
-		log.Fatal(err)
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
-	return c.HTML(http.StatusOK, builder.String())
+	handler.WriteHtml(w, builder.String())
 }
 
 func parseSortOrder(orderStr string) meta.SortOrder {

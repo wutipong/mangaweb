@@ -1,34 +1,37 @@
 package view
 
 import (
+	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/handler"
 	"net/http"
 	"path/filepath"
 	"strconv"
-
-	"github.com/labstack/echo/v4"
 )
 
 type setFavoriteResponse struct {
 	Favorite bool `json:"favorite"`
 }
 
-func SetFavoriteHandler(c echo.Context) error {
-	filename := c.Param("*")
-	filename = filepath.FromSlash(filename)
+func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	item := handler.ParseParam(params, "item")
+	item = filepath.FromSlash(item)
+
+	query := r.URL.Query()
 
 	db, err := handler.CreateMetaProvider()
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 	defer db.Close()
 
-	m, err := db.Read(filename)
+	m, err := db.Read(item)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
-	if fav, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
+	if fav, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		if fav != m.Favorite {
 			m.Favorite = fav
 			db.Write(m)
@@ -38,5 +41,6 @@ func SetFavoriteHandler(c echo.Context) error {
 	response := setFavoriteResponse{
 		Favorite: m.Favorite,
 	}
-	return c.JSON(http.StatusOK, response)
+
+	handler.WriteJson(w, response)
 }

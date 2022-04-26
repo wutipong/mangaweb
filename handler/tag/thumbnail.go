@@ -1,26 +1,30 @@
 package tag
 
 import (
-	"github.com/labstack/echo/v4"
+	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/handler"
 	"net/http"
 	"path/filepath"
 )
 
-func ThumbnailHandler(c echo.Context) error {
-	tagStr := c.Param("*")
+func ThumbnailHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	tagStr := handler.ParseParam(params, "tag")
 	tagStr = filepath.FromSlash(tagStr)
 
 	provider, err := handler.CreateTagProvider()
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 	defer provider.Close()
 
 	m, err := provider.Read(tagStr)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
-	return c.Blob(http.StatusOK, "image/jpeg", m.Thumbnail)
+	w.WriteHeader(http.StatusOK)
+	w.Write(m.Thumbnail)
+	w.Header().Set("Content-Type", "image/jpeg")
 }

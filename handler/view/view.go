@@ -2,6 +2,7 @@ package view
 
 import (
 	"fmt"
+	"github.com/julienschmidt/httprouter"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -11,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"github.com/wutipong/mangaweb/handler"
 )
@@ -48,30 +48,36 @@ type viewData struct {
 	Tags            []string
 }
 
-func Handler(c echo.Context) error {
-	fileName := c.Param("*")
-	fileName = filepath.FromSlash(fileName)
+func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	item := handler.ParseParam(params, "item")
+	item = filepath.FromSlash(item)
+
+	query := r.URL.Query()
+
 	db, err := handler.CreateMetaProvider()
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 	defer db.Close()
 
-	m, err := db.Read(fileName)
+	m, err := db.Read(item)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	pages, err := ListPages(m)
 	if err != nil {
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	hash := fnv.New64()
-	hash.Write([]byte(fileName))
+	hash.Write([]byte(item))
 	id := hash.Sum64()
 
-	if fav, e := strconv.ParseBool(c.QueryParam("favorite")); e == nil {
+	if fav, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		if fav != m.Favorite {
 			m.Favorite = fav
 			db.Write(m)
@@ -83,7 +89,7 @@ func Handler(c echo.Context) error {
 		db.Write(m)
 	}
 
-	browseUrl := c.Request().Referer()
+	browseUrl := r.Referer()
 	if browseUrl == "" {
 		browseUrl = handler.CreateBrowseURL(strconv.FormatUint(id, 16))
 	} else {
@@ -95,7 +101,8 @@ func Handler(c echo.Context) error {
 	tagProvider, err := handler.CreateTagProvider()
 	if err != nil {
 		log.Fatal(err)
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
 	tags := make([]string, 0)
@@ -103,7 +110,8 @@ func Handler(c echo.Context) error {
 		t, err := tagProvider.Read(tagStr)
 		if err != nil {
 			log.Fatal(err)
-			return err
+			handler.WriteError(w, err)
+			return
 		}
 
 		if !t.Hidden {
@@ -112,11 +120,11 @@ func Handler(c echo.Context) error {
 	}
 
 	data := viewData{
-		Name:            fileName,
-		Title:           fmt.Sprintf("Manga - Viewing [%s]", fileName),
+		Name:            item,
+		Title:           fmt.Sprintf("Manga - Viewing [%s]", item),
 		BrowseURL:       browseUrl,
-		ImageURLs:       createImageURLs(fileName, pages),
-		UpdateCoverURLs: createUpdateCoverURLs(fileName, pages),
+		ImageURLs:       createImageURLs(item, pages),
+		UpdateCoverURLs: createUpdateCoverURLs(item, pages),
 		Favorite:        m.Favorite,
 		Tags:            tags,
 	}
@@ -124,11 +132,11 @@ func Handler(c echo.Context) error {
 	builder := strings.Builder{}
 	err = viewTemplate.Execute(&builder, data)
 	if err != nil {
-		log.Fatal(err)
-		return err
+		handler.WriteError(w, err)
+		return
 	}
 
-	return c.HTML(http.StatusOK, builder.String())
+	handler.WriteHtml(w, builder.String())
 }
 
 func createImageURLs(file string, pages []Page) []string {

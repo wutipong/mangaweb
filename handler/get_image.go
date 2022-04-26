@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"fmt"
+	"github.com/julienschmidt/httprouter"
 	_ "image/png"
 	"io/ioutil"
 	"net/http"
@@ -13,45 +14,48 @@ import (
 
 	"github.com/wutipong/mangaweb/image"
 	"github.com/wutipong/mangaweb/meta"
-
-	"github.com/labstack/echo/v4"
 )
 
 // GetImage returns an image with specific width/height while retains aspect ratio.
-func GetImage(c echo.Context) error {
-	filename := c.Param("*")
-	filename = filepath.FromSlash(filename)
+func GetImage(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	item := ParseParam(params, "item")
+	item = filepath.FromSlash(item)
+
+	query := r.URL.Query()
 
 	provider, err := CreateMetaProvider()
 	if err != nil {
-		return err
+		WriteError(w, err)
+		return
 	}
 	defer provider.Close()
 
 	var width, height int64 = 0, 0
-	if w, e := strconv.ParseInt(c.QueryParam("width"), 10, 64); e == nil {
+	if w, e := strconv.ParseInt(query.Get("width"), 10, 64); e == nil {
 		width = w
 		height = width
 	}
 
-	if h, e := strconv.ParseInt(c.QueryParam("height"), 10, 64); e == nil {
+	if h, e := strconv.ParseInt(query.Get("height"), 10, 64); e == nil {
 		height = h
 	}
 
 	var index = 0
-	if i, err := strconv.Atoi(c.QueryParam("i")); err == nil {
+	if i, err := strconv.Atoi(query.Get("i")); err == nil {
 		index = i
 	}
 
-	m, err := provider.Read(filename)
+	m, err := provider.Read(item)
 	if err != nil {
-		return err
+		WriteError(w, err)
+		return
 	}
 	data, f, err := OpenZipEntry(m, index)
 
 	if width == 0 || height == 0 {
 		if err != nil {
-			return nil
+			WriteError(w, err)
+			return
 		}
 
 		var mimetype string
@@ -62,21 +66,29 @@ func GetImage(c echo.Context) error {
 			mimetype = "image/png"
 		}
 
-		return c.Blob(http.StatusOK, mimetype, data)
+		w.WriteHeader(http.StatusOK)
+		w.Write(data)
+		w.Header().Set("Content-Type", mimetype)
+
+		return
 	}
 	reader := bytes.NewBuffer(data)
 
 	img, err := image.Create(reader)
 	if err != nil {
-		return err
+		WriteError(w, err)
+		return
 	}
 
 	resized := image.Resize(img, uint(width), uint(height))
 	output, err := image.ToJPEG(resized)
 	if err != nil {
-		return err
+		WriteError(w, err)
+		return
 	}
-	return c.Blob(http.StatusOK, "image/jpeg", output)
+	w.WriteHeader(http.StatusOK)
+	w.Write(output)
+	w.Header().Set("Content-Type", "image/jpeg")
 }
 
 func OpenZipEntry(m meta.Meta, index int) (content []byte, filename string, err error) {
