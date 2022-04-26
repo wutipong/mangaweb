@@ -1,7 +1,8 @@
-package handler
+package view
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/wutipong/mangaweb/handler"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
@@ -11,7 +12,7 @@ func Download(c echo.Context) error {
 	filename := c.Param("*")
 	filename = filepath.FromSlash(filename)
 
-	db, err := CreateMetaProvider()
+	db, err := handler.CreateMetaProvider()
 	if err != nil {
 		return err
 	}

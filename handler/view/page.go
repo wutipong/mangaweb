@@ -12,7 +12,7 @@ type Page struct {
 	Name  string
 }
 
-func ListPages(m meta.Item) (pages []Page, err error) {
+func ListPages(m meta.Meta) (pages []Page, err error) {
 	if len(m.FileIndices) == 0 {
 		return
 	}

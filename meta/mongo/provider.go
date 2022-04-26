@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"golang.org/x/exp/slices"
 
 	"github.com/wutipong/mangaweb/meta"
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,16 +12,17 @@ import (
 )
 
 var uri string
+var databaseName string
 
 const CollectionName = "items"
-const DatabaseName = "manga"
 
 type Provider struct {
 	client *mongo.Client
 }
 
-func Init(con string) error {
+func Init(con string, db string) error {
 	uri = con
+	databaseName = db
 
 	p, err := New()
 	if err != nil {
@@ -36,7 +38,7 @@ func Init(con string) error {
 	}
 
 	ctx := context.Background()
-	p.getItemCollection().Indexes().CreateOne(ctx, model)
+	p.getCollection().Indexes().CreateOne(ctx, model)
 
 	return nil
 }
@@ -49,63 +51,63 @@ func New() (p Provider, err error) {
 	return
 }
 
-func (p *Provider) getItemCollection() *mongo.Collection {
-	return p.client.Database(DatabaseName).Collection(CollectionName)
+func (p *Provider) getCollection() *mongo.Collection {
+	return p.client.Database(databaseName).Collection(CollectionName)
 }
 
 func (p *Provider) IsItemExist(name string) bool {
 	ctx := context.Background()
-	result := p.getItemCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
+	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
-	var item meta.Item
+	var item meta.Meta
 
 	err := result.Decode(&item)
 
 	return err != nil
 }
 
-func (p *Provider) Write(i meta.Item) error {
+func (p *Provider) Write(i meta.Meta) error {
 	ctx := context.Background()
 
-	_, err := p.getItemCollection().UpdateOne(
+	_, err := p.getCollection().UpdateOne(
 		ctx, bson.D{{Key: "name", Value: i.Name}}, bson.M{"$set": i}, options.Update().SetUpsert(true))
 
 	return err
 }
 
-func (p *Provider) Delete(i meta.Item) error {
+func (p *Provider) Delete(i meta.Meta) error {
 	ctx := context.Background()
-	_, err := p.getItemCollection().DeleteOne(ctx, bson.D{{Key: "name", Value: i.Name}})
+	_, err := p.getCollection().DeleteOne(ctx, bson.D{{Key: "name", Value: i.Name}})
 
 	return err
 }
 
-func (p *Provider) Read(name string) (i meta.Item, err error) {
+func (p *Provider) Read(name string) (i meta.Meta, err error) {
 	ctx := context.Background()
-	result := p.getItemCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
+	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
 	err = result.Decode(&i)
 
 	return
 }
-func (p *Provider) Open(name string) (i meta.Item, err error) {
+func (p *Provider) Open(name string) (i meta.Meta, err error) {
 	ctx := context.Background()
-	result := p.getItemCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
+	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
 	err = result.Decode(&i)
 
 	return
 }
 
-func (p *Provider) ReadAll() (items []meta.Item, err error) {
+func (p *Provider) ReadAll() (items []meta.Meta, err error) {
 	ctx := context.Background()
-	cursor, err := p.getItemCollection().Find(ctx, bson.D{})
+	cursor, err := p.getCollection().Find(ctx, bson.D{})
 	if err != nil {
 		return
 	}
 
 	for cursor.Next(ctx) {
-		i := meta.Item{}
+		i := meta.Meta{}
 		err = cursor.Decode(&i)
 		if err != nil {
 			return
@@ -117,7 +119,7 @@ func (p *Provider) ReadAll() (items []meta.Item, err error) {
 	return
 }
 
-func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, order meta.SortOrder, pageSize int, page int) (items []meta.Item, err error) {
+func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, order meta.SortOrder, pageSize int, page int) (items []meta.Meta, err error) {
 	ctx := context.Background()
 
 	filter := createFilter(criteria)
@@ -141,13 +143,13 @@ func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, o
 
 	opts.SetSkip(int64(pageSize * page)).SetLimit(int64(pageSize))
 
-	cursor, err := p.getItemCollection().Find(ctx, filter, opts)
+	cursor, err := p.getCollection().Find(ctx, filter, opts)
 	if err != nil {
 		return
 	}
 
 	for cursor.Next(ctx) {
-		i := meta.Item{}
+		i := meta.Meta{}
 		err = cursor.Decode(&i)
 		if err != nil {
 			return
@@ -165,7 +167,7 @@ func (p *Provider) Count(criteria []meta.SearchCriteria) (count int64, err error
 	opts := options.Count()
 
 	filter := createFilter(criteria)
-	count, err = p.getItemCollection().CountDocuments(ctx, filter, opts)
+	count, err = p.getCollection().CountDocuments(ctx, filter, opts)
 
 	return
 }
@@ -185,13 +187,28 @@ func createFilter(criteria []meta.SearchCriteria) bson.D {
 				name := c.Value.(string)
 				regex := createNameRegex(name)
 
-				output = append(output, bson.E{"name", regex})
+				output = append(output, bson.E{Key: "name", Value: regex})
 				break
 			}
 
 		case meta.SearchFieldFavorite:
 			{
-				output = append(output, bson.E{"favorite", c.Value})
+				output = append(output, bson.E{Key: "favorite", Value: c.Value})
+				break
+			}
+
+		case meta.SearchFieldTag:
+			{
+				output = append(
+					output,
+					bson.E{
+						Key: "tags",
+						Value: bson.D{{
+							Key:   "$eq",
+							Value: c.Value,
+						}},
+					},
+				)
 				break
 			}
 		}
@@ -201,9 +218,9 @@ func createFilter(criteria []meta.SearchCriteria) bson.D {
 
 func (p *Provider) NeedSetup() (b bool, err error) {
 	ctx := context.Background()
-	collectionNames, err := p.client.Database(DatabaseName).ListCollectionNames(ctx, bson.D{})
+	collectionNames, err := p.client.Database(databaseName).ListCollectionNames(ctx, bson.D{})
 
-	b = len(collectionNames) == 0
+	b = slices.Contains(collectionNames, CollectionName)
 
 	return
 }

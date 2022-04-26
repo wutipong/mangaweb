@@ -3,6 +3,7 @@ package meta
 import (
 	"archive/zip"
 	"fmt"
+	"github.com/wutipong/mangaweb/tag"
 	"io"
 	"io/fs"
 	"os"
@@ -15,47 +16,49 @@ import (
 	"github.com/wutipong/mangaweb/image"
 )
 
-// Item the meta data for each manga item.
+// Meta the metadata for each manga item.
 // Do not change the field type nor names. Add new field when necessary.
-// Also, when update the structure, if the new field is required, increment the CurrentItemVersion by one
+// Also, when update the structure, if the new field is required, increment the CurrentVersion by one
 // and create a migration function.
-type Item struct {
+type Meta struct {
 	Name        string    `json:"name" db:"name" bson:"name"`
 	CreateTime  time.Time `json:"create_time" db:"create_time" bson:"create_time"`
 	Favorite    bool      `json:"favorite" db:"favorite" bson:"favorite"`
 	FileIndices []int     `json:"file_indices" bson:"file_indices"`
 	Thumbnail   []byte    `json:"thumbnail" db:"thumbnail" bson:"thumbnail"`
 	IsRead      bool      `json:"is_read" db:"read" bson:"is_read"`
-	Version     int       `json:"version" db:"version" bson:"version"`
+	Tags        []string  `json:"tags" db:"tags" bson:"tags"`
+
+	Version int `json:"version" db:"version" bson:"version"`
 }
 
-type MetaProviderFactory func() (p Provider, err error)
+type ProviderFactory func() (p Provider, err error)
 
-//CurrentItemVersion the current version of `Item` structure.
-const CurrentItemVersion = 0
+//CurrentVersion the current version of `Meta` structure.
+const CurrentVersion = 1
 
-func NewItem(name string) (i Item, err error) {
-
+func NewItem(name string) (i Meta, err error) {
 	createTime := time.Now()
 
 	if stat, e := fs.Stat(os.DirFS(BaseDirectory), name); e == nil {
 		createTime = stat.ModTime()
 	}
 
-	i = Item{
+	i = Meta{
 		Name:       name,
 		CreateTime: createTime,
 		Favorite:   false,
-		Version:    CurrentItemVersion,
+		Version:    CurrentVersion,
 	}
 
 	i.GenerateImageIndices()
 	i.GenerateThumbnail(0)
+	i.PopulateTags()
 
 	return
 }
 
-func (m *Item) Open() (reader io.ReadCloser, err error) {
+func (m *Meta) Open() (reader io.ReadCloser, err error) {
 	mutex := new(sync.Mutex)
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -66,7 +69,7 @@ func (m *Item) Open() (reader io.ReadCloser, err error) {
 	return
 }
 
-func (m *Item) GenerateThumbnail(fileIndex int) error {
+func (m *Meta) GenerateThumbnail(fileIndex int) error {
 	mutex := new(sync.Mutex)
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -99,7 +102,7 @@ func (m *Item) GenerateThumbnail(fileIndex int) error {
 	return nil
 }
 
-func (m *Item) GenerateImageIndices() error {
+func (m *Meta) GenerateImageIndices() error {
 	mutex := new(sync.Mutex)
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -137,4 +140,8 @@ func (m *Item) GenerateImageIndices() error {
 	}
 
 	return nil
+}
+
+func (m *Meta) PopulateTags() {
+	m.Tags = tag.ParseTag(m.Name)
 }

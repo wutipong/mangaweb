@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/wutipong/mangaweb/tag"
+
 	"net/http"
 	"os"
 	"path"
@@ -14,10 +16,12 @@ import (
 
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/handler/browse"
+	handlertag "github.com/wutipong/mangaweb/handler/tag"
 	"github.com/wutipong/mangaweb/handler/view"
 	"github.com/wutipong/mangaweb/meta"
-	"github.com/wutipong/mangaweb/meta/mongo"
+	metamongo "github.com/wutipong/mangaweb/meta/mongo"
 	"github.com/wutipong/mangaweb/scheduler"
+	tagmongo "github.com/wutipong/mangaweb/tag/mongo"
 )
 
 // Recreate the static resource file.
@@ -46,6 +50,9 @@ const (
 	pathFavorite      = "/favorite"
 	pathDownload      = "/download"
 	pathRescanLibrary = "/rescan_library"
+	pathTagFavorite   = "/tag_favorite"
+	pathTagList       = "/tag_list"
+	pathTagThumb      = "/tag_thumb"
 )
 
 func main() {
@@ -57,6 +64,7 @@ func main() {
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
 	dataPath := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
 	database := setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
+	dbName := setupFlag("database_name", "manga", "MANGAWEB_DB_NAME", "Specify the database name")
 	prefix := setupFlag("prefix", "", "MANGAWEB_PREFIX", "URL prefix")
 
 	flag.Parse()
@@ -66,7 +74,11 @@ func main() {
 	log.Infof("MangaWeb version:%s", versionString)
 
 	log.Infof("Data source Path: %s", *dataPath)
-	if err := mongo.Init(*database); err != nil {
+	if err := metamongo.Init(*database, *dbName); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := tagmongo.Init(*database, *dbName); err != nil {
 		log.Fatal(err)
 	}
 
@@ -85,7 +97,10 @@ func main() {
 		}))
 	}
 
-	scheduler.Init(newProvider)
+	scheduler.Init(scheduler.Options{
+		MetaProviderFactory: newMetaProvider,
+		TagProviderFactory:  newTagProvider,
+	})
 
 	e.Pre(middleware.RemoveTrailingSlash())
 
@@ -102,7 +117,8 @@ func main() {
 
 func RegisterHandler(e *echo.Echo, pathPrefix string) {
 	handler.Init(handler.Options{
-		MetaProviderFactory: newProvider,
+		MetaProviderFactory: newMetaProvider,
+		TagProviderFactory:  newTagProvider,
 		VersionString:       versionString,
 		PathPrefix:          pathPrefix,
 		PathRoot:            pathRoot,
@@ -115,29 +131,43 @@ func RegisterHandler(e *echo.Echo, pathPrefix string) {
 		PathFavorite:        pathFavorite,
 		PathDownload:        pathDownload,
 		PathRescanLibrary:   pathRescanLibrary,
+		PathTagFavorite:     pathTagFavorite,
+		PathTagList:         pathTagList,
+		PathTagThumbnail:    pathTagThumb,
 	})
 	// Routes
 	e.GET(pathRoot, root)
 	e.GET(pathBrowse, browse.Handler)
+	e.GET(path.Join(pathBrowse, "*"), browse.Handler)
 	e.GET(path.Join(pathView, "*"), view.Handler)
 	e.GET(path.Join(pathGetImage, "*"), handler.GetImage)
-	e.GET(path.Join(pathUpdateCover, "*"), handler.UpdateCover)
-	e.GET(path.Join(pathThumbnail, "*"), handler.ThumbnailHandler)
-	e.GET(path.Join(pathFavorite, "*"), handler.SetFavoriteHandler)
-	e.GET(path.Join(pathFavorite, "*"), handler.SetFavoriteHandler)
-	e.GET(path.Join(pathDownload, "*"), handler.Download)
+	e.GET(path.Join(pathUpdateCover, "*"), view.UpdateCover)
+	e.GET(path.Join(pathThumbnail, "*"), browse.ThumbnailHandler)
+	e.GET(path.Join(pathFavorite, "*"), view.SetFavoriteHandler)
+	e.GET(path.Join(pathFavorite, "*"), view.SetFavoriteHandler)
+	e.GET(path.Join(pathDownload, "*"), view.Download)
 	e.GET(pathRescanLibrary, handler.RescanLibraryHandler)
+	e.GET(path.Join(pathTagFavorite, "*"), handlertag.SetFavoriteHandler)
+	e.GET(pathTagList, handlertag.TagListHandler)
+	e.GET(path.Join(pathTagThumb, "*"), handlertag.ThumbnailHandler)
 
 	e.Static(pathStatic, "static")
 }
 
-// Handler
+// TagListHandler
 func root(c echo.Context) error {
 	return c.Redirect(http.StatusPermanentRedirect, handler.CreateBrowseURL(""))
 }
 
-func newProvider() (p meta.Provider, err error) {
-	mp, e := mongo.New()
+func newMetaProvider() (p meta.Provider, err error) {
+	mp, e := metamongo.New()
+	p = &mp
+	err = e
+	return
+}
+
+func newTagProvider() (p tag.Provider, err error) {
+	mp, e := tagmongo.New()
 	p = &mp
 	err = e
 	return

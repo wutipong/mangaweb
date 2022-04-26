@@ -1,11 +1,15 @@
 package handler
 
-import "github.com/wutipong/mangaweb/meta"
+import (
+	"github.com/wutipong/mangaweb/meta"
+	"github.com/wutipong/mangaweb/tag"
+)
 
 var options Options
 
 type Options struct {
-	MetaProviderFactory meta.MetaProviderFactory
+	MetaProviderFactory meta.ProviderFactory
+	TagProviderFactory  tag.ProviderFactory
 	VersionString       string
 
 	PathPrefix        string
@@ -19,6 +23,9 @@ type Options struct {
 	PathFavorite      string
 	PathDownload      string
 	PathRescanLibrary string
+	PathTagFavorite   string
+	PathTagList       string
+	PathTagThumbnail  string
 }
 
 func Init(o Options) {
@@ -27,6 +34,10 @@ func Init(o Options) {
 
 func CreateMetaProvider() (provider meta.Provider, err error) {
 	return options.MetaProviderFactory()
+}
+
+func CreateTagProvider() (provider tag.Provider, err error) {
+	return options.TagProviderFactory()
 }
 
 func CreateVersionString() string {

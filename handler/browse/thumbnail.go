@@ -1,9 +1,10 @@
-package handler
+package browse
 
 import (
 	"database/sql"
 	"errors"
 	"github.com/labstack/echo/v4"
+	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/meta"
 	"net/http"
 	"path/filepath"
@@ -13,7 +14,7 @@ func ThumbnailHandler(c echo.Context) error {
 	filename := c.Param("*")
 	filename = filepath.FromSlash(filename)
 
-	provider, err := CreateMetaProvider()
+	provider, err := handler.CreateMetaProvider()
 	if err != nil {
 		return err
 	}

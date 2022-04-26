@@ -1,6 +1,7 @@
-package handler
+package view
 
 import (
+	"github.com/wutipong/mangaweb/handler"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -16,7 +17,7 @@ func SetFavoriteHandler(c echo.Context) error {
 	filename := c.Param("*")
 	filename = filepath.FromSlash(filename)
 
-	db, err := CreateMetaProvider()
+	db, err := handler.CreateMetaProvider()
 	if err != nil {
 		return err
 	}

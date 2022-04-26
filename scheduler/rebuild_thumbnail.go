@@ -3,7 +3,7 @@ package scheduler
 import "github.com/labstack/gommon/log"
 
 func RebuildThumbnail() error {
-	provider, err := metaProviderFactory()
+	provider, err := createMetaProvider()
 
 	if err != nil {
 		return err

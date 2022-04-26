@@ -42,44 +42,64 @@
         <span class='navbar-brand mr-auto text-truncate h1 d-none d-sm-block' style='max-width: 50%;'>{{.Name}}</span>
         <span class='navbar-brand mr-auto text-truncate h1 d-block d-sm-none' style='max-width: 50%;'>View</span>
 
-        <ul class='navbar-nav mb-2 mb-lg-0 flex-row'>
-            <li class='nav-item dropdown'>
-                <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown'
-                   role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                    <span class='d-inline d-sm-none'><i class='bi bi-list'></i></span>
-                    <span class='d-none d-sm-inline'><i class='bi bi-list'></i> Menu</span>
-                </a>
-                <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
-                    <a class='dropdown-item' id='download-btn' download>
-                        <i class='bi bi-download'></i>
-                        Download Current Page
-                    </a>
-                    <a class='dropdown-item' download href='{{CreateDownloadURL .Name}}'>
-                        <i class='bi bi-download'></i>
-                        Download Manga
-                    </a>
-                    <div class='dropdown-divider'></div>
-                    <a class='dropdown-item' id='update-cover-btn' onclick='updateCover(0); return false;'>
-                        <i class='bi bi-journal-arrow-up'></i>
-                        Update Cover
-                    </a>
-                </div>
-            </li>
+        <button class='navbar-toggler' type='button' data-bs-toggle='collapse'
+                data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent'
+                aria-expanded='false' aria-label='Toggle navigation'>
 
-            <li class='nav-item'>
-                <a id='favorite-btn' class='btn {{if .Favorite}}btn-pink active{{end}}'
-                   onclick='toggleFavorite(); return false;'>
-                    <span class='d-inline d-sm-none'><i class='bi bi-star-fill'></i></span>
-                    <span class='d-none d-sm-inline'><i class='bi bi-star-fill'></i> Favorite</span>
-                </a>
-            </li>
-            <li class='nav-item'>
-                <a id='close-btn' class='btn btn-danger' href='{{.BrowseURL}}'>
-                    <span class='d-inline d-sm-none'><i class='bi bi-x-circle-fill'></i></span>
-                    <span class='d-none d-sm-inline'><i class='bi bi-x-circle-fill'></i> Close</span>
-                </a>
-            </li>
-        </ul>
+            <span class='navbar-toggler-icon'></span>
+        </button>
+
+        <div class='collapse navbar-collapse' id='navbarSupportedContent'>
+            <ul class='navbar-nav mb-2 me-auto'>
+                <li class='nav-item dropdown'>
+                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown'
+                       role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        <i class="bi bi-tags-fill"></i> Tags
+                    </a>
+                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
+                        {{range .Tags}}
+                            <a class='dropdown-item' href='{{CreateBrowseTagURL .}}'>
+                                {{.}}
+                            </a>
+                        {{end}}
+                    </div>
+                </li>
+                <li class='nav-item dropdown'>
+                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown'
+                       role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        <i class='bi bi-list'></i> Menu
+                    </a>
+                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
+                        <a class='dropdown-item' id='download-btn' download>
+                            <i class='bi bi-download'></i>
+                            Download Current Page
+                        </a>
+                        <a class='dropdown-item' download href='{{CreateDownloadURL .Name}}'>
+                            <i class='bi bi-download'></i>
+                            Download Manga
+                        </a>
+                        <div class='dropdown-divider'></div>
+                        <a class='dropdown-item' id='update-cover-btn' onclick='updateCover(0); return false;'>
+                            <i class='bi bi-journal-arrow-up'></i>
+                            Update Cover
+                        </a>
+                    </div>
+                </li>
+            </ul>
+            <ul class='navbar-nav'>
+                <li class='nav-item mb-2 mb-lg-0'>
+                    <a id='favorite-btn' class='btn {{if .Favorite}}btn-pink active{{else}} btn-outline-pink{{end}}'
+                       onclick='toggleFavorite(); return false;'>
+                        <i class='bi bi-star-fill'></i> Favorite
+                    </a>
+                </li>
+                <li class='nav-item'>
+                    <a id='close-btn' class='btn btn-danger' href='{{.BrowseURL}}'>
+                        <i class='bi bi-x-circle-fill'></i> Close
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>
 <script src='{{CreateURL "/static/index.js"}}'></script>
@@ -114,7 +134,7 @@
             btn.addClass('btn btn-pink active')
         } else {
             btn.removeClass()
-            btn.addClass('btn')
+            btn.addClass('btn btn-outline-pink')
         }
     }
 
