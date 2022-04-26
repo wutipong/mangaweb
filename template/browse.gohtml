@@ -122,15 +122,15 @@
                     <a class='nav-link' href='#' data-bs-toggle='modal' data-bs-target='#aboutModal'>About</a>
                 </li>
             </ul>
-            <ul class='navbar-nav mb-2 mb-lg-0 flex-row  {{if eq .Tag "" }}d-none{{end}}'>
+            <ul class='navbar-nav ms-lg-2 mb-2 mb-lg-0 {{if eq .Tag "" }}d-none{{end}}'>
                 <li class='nav-item'>
-                    <a id='favorite-btn' class='btn {{if .TagFavorite}}btn-pink active{{end}}'
+                    <a id='favorite-btn' class='btn {{if .TagFavorite}}btn-pink active {{else}} btn-outline-pink{{end}}'
                        onclick='toggleFavorite(); return false;'>
                         <i class='bi bi-star-fill'></i> Favorite tag
                     </a>
                 </li>
             </ul>
-            <form class='d-flex'>
+            <form class='d-flex ms-lg-2'>
                 <div class='input-group'>
                     <input class='form-control' type='search' placeholder='Search' aria-label='Search' id='search-text'>
                     <button class='btn btn-outline-success' type='button' id='search-button' onclick='onSearchClick()'>
@@ -289,7 +289,7 @@
             btn.addClass('btn btn-pink active')
         } else {
             btn.removeClass()
-            btn.addClass('btn')
+            btn.addClass('btn btn-outline-pink')
         }
     }
 
