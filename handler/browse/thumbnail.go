@@ -36,6 +36,6 @@ func ThumbnailHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write(m.Thumbnail)
 	w.Header().Set("Content-Type", "image/jpeg")
+	w.Write(m.Thumbnail)
 }
