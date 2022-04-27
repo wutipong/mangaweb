@@ -51,27 +51,29 @@ func GetImage(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 		return
 	}
 	data, f, err := OpenZipEntry(m, index)
+	if err != nil {
+		WriteError(w, err)
+		return
+	}
 
 	if width == 0 || height == 0 {
-		if err != nil {
-			WriteError(w, err)
-			return
-		}
-
-		var mimetype string
+		var contentType string
 		switch filepath.Ext(strings.ToLower(f)) {
 		case ".jpg", ".jpeg":
-			mimetype = "image/jpeg"
+			contentType = "image/jpeg"
 		case ".png":
-			mimetype = "image/png"
+			contentType = "image/png"
+		case ".webp":
+			contentType = "image/webp"
 		}
 
 		w.WriteHeader(http.StatusOK)
 		w.Write(data)
-		w.Header().Set("Content-Type", mimetype)
+		w.Header().Set("Content-Type", contentType)
 
 		return
 	}
+
 	reader := bytes.NewBuffer(data)
 
 	img, err := image.Create(reader)

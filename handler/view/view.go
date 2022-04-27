@@ -38,14 +38,14 @@ func init() {
 var viewTemplate *template.Template
 
 type viewData struct {
-	Name            string
-	Title           string
-	BrowseURL       string
-	ImageURLs       []string
-	UpdateCoverURLs []string
-	StartIndex      int64
-	Favorite        bool
-	Tags            []string
+	Name             string
+	Title            string
+	BrowseURL        string
+	Favorite         bool
+	ImageURLs        []string
+	UpdateCoverURLs  []string
+	DownloadPageURLs []string
+	Tags             []string
 }
 
 func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -120,13 +120,14 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	}
 
 	data := viewData{
-		Name:            item,
-		Title:           fmt.Sprintf("Manga - Viewing [%s]", item),
-		BrowseURL:       browseUrl,
-		ImageURLs:       createImageURLs(item, pages),
-		UpdateCoverURLs: createUpdateCoverURLs(item, pages),
-		Favorite:        m.Favorite,
-		Tags:            tags,
+		Name:             item,
+		Title:            fmt.Sprintf("Manga - Viewing [%s]", item),
+		BrowseURL:        browseUrl,
+		ImageURLs:        createImageURLs(item, pages),
+		UpdateCoverURLs:  createUpdateCoverURLs(item, pages),
+		DownloadPageURLs: createDownloadImageURLs(item, pages),
+		Favorite:         m.Favorite,
+		Tags:             tags,
 	}
 
 	builder := strings.Builder{}
@@ -137,6 +138,14 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	}
 
 	handler.WriteHtml(w, builder.String())
+}
+
+func createDownloadImageURLs(file string, pages []Page) []string {
+	output := make([]string, len(pages))
+	for i, p := range pages {
+		output[i] = handler.CreateGetImageURL(file, p.Index)
+	}
+	return output
 }
 
 func createImageURLs(file string, pages []Page) []string {
