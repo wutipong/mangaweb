@@ -4,12 +4,10 @@ import (
 	"flag"
 	"fmt"
 
-	"net/http"
-	"os"
-	"path"
-
 	"github.com/joho/godotenv"
 	"github.com/julienschmidt/httprouter"
+	"net/http"
+	"os"
 
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/handler/browse"
@@ -125,20 +123,20 @@ func RegisterHandler(router *httprouter.Router, pathPrefix string) {
 		PathTagThumbnail:    pathTagThumb,
 	})
 	// Routes
-	router.GET(pathRoot, root)
-	router.GET(path.Join(pathBrowse, "*tag"), browse.Handler)
-	router.GET(path.Join(pathView, "*item"), view.Handler)
-	router.GET(path.Join(pathGetImage, "*item"), handler.GetImage)
-	router.GET(path.Join(pathUpdateCover, "*item"), view.UpdateCover)
-	router.GET(path.Join(pathThumbnail, "*item"), browse.ThumbnailHandler)
-	router.GET(path.Join(pathFavorite, "*item"), view.SetFavoriteHandler)
-	router.GET(path.Join(pathDownload, "*item"), view.Download)
-	router.GET(pathRescanLibrary, handler.RescanLibraryHandler)
-	router.GET(path.Join(pathTagFavorite, "*tag"), handlertag.SetFavoriteHandler)
-	router.GET(pathTagList, handlertag.TagListHandler)
-	router.GET(path.Join(pathTagThumb, "*tag"), handlertag.ThumbnailHandler)
+	router.GET(handler.CreateURL(pathRoot), root)
+	router.GET(handler.CreateBrowseURLPattern(), browse.Handler)
+	router.GET(handler.CreateViewURLPattern(), view.Handler)
+	router.GET(handler.CreateGetImageURLPattern(), handler.GetImage)
+	router.GET(handler.CreateUpdateCoverURLPattern(), view.UpdateCover)
+	router.GET(handler.CreateThumbnailURLPattern(), browse.ThumbnailHandler)
+	router.GET(handler.CreateSetFavoriteURLPattern(), view.SetFavoriteHandler)
+	router.GET(handler.CreateDownloadURLPattern(), view.Download)
+	router.GET(handler.CreateRescanURLPattern(), handler.RescanLibraryHandler)
+	router.GET(handler.CreateSetTagFavoriteURLPattern(), handlertag.SetFavoriteHandler)
+	router.GET(handler.CreateTagListURLPattern(), handlertag.TagListHandler)
+	router.GET(handler.CreateTagThumbnailURLPattern(), handlertag.ThumbnailHandler)
 
-	router.ServeFiles(path.Join(pathStatic, "*filepath"), http.Dir("static"))
+	router.ServeFiles(handler.CreateURL(pathStatic, "*filepath"), http.Dir("static"))
 }
 
 func root(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
