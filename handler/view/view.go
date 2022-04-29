@@ -3,6 +3,7 @@ package view
 import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	"go.uber.org/zap"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -118,6 +119,8 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 			tags = append(tags, t.Name)
 		}
 	}
+
+	log.Get().Info("View Item", zap.String("item_name", item))
 
 	data := viewData{
 		Name:             item,

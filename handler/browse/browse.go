@@ -3,6 +3,7 @@ package browse
 import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	"go.uber.org/zap"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -160,6 +161,13 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	if page > pageCount || page < 0 {
 		page = 0
 	}
+
+	log.Get().Info("Browse",
+		zap.Int("page", page),
+		zap.String("tag", tagStr),
+		zap.Bool("favorite_only", favOnly),
+		zap.String("sort_by", string(sort)),
+		zap.String("sort_order", string(order)))
 
 	data := browseData{
 		Title:        "Browse - All items",

@@ -3,6 +3,8 @@ package tag
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
+	"go.uber.org/zap"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -15,6 +17,8 @@ type setTagFavoriteResponse struct {
 func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	tag := handler.ParseParam(params, "tag")
 	tag = filepath.FromSlash(tag)
+
+	log.Get().Info("Set favorite tag", zap.String("tag", tag))
 
 	query := r.URL.Query()
 

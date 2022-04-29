@@ -3,6 +3,8 @@ package view
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
+	"go.uber.org/zap"
 	_ "image/png"
 	"net/http"
 	"path/filepath"
@@ -27,6 +29,8 @@ func UpdateCover(w http.ResponseWriter, r *http.Request, params httprouter.Param
 	if i, err := strconv.Atoi(query.Get("i")); err == nil {
 		index = i
 	}
+
+	log.Get().Info("Update Cover", zap.String("item_name", item), zap.Int("index", index))
 
 	m, err := provider.Read(item)
 	if err != nil {

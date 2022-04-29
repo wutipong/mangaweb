@@ -3,6 +3,8 @@ package view
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
+	"go.uber.org/zap"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -15,6 +17,8 @@ type setFavoriteResponse struct {
 func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	item := handler.ParseParam(params, "item")
 	item = filepath.FromSlash(item)
+
+	log.Get().Info("Set Favorite Item", zap.String("item_name", item))
 
 	query := r.URL.Query()
 
