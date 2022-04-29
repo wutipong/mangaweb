@@ -2,7 +2,7 @@ package scheduler
 
 import (
 	"github.com/go-co-op/gocron"
-	"github.com/labstack/gommon/log"
+	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/tag"
 	"time"
@@ -24,9 +24,9 @@ func Init(options Options) {
 
 	scheduler = gocron.NewScheduler(time.UTC)
 	scheduler.Every(30).Minutes().Do(func() {
-		log.Info("Update metadata set.")
+		log.Get().Sugar().Info("Update metadata set.")
 		ScanLibrary()
-		log.Info("Update tag list.")
+		log.Get().Sugar().Info("Update tag list.")
 		UpdateTags()
 	})
 	ScheduleMigrateMeta()

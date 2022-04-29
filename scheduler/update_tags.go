@@ -1,7 +1,7 @@
 package scheduler
 
 import (
-	"github.com/labstack/gommon/log"
+	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/tag"
 	"sort"
@@ -73,7 +73,7 @@ func UpdateTags() error {
 
 func ScheduleUpdateTags() {
 	scheduler.Every(1).Millisecond().LimitRunsTo(1).Do(func() {
-		log.Info("Update tags.")
+		log.Get().Sugar().Info("Update tags.")
 		UpdateTags()
 	})
 }

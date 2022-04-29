@@ -1,7 +1,7 @@
 package scheduler
 
 import (
-	"github.com/labstack/gommon/log"
+	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
 )
 
@@ -35,16 +35,16 @@ func ScanLibrary() error {
 			continue
 		}
 
-		log.Printf("Creating metadata for %s", file)
+		log.Get().Sugar().Infof("Creating metadata for %s", file)
 
 		item, err := meta.NewItem(file)
 		if err != nil {
-			log.Printf("Failed to create meta data : %v", err)
+			log.Get().Sugar().Errorf("Failed to create meta data : %v", err)
 		}
 
 		err = provider.Write(item)
 		if err != nil {
-			log.Printf("Failed to write meta data : %v", err)
+			log.Get().Sugar().Errorf("Failed to write meta data : %v", err)
 		}
 	}
 
@@ -60,9 +60,9 @@ func ScanLibrary() error {
 			continue
 		}
 
-		log.Printf("Deleting metadata for %s", m.Name)
+		log.Get().Sugar().Infof("Deleting metadata for %s", m.Name)
 		if err := provider.Delete(m); err != nil {
-			log.Printf("Failed to delete meta for %s", m.Name)
+			log.Get().Sugar().Infof("Failed to delete meta for %s", m.Name)
 		}
 
 	}
@@ -72,7 +72,7 @@ func ScanLibrary() error {
 
 func ScheduleScanLibrary() {
 	scheduler.Every(1).Millisecond().LimitRunsTo(1).Do(func() {
-		log.Info("Scanning Library.")
+		log.Get().Sugar().Infof("Scanning Library.")
 		ScanLibrary()
 	})
 }

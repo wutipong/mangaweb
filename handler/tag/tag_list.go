@@ -2,8 +2,8 @@ package tag
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/labstack/gommon/log"
 	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -28,7 +28,7 @@ func init() {
 			"template/header.gohtml",
 		)
 	if err != nil {
-		log.Panic(err)
+		log.Get().Sugar().Panic(err)
 		os.Exit(-1)
 	}
 }

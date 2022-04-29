@@ -2,7 +2,7 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/labstack/gommon/log"
+	"github.com/wutipong/mangaweb/log"
 	"net/http"
 )
 
@@ -19,7 +19,7 @@ func WriteJson(w http.ResponseWriter, v any) {
 }
 
 func WriteError(w http.ResponseWriter, err error) {
-	log.Error(err)
+	log.Get().Sugar().Error(err)
 	WriteJson(w, err)
 }
 

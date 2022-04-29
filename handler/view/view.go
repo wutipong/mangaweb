@@ -12,8 +12,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/labstack/gommon/log"
 	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
 )
 
 const (
@@ -30,7 +30,7 @@ func init() {
 			"template/header.gohtml",
 		)
 	if err != nil {
-		log.Panic(err)
+		log.Get().Sugar().Panic(err)
 		os.Exit(-1)
 	}
 }
@@ -100,7 +100,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	}
 	tagProvider, err := handler.CreateTagProvider()
 	if err != nil {
-		log.Fatal(err)
+		log.Get().Sugar().Fatal(err)
 		handler.WriteError(w, err)
 		return
 	}
@@ -109,7 +109,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	for _, tagStr := range m.Tags {
 		t, err := tagProvider.Read(tagStr)
 		if err != nil {
-			log.Fatal(err)
+			log.Get().Sugar().Fatal(err)
 			handler.WriteError(w, err)
 			return
 		}
