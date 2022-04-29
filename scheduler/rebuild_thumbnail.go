@@ -1,6 +1,6 @@
 package scheduler
 
-import "github.com/labstack/gommon/log"
+import "github.com/wutipong/mangaweb/log"
 
 func RebuildThumbnail() error {
 	provider, err := createMetaProvider()
@@ -17,9 +17,9 @@ func RebuildThumbnail() error {
 
 	for _, m := range allMeta {
 		e := m.GenerateThumbnail(0)
-		log.Printf("Generating new thumbnail for %s", m.Name)
+		log.Get().Sugar().Infof("Generating new thumbnail for %s", m.Name)
 		if e != nil {
-			log.Printf("Failed to generate thumbnail for %s", m.Name)
+			log.Get().Sugar().Errorf("Failed to generate thumbnail for %s", m.Name)
 			continue
 		}
 
@@ -31,7 +31,7 @@ func RebuildThumbnail() error {
 
 func ScheduleRebuildThumbnail() {
 	scheduler.Every(1).Millisecond().LimitRunsTo(1).Do(func() {
-		log.Info("Force updating thumbnail")
+		log.Get().Sugar().Info("Force updating thumbnail")
 		RebuildThumbnail()
 	})
 }

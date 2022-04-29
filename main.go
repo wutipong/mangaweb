@@ -3,23 +3,23 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/julienschmidt/httprouter"
-	"github.com/wutipong/mangaweb/tag"
 
 	"net/http"
 	"os"
 	"path"
 
 	"github.com/joho/godotenv"
-	"github.com/labstack/gommon/log"
+	"github.com/julienschmidt/httprouter"
 
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/handler/browse"
 	handlertag "github.com/wutipong/mangaweb/handler/tag"
 	"github.com/wutipong/mangaweb/handler/view"
+	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
 	metamongo "github.com/wutipong/mangaweb/meta/mongo"
 	"github.com/wutipong/mangaweb/scheduler"
+	"github.com/wutipong/mangaweb/tag"
 	tagmongo "github.com/wutipong/mangaweb/tag/mongo"
 )
 
@@ -55,9 +55,15 @@ const (
 )
 
 func main() {
-	err := godotenv.Load()
+	err := log.Init()
 	if err != nil {
-		log.Info("Use .env file.")
+		panic(err)
+	}
+	defer log.Close()
+
+	err = godotenv.Load()
+	if err != nil {
+		log.Get().Info("Use .env file.")
 	}
 
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
@@ -70,15 +76,15 @@ func main() {
 
 	meta.BaseDirectory = *dataPath
 	printBanner()
-	log.Infof("MangaWeb version:%s", versionString)
+	log.Get().Sugar().Infof("MangaWeb version:%s", versionString)
 
-	log.Infof("Data source Path: %s", *dataPath)
+	log.Get().Sugar().Infof("Data source Path: %s", *dataPath)
 	if err := metamongo.Init(*database, *dbName); err != nil {
-		log.Fatal(err)
+		log.Get().Sugar().Fatal(err)
 	}
 
 	if err := tagmongo.Init(*database, *dbName); err != nil {
-		log.Fatal(err)
+		log.Get().Sugar().Fatal(err)
 	}
 
 	router := httprouter.New()
@@ -91,10 +97,10 @@ func main() {
 	RegisterHandler(router, *prefix)
 	scheduler.Start()
 
-	log.Info("Server starts.")
-	log.Fatal(http.ListenAndServe(*address, router))
+	log.Get().Info("Server starts.")
+	log.Get().Sugar().Fatal(http.ListenAndServe(*address, router))
 
-	log.Info("shutting down the server")
+	log.Get().Sugar().Info("shutting down the server")
 	scheduler.Stop()
 }
 

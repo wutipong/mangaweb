@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/labstack/gommon/log"
 	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
 )
 
@@ -30,7 +30,7 @@ func init() {
 			"template/header.gohtml",
 		)
 	if err != nil {
-		log.Panic(err)
+		log.Get().Sugar().Panic(err)
 		os.Exit(-1)
 	}
 }
