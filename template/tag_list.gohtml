@@ -1,7 +1,7 @@
 {{template "html-head" .}}
 
 {{define "item-card"}}
-    <div class='card mb-3 {{if .Favorite}}border border-pink {{end}}' id='{{.ID}}'>
+    <div class='card mb-3 {{if .Favorite}}border border-pink favorite{{else}} not-favorite{{end}}' id='{{.ID}}'>
 
         {{if .Favorite}}
             <span class='position-absolute bottom-0 end-0 p-2 badge bg-pink'>
@@ -59,6 +59,18 @@
                         </li>
                     </ul>
                 </li>
+                <li class='nav-item dropdown'>
+                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button'
+                       data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        Filter
+                    </a>
+                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
+                        <button class='dropdown-item' type='button'
+                                id='filter-favorite' onclick='toggleFavoriteFilter(); return false'>
+                            <i class='bi bi-star-fill'></i> Favorite
+                        </button>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>
@@ -75,3 +87,16 @@
 </body>
 
 <script src='{{CreateURL "/static/index.js"}}'></script>
+<script>
+    let favoriteOnly = false
+    function toggleFavoriteFilter() {
+        favoriteOnly = !favoriteOnly
+        if(favoriteOnly){
+            $('.not-favorite').addClass('d-none')
+            $('#filter-favorite').addClass('active')
+        }else {
+            $('.not-favorite').removeClass('d-none')
+            $('#filter-favorite').removeClass('active')
+        }
+    }
+</script>
