@@ -3,6 +3,8 @@ package view
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
@@ -12,6 +14,8 @@ import (
 func Download(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	item := handler.ParseParam(params, "item")
 	item = filepath.FromSlash(item)
+
+	log.Get().Info("Download", zap.String("item_name", item))
 
 	db, err := handler.CreateMetaProvider()
 	if err != nil {

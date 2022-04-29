@@ -77,6 +77,8 @@ func createItems(allTags []tag.Tag, favoriteOnly bool) []ItemData {
 func TagListHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	query := r.URL.Query()
 
+	log.Get().Info("Tag list")
+
 	favOnly := false
 	if f, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		favOnly = f

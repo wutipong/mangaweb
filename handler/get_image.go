@@ -5,6 +5,8 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
+	"github.com/wutipong/mangaweb/log"
+	"go.uber.org/zap"
 	_ "image/png"
 	"io/ioutil"
 	"net/http"
@@ -44,6 +46,8 @@ func GetImage(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 	if i, err := strconv.Atoi(query.Get("i")); err == nil {
 		index = i
 	}
+
+	log.Get().Info("Get image", zap.String("item_name", item), zap.Int("index", index))
 
 	m, err := provider.Read(item)
 	if err != nil {

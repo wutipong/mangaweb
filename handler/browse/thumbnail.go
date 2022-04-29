@@ -5,7 +5,9 @@ import (
 	"errors"
 	"github.com/julienschmidt/httprouter"
 	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
+	"go.uber.org/zap"
 	"net/http"
 	"path/filepath"
 )
@@ -13,6 +15,8 @@ import (
 func ThumbnailHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	item := handler.ParseParam(params, "item")
 	item = filepath.FromSlash(item)
+
+	log.Get().Info("Item Thumbnail", zap.String("item_name", item))
 
 	provider, err := handler.CreateMetaProvider()
 	if err != nil {
