@@ -89,12 +89,13 @@
 <script src='{{CreateURL "/static/index.js"}}'></script>
 <script>
     let favoriteOnly = false
+
     function toggleFavoriteFilter() {
         favoriteOnly = !favoriteOnly
-        if(favoriteOnly){
+        if (favoriteOnly) {
             $('.not-favorite').addClass('d-none')
             $('#filter-favorite').addClass('active')
-        }else {
+        } else {
             $('.not-favorite').removeClass('d-none')
             $('#filter-favorite').removeClass('active')
         }
