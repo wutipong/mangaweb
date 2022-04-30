@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+var ErrUnknown = New(0, "unknown error.")
+
 type Error struct {
 	Code    uint   `json:"code"`
 	Message string `json:"message"`

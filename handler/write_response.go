@@ -2,14 +2,17 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/wutipong/mangaweb/log"
-	"go.uber.org/zap"
+	"github.com/wutipong/mangaweb/errors"
 	"net/http"
 )
 
 func WriteJson(w http.ResponseWriter, v any) {
-	if _, ok := v.(error); ok {
+	if err, ok := v.(error); ok {
 		w.WriteHeader(http.StatusInternalServerError)
+		if _, ok := err.(errors.Error); !ok {
+			v = errors.ErrUnknown.Wrap(err)
+		}
+
 	} else {
 		w.WriteHeader(http.StatusOK)
 	}
@@ -17,12 +20,6 @@ func WriteJson(w http.ResponseWriter, v any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	b, _ := json.Marshal(v)
 	w.Write(b)
-}
-
-func WriteError(w http.ResponseWriter, err error) {
-	log.Get().Error("Error", zap.Error(err))
-
-	WriteJson(w, err)
 }
 
 func WriteHtml(w http.ResponseWriter, content string) {

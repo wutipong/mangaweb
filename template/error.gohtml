@@ -1,0 +1,10 @@
+{{template "html-head" .}}
+<body>
+<div class="m-4">
+    <h1 class="h1">Something is wrong</h1>
+
+    <div><strong>Problem</strong> {{.Message}}</div>
+    <div class="small"><strong>Reference code</strong> {{.Code}}</div>
+    <a class="small" href='{{CreateRootURL}}'> return to homepage.</a>
+</div>
+</body>
