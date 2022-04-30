@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"github.com/wutipong/mangaweb/log"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -19,7 +20,8 @@ func WriteJson(w http.ResponseWriter, v any) {
 }
 
 func WriteError(w http.ResponseWriter, err error) {
-	log.Get().Sugar().Error(err)
+	log.Get().Error("Error", zap.Error(err))
+
 	WriteJson(w, err)
 }
 

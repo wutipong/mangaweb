@@ -84,6 +84,11 @@ func (p *Provider) Read(name string) (t tag.Tag, err error) {
 	ctx := context.Background()
 	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
 
+	if result.Err() != nil {
+		err = tag.ErrTagNotFound.Wrap(result.Err()).Format(name)
+		return
+	}
+
 	err = result.Decode(&t)
 
 	return

@@ -85,6 +85,10 @@ func (p *Provider) Delete(i meta.Meta) error {
 func (p *Provider) Read(name string) (i meta.Meta, err error) {
 	ctx := context.Background()
 	result := p.getCollection().FindOne(ctx, bson.D{{Key: "name", Value: name}})
+	if result.Err() == mongo.ErrNoDocuments {
+		err = meta.ErrMetaDataNotFound.Wrap(result.Err()).Format(name)
+		return
+	}
 
 	err = result.Decode(&i)
 
