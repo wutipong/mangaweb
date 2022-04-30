@@ -103,3 +103,7 @@ func CreateTagThumbnailURL(filepath string) string {
 
 	return urlStr
 }
+
+func CreateRootURL() string {
+	return CreateURL(options.PathRoot)
+}
