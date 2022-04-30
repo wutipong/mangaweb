@@ -10,9 +10,9 @@ import (
 	"strings"
 )
 
-var errorTemplate *template.Template
+var errorTemplate *template.Template = nil
 
-func init() {
+func initError() {
 	var err error
 	errorTemplate, err = template.New("error.gohtml").
 		Funcs(HtmlTemplateFuncMap()).
@@ -52,6 +52,11 @@ func WriteError(w http.ResponseWriter, err error) {
 	}
 
 	builder := strings.Builder{}
+
+	if errorTemplate == nil {
+		initError()
+	}
+
 	err = errorTemplate.Execute(&builder, data)
 	if err != nil {
 		WriteJson(w, err)
