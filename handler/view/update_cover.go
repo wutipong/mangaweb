@@ -34,21 +34,21 @@ func UpdateCover(w http.ResponseWriter, r *http.Request, params httprouter.Param
 
 	m, err := provider.Read(item)
 	if err != nil {
-		handler.WriteError(w, err)
+		handler.WriteJson(w, err)
 		return
 	}
 
 	entryIndex := m.FileIndices[index]
-	err = m.GenerateThumbnail(entryIndex)
 
+	err = m.GenerateThumbnail(entryIndex)
 	if err != nil {
-		handler.WriteError(w, err)
+		handler.WriteJson(w, err)
 		return
 	}
 
 	err = provider.Write(m)
 	if err != nil {
-		handler.WriteError(w, err)
+		handler.WriteJson(w, err)
 		return
 	}
 

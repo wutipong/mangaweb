@@ -24,14 +24,14 @@ func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httproute
 
 	db, err := handler.CreateMetaProvider()
 	if err != nil {
-		handler.WriteError(w, err)
+		handler.WriteJson(w, err)
 		return
 	}
 	defer db.Close()
 
 	m, err := db.Read(item)
 	if err != nil {
-		handler.WriteError(w, err)
+		handler.WriteJson(w, err)
 		return
 	}
 
