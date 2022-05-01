@@ -45,7 +45,7 @@ func CreateBrowseURLPattern() string {
 }
 
 func CreateSetTagFavoriteURLPattern() string {
-	urlStr := CreateURL(options.PathTagFavorite, "*item")
+	urlStr := CreateURL(options.PathTagFavorite, "*tag")
 
 	return urlStr
 }
