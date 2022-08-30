@@ -28,6 +28,8 @@ func Init(options Options) {
 		ScanLibrary()
 		log.Get().Sugar().Info("Update tag list.")
 		UpdateTags()
+		log.Get().Sugar().Info("Update missing thumbnails.")
+		UpdateMissingThumbnail()
 	})
 	ScheduleMigrateMeta()
 }

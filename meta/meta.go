@@ -86,7 +86,7 @@ func (m *Meta) GenerateThumbnail(fileIndex int) error {
 		return fmt.Errorf("file list is empty")
 	}
 
-	img, err := image.CreateCover(fileIndex, r)
+	img, err := image.CreateCover(m.FileIndices[fileIndex], r)
 	if err != nil {
 		return err
 	}
