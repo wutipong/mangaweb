@@ -4,7 +4,6 @@ import (
 	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/tag"
-	"sort"
 )
 
 func UpdateTags() error {
@@ -36,9 +35,10 @@ func UpdateTags() error {
 	defer tagProvider.Close()
 
 	allTag, err := tagProvider.ReadAll()
-	sort.Slice(allTag, func(i, j int) bool {
-		return allTag[i].Name < allTag[j].Name
-	})
+	allTagSet := make(map[string]bool)
+	for _, t := range allTag {
+		allTagSet[t.Name] = true
+	}
 
 	findMetaWithTag := func(tag string) meta.Meta {
 		for _, m := range allMeta {
@@ -52,10 +52,8 @@ func UpdateTags() error {
 		return meta.Meta{}
 	}
 
-	for tagStr, _ := range tagSet {
-		if sort.Search(len(allTag), func(i int) bool {
-			return allTag[i].Name == tagStr
-		}) == len(allTag) {
+	for tagStr := range tagSet {
+		if _, found := allTagSet[tagStr]; !found {
 			t := tag.NewTag(tagStr)
 			m := findMetaWithTag(tagStr)
 			t.Thumbnail = m.Thumbnail
