@@ -130,10 +130,10 @@
                     </a>
                 </li>
             </ul>
-            <form class='d-flex ms-lg-2'>
+            <form class='d-flex ms-lg-2' onsubmit="return onSearchClick(event);">
                 <div class='input-group'>
                     <input class='form-control' type='search' placeholder='Search' aria-label='Search' id='search-text'>
-                    <button class='btn btn-outline-success' type='button' id='search-button' onclick='onSearchClick()'>
+                    <button class='btn btn-outline-success' type='submit' id='search-button'>
                         <i class='bi bi-search'></i>
                     </button>
                 </div>
@@ -262,13 +262,16 @@
         url.search = searchParams.toString()
     }
 
-    function onSearchClick() {
+    function onSearchClick(e) {
+        e.preventDefault();
         let searchText = $('#search-text').val()
         let url = window.location
         let searchParams = new URLSearchParams(url.search)
         searchParams.set('search', searchText)
 
         url.search = searchParams.toString()
+
+        return false;
     }
 
     function rescanLibrary() {
