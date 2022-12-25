@@ -35,6 +35,17 @@
 {{end}}
 
 <body>
+<div id="app"></div>
+<script type='module'>
+    import Browse from {{CreateURL "/static/Browse.js"}}
+
+    const app = new Browse({
+        target: document.getElementById('app'),
+        props: {
+            name: "test from browse handle",
+        }
+    })
+</script>
 <nav class='navbar navbar-dark bg-dark fixed-top navbar-expand-lg'>
     <div class='container-fluid'>
         <span class='navbar-brand text-truncate'>{{.Title}}</span>
