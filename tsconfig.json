@@ -3,8 +3,8 @@
         "target": "ES6",
         "noImplicitAny": false,
         "sourceMap": true,
-        "rootDir": "src",
-        "outDir": "dist/js",
+        "rootDir": "static-src",
+        "outDir": "static",
         "noEmitOnError": true,
         "lib": [
             "es2015",
