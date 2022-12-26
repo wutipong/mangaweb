@@ -16,10 +16,7 @@ func initError() {
 	var err error
 	errorTemplate, err = template.New("error.gohtml").
 		Funcs(HtmlTemplateFuncMap()).
-		ParseFiles(
-			"template/error.gohtml",
-			"template/header.gohtml",
-		)
+		ParseFiles("template/error.gohtml")
 	if err != nil {
 		log.Get().Sugar().Panic(err)
 		os.Exit(-1)
