@@ -1,8 +1,15 @@
 package handler
 
 import (
+	"encoding/json"
 	"html/template"
 )
+
+func marshal(i any) template.JS {
+	str, _ := json.Marshal(i)
+
+	return template.JS(str)
+}
 
 func HtmlTemplateFuncMap() template.FuncMap {
 	return template.FuncMap{
@@ -20,5 +27,6 @@ func HtmlTemplateFuncMap() template.FuncMap {
 		"CreateBrowseTagURL":      CreateBrowseTagURL,
 		"CreateTagThumbnailURL":   CreateTagThumbnailURL,
 		"CreateRootURL":           CreateRootURL,
+		"Marshal":                 marshal,
 	}
 }

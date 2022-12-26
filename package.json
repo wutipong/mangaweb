@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prebuild": "npx rimraf ./static",
-    "build": "parcel build --dist-dir ./static ./static-src/index.js ./static-src/Browse.svelte"
+    "build": "parcel build --dist-dir ./static ./static-src/index.js ./static-src/browse.ts"
   },
   "repository": {
     "type": "git",
