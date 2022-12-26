@@ -38,9 +38,11 @@ type PageData struct {
 }
 
 type ItemData struct {
-	ID       uint64
-	Name     string
-	Favorite bool
+	ID           uint64
+	Name         string
+	Favorite     bool
+	URL          string
+	ThumbnailURL string
 }
 
 func createItems(allTags []tag.Tag, favoriteOnly bool) []ItemData {
@@ -58,9 +60,11 @@ func createItems(allTags []tag.Tag, favoriteOnly bool) []ItemData {
 			id := hash.Sum64()
 
 			allItems[i] = ItemData{
-				ID:       id,
-				Name:     t.Name,
-				Favorite: t.Favorite,
+				ID:           id,
+				Name:         t.Name,
+				Favorite:     t.Favorite,
+				URL:          handler.CreateBrowseTagURL(t.Name),
+				ThumbnailURL: handler.CreateTagThumbnailURL(t.Name),
 			}
 		}
 	}
