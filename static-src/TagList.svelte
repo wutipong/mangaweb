@@ -1,7 +1,10 @@
 <script>
-    export let params
+    import Toolbar from "./TagList/Toolbar.svelte";
 
-    console.log(params)
+    export let params
+    export let browseURL = ""
+    export let tagListURL = ""
+
 </script>
 
-<h1>Hello this is from view.svelte</h1>
+<Toolbar title="{params.Title}" browseURL="{browseURL}" tagListURL="{tagListURL}" onToggleFavoriteFilter=""></Toolbar>
