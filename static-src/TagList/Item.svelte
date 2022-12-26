@@ -9,8 +9,6 @@
 <div class='card mb-3'
      class:border={favorite}
      class:border-pink={favorite}
-     class:favorite={favorite}
-     class:not-favorite={!favorite}
      id='{id}'>
 
     {#if favorite}
