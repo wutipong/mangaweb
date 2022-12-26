@@ -13,4 +13,5 @@ const app = new TagList({
     },
 })
 
+console.log(params);
 export default app;

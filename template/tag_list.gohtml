@@ -5,32 +5,6 @@
     <title>{{.Title}}</title>
 </head>
 
-{{define "item-card"}}
-    <div class='card mb-3 {{if .Favorite}}border border-pink favorite{{else}} not-favorite{{end}}' id='{{.ID}}'>
-
-        {{if .Favorite}}
-            <span class='position-absolute bottom-0 end-0 p-2 badge bg-pink'>
-                <span><i class='bi bi-star-fill'></i> Favorite</span>
-            </span>
-        {{end}}
-
-        <div class='row g-0'>
-            <div class='col-md-4'>
-                <a href='{{CreateBrowseTagURL .Name}}' class='thumb-link'>
-                    <img class='img-fluid lazy rounded thumb-img' loading='lazy' src='{{CreateTagThumbnailURL .Name}}'
-                         alt='{{.Name}}'>
-                </a>
-            </div>
-            <div class='col-md-8'>
-                <div class='card-body'>
-                    <h5 class='card-title'><a href='{{CreateBrowseTagURL .Name}}'>{{.Name}}</a></h5>
-                </div>
-            </div>
-        </div>
-
-    </div>
-{{end}}
-
 <body>
 
 <div id="app"></div>
@@ -40,78 +14,6 @@
         data-browse-url='{{CreateBrowseURL ""}}'
         data-tag-list-url='{{CreateTagListURL}}'>
 </script>
-
-<!-- nav class='navbar navbar-dark bg-dark fixed-top navbar-expand-lg'>
-    <div class='container-fluid'>
-        <span class='navbar-brand text-truncate'>{{.Title}}</span>
-
-        <button class='navbar-toggler' type='button' data-bs-toggle='collapse'
-                data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent'
-                aria-expanded='false' aria-label='Toggle navigation'>
-
-            <span class='navbar-toggler-icon'></span>
-        </button>
-
-        <div class='collapse navbar-collapse' id='navbarSupportedContent'>
-            <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
-                <li class='nav-item dropdown'>
-                    <a class='nav-link dropdown-toggle' href='#' id='navbarBrowseDropdown'
-                       role='button' data-bs-toggle='dropdown' aria-expanded='false'>
-                        Browse
-                    </a>
-                    <ul class='dropdown-menu' aria-labelledby='navbarBrowseDropdown'>
-                        <li>
-                            <a class='dropdown-item' href='{{CreateBrowseURL ""}}'>
-                                <i class='bi bi-list-ul'></i> All items
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class='dropdown-item' href='{{CreateTagListURL}}'>
-                                <i class="bi bi-tags-fill"></i> Tag list
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class='nav-item dropdown'>
-                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button'
-                       data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                        Filter
-                    </a>
-                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
-                        <button class='dropdown-item' type='button'
-                                id='filter-favorite' onclick='toggleFavoriteFilter(); return false'>
-                            <i class='bi bi-star-fill'></i> Favorite
-                        </button>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav -->
-
-<div class='container-fluid' style='padding-top:100px;'>
-    <div class='grid-container'>
-        {{range .Tags}}
-            {{template "item-card" .}}
-        {{end}}
-    </div>
-</div>
-
 </body>
 
 <script src='{{CreateURL "/static/index.js"}}'></script>
-<script>
-    let favoriteOnly = false
-
-    function toggleFavoriteFilter() {
-        favoriteOnly = !favoriteOnly
-        if (favoriteOnly) {
-            $('.not-favorite').addClass('d-none')
-            $('#filter-favorite').addClass('active')
-        } else {
-            $('.not-favorite').removeClass('d-none')
-            $('#filter-favorite').removeClass('active')
-        }
-    }
-</script>
