@@ -3,6 +3,7 @@
     export let browseURL = ""
     export let tagListURL = ""
     export let onToggleFavoriteFilter
+    export let favoriteOnly = false
 
     function toggleFavoriteFilter() {
         (onToggleFavoriteFilter !== undefined)? onToggleFavoriteFilter():null
@@ -47,8 +48,12 @@
                         Filter
                     </a>
                     <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
-                        <button class='dropdown-item' type='button'
-                                id='filter-favorite' on:click={toggleFavoriteFilter}>
+                        <button class='dropdown-item'
+                                type='button'
+                                id='filter-favorite'
+                                on:click={toggleFavoriteFilter}
+                                class:active={favoriteOnly}
+                        >
                             <i class='bi bi-star-fill'></i> Favorite
                         </button>
                     </div>
