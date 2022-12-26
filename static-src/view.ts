@@ -9,4 +9,6 @@ const app = new View({
     },
 })
 
+console.log(params)
+
 export default app;
