@@ -8,24 +8,31 @@
 
     let favoriteOnly = false
 
-    function toggleFavoriteFilter() {
+    function toggleFavoriteOnly() {
         favoriteOnly = !favoriteOnly
-        if (favoriteOnly) {
-            $('.not-favorite').addClass('d-none')
-            $('#filter-favorite').addClass('active')
-        } else {
-            $('.not-favorite').removeClass('d-none')
-            $('#filter-favorite').removeClass('active')
-        }
     }
 </script>
 
-<Toolbar title="{params.Title}" browseURL="{browseURL}" tagListURL="{tagListURL}" onToggleFavoriteFilter=""></Toolbar>
+<Toolbar
+        title="{params.Title}"
+        browseURL="{browseURL}"
+        tagListURL="{tagListURL}"
+        onToggleFavoriteFilter="{toggleFavoriteOnly}"
+        favoriteOnly={favoriteOnly}>
+</Toolbar>
 
 <div class='container-fluid' style='padding-top:100px;'>
     <div class='grid-container'>
         {#each params.Tags as tag}
-            <Item name={tag.Name} favorite={tag.Favorite} id={tag.ID} url={tag.URL} thumbnailURL={tag.ThumbnailURL}></Item>
+            {#if !favoriteOnly || (favoriteOnly && tag.Favorite)}
+                <Item
+                        name={tag.Name}
+                        favorite={tag.Favorite}
+                        id={tag.ID}
+                        url={tag.URL}
+                        thumbnailURL={tag.ThumbnailURL}
+                ></Item>
+            {/if}
         {/each}
     </div>
 </div>
