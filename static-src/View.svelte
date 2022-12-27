@@ -43,8 +43,11 @@
         }
     }
 
-    function updateCover() {
+    async function updateCover() {
+        const url = new URL(params.UpdateCoverURLs[current], window.location.origin)
 
+        await fetch(url)
+        toast.show('Update Cover', 'The cover image is updated successfully.')
     }
 
     function onIndexChange(i) {
