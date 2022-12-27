@@ -45,6 +45,7 @@ type viewData struct {
 	DownloadPageURLs []string
 	Tags             []string
 	TagsV2           []tagData
+	DownloadURL      string
 }
 
 type tagData struct {
@@ -141,6 +142,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		DownloadPageURLs: createDownloadImageURLs(item, pages),
 		Favorite:         m.Favorite,
 		TagsV2:           tagsV2,
+		DownloadURL:      handler.CreateDownloadURL(item),
 	}
 
 	builder := strings.Builder{}
