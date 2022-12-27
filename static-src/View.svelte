@@ -24,8 +24,21 @@
         })
     }
 
-    function toggleFavorite() {
+    async function toggleFavorite() {
         favorite = !favorite
+
+        const urlSearchParams = new URLSearchParams()
+        urlSearchParams.set('favorite', (!favorite).toString())
+
+        const url = new URL(params.SetFavoriteURL, window.location.origin)
+        url.search = urlSearchParams.toString()
+
+        await fetch(url)
+        if (favorite) {
+            showToast('Favorite', 'The current manga is now your favorite.')
+        } else {
+            showToast('Favorite', 'The current manga is no longer your favorite.')
+        }
     }
 
     function updateCover() {
