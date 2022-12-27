@@ -7,7 +7,7 @@
 
     let favorite = params.Favorite
     let name = params.Name
-    let tags = params.TagsV2
+    let tags = params.Tags
     let browseURL = params.BrowseURL
 
     let current = 0
