@@ -43,6 +43,8 @@ type browseData struct {
 	SortOrder    string
 	Tag          string
 	TagFavorite  bool
+	BrowseURL    string
+	TagListURL   string
 
 	Items []item
 	Pages []pageItem
@@ -174,6 +176,8 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		SortOrder:    string(order),
 		Items:        items,
 		Pages:        createPageItems(page, pageCount, *r.URL),
+		BrowseURL:    handler.CreateBrowseURL(""),
+		TagListURL:   handler.CreateTagListURL(),
 	}
 
 	if tagStr != "" {
