@@ -1,6 +1,7 @@
 <script>
     import Toolbar from "./View/Toolbar.svelte";
     import ImageViewer from "./View/ImageViewer.svelte";
+    import Toast from "./View/Toast.svelte";
 
     export let params
     console.log(params)
@@ -11,6 +12,7 @@
     let browseURL = params.BrowseURL
 
     let current = 0
+    let toast
 
     function downloadManga() {
         browser.downloads.download({
@@ -28,16 +30,16 @@
         favorite = !favorite
 
         const urlSearchParams = new URLSearchParams()
-        urlSearchParams.set('favorite', (!favorite).toString())
+        urlSearchParams.set('favorite', favorite.toString())
 
         const url = new URL(params.SetFavoriteURL, window.location.origin)
         url.search = urlSearchParams.toString()
 
         await fetch(url)
         if (favorite) {
-            showToast('Favorite', 'The current manga is now your favorite.')
+            toast.show('Favorite', 'The current manga is now your favorite.')
         } else {
-            showToast('Favorite', 'The current manga is no longer your favorite.')
+            toast.show('Favorite', 'The current manga is no longer your favorite.')
         }
     }
 
@@ -64,3 +66,5 @@
          onDownloadPage={downloadPage}
          toggleFavorite={toggleFavorite}
          updateCover={updateCover}/>
+
+<Toast bind:this={toast}/>
