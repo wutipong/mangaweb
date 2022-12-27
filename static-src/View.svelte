@@ -4,7 +4,6 @@
     import Toast from "./View/Toast.svelte";
 
     export let params
-    console.log(params)
 
     let favorite = params.Favorite
     let name = params.Name
@@ -15,15 +14,11 @@
     let toast
 
     function downloadManga() {
-        browser.downloads.download({
-            url: params.DownloadURL
-        })
+        download(params.DownloadURL)
     }
 
     function downloadPage() {
-        browser.downloads.download({
-            url: params.DownloadPageURLs[current]
-        })
+        download(params.DownloadPageURLs[current])
     }
 
     async function toggleFavorite() {
@@ -52,6 +47,16 @@
 
     function onIndexChange(i) {
         current = i
+    }
+
+    function download(url) {
+        let link = document.createElement("a");
+        link.setAttribute('download', '');
+        link.href = url;
+        document.body.appendChild(link);
+
+        link.click();
+        link.remove();
     }
 
 </script>
