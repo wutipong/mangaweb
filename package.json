@@ -19,6 +19,8 @@
   "homepage": "https://github.com/wutipong/mangaweb#readme",
   "devDependencies": {
     "@parcel/transformer-sass": "^2.7.0",
+    "@types/bootstrap": "^5.2.6",
+    "@types/jquery": "^3.5.14",
     "parcel": "^2.7.0",
     "parcel-transformer-svelte3-plus": "^0.2.8",
     "svelte": "^3.55.0",
