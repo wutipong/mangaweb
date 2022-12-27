@@ -38,10 +38,10 @@
                     </div>
                 </li>
                 <li class='nav-item dropdown'>
-                    <button class='nav-link dropdown-toggle' href='#' id='navbarDropdown'
+                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown'
                             data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
                         <i class='bi bi-list'></i> Menu
-                    </button>
+                    </a>
                     <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
                         <button class='dropdown-item' id='download-btn' download on:click={onDownloadPage}>
                             <i class='bi bi-download'></i>

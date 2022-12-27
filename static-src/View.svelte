@@ -6,7 +6,7 @@
 
     let favorite = params.Favorite
     let name = params.Name
-    let tags = params.Tags
+    let tags = params.TagsV2
     let browseURL = params.BrowseURL
 
     function downloadManga(){
@@ -27,13 +27,13 @@
 
 </script>
 
-<Toolbar Tags="{tags}"
+<Toolbar Tags={tags}
          Name={name}
          Favorite={favorite}
          BrowseURL={browseURL}
-         onDownloadManga="{downloadManga}"
-         onDownloadPage="{downloadPage}"
-         toggleFavorite="{toggleFavorite}"
-         updateCover="{updateCover}">
+         onDownloadManga={downloadManga}
+         onDownloadPage={downloadPage}
+         toggleFavorite={toggleFavorite}
+         updateCover={updateCover}>
 
 </Toolbar>
