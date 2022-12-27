@@ -7,7 +7,7 @@
 
 <body>
 
-<div class='fullscreen' style='padding-top:80px;'>
+<!-- div class='fullscreen' style='padding-top:80px;'>
     <div class='carousel slide w-100 h-100' id='carouselControl'>
         <div class='carousel-inner w-100 h-100' id='carousel' style='width:100%; height:100%;'>
             {{range $i, $url := .ImageURLs}}
@@ -29,7 +29,7 @@
             <span class='visually-hidden'>Next</span>
         </a>
     </div>
-</div>
+</div -->
 
 <div class='position-fixed bottom-0 end-0 p-3' style='z-index: 11'>
     <div id='toast' class='toast' role='alert' aria-live='assertive' aria-atomic='true'>
@@ -122,18 +122,20 @@
         if (window.location.search !== '')
             window.location.search = ''
 
-        $('.carousel').carousel({
+        /* $('.carousel').carousel({
             interval: false
-        })
+        })*/
 
         let downloadUrls = [{{range .DownloadPageURLs}}
             '{{.}}',
             {{end}}]
 
+        /*
         $('#carouselControl').on('slide.bs.carousel', function (e) {
             $('#download-btn').attr('href', downloadUrls[e.to])
             $('#update-cover-btn').attr('onclick', `updateCover(${e.to}); return false;`)
         })
+        */
 
         $('#download-btn').attr('href', downloadUrls[0])
         $('#update-cover-btn').attr('onclick', 'updateCover(0); return false;')
