@@ -43,8 +43,7 @@ type viewData struct {
 	ImageURLs        []string
 	UpdateCoverURLs  []string
 	DownloadPageURLs []string
-	Tags             []string
-	TagsV2           []tagData
+	Tags             []tagData
 	DownloadURL      string
 	SetFavoriteURL   string
 }
@@ -111,8 +110,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		return
 	}
 
-	tagsV2 := make([]tagData, 0)
-	tags := make([]string, 0)
+	tags := make([]tagData, 0)
 
 	for _, tagStr := range m.Tags {
 		t, err := tagProvider.Read(tagStr)
@@ -123,12 +121,10 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		}
 
 		if !t.Hidden {
-			tagsV2 = append(tagsV2, tagData{
+			tags = append(tags, tagData{
 				Name: t.Name,
 				URL:  handler.CreateBrowseTagURL(t.Name),
 			})
-
-			tags = append(tags, t.Name)
 		}
 	}
 
@@ -142,7 +138,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		UpdateCoverURLs:  createUpdateCoverURLs(item, pages),
 		DownloadPageURLs: createDownloadImageURLs(item, pages),
 		Favorite:         m.Favorite,
-		TagsV2:           tagsV2,
+		Tags:             tags,
 		DownloadURL:      handler.CreateDownloadURL(item),
 		SetFavoriteURL:   handler.CreateSetFavoriteURL(item),
 	}
