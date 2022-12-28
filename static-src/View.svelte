@@ -1,7 +1,7 @@
 <script>
     import Toolbar from "./View/Toolbar.svelte";
     import ImageViewer from "./View/ImageViewer.svelte";
-    import Toast from "./View/Toast.svelte";
+    import Toast from "./Common/Toast.svelte";
 
     export let params
 
