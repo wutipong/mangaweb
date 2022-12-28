@@ -15,60 +15,14 @@
     const checkedClass = 'dropdown-item-checked'
     let favorite = {{.TagFavorite}};
 
-    function changeSort(sortBy) {
-        let url = window.location
-        let searchParams = new URLSearchParams(url.search)
-        searchParams.set('sort', sortBy)
 
-        if (sortBy === 'name') {
-            searchParams.set('order', 'ascending')
-        } else if (sortBy === 'createTime') {
-            searchParams.set('order', 'descending')
-        }
 
-        searchParams.delete('page')
 
-        url.search = searchParams.toString()
-    }
 
-    function changeOrder(order) {
-        let url = window.location
-        let searchParams = new URLSearchParams(url.search)
 
-        searchParams.set('order', order)
 
-        url.search = searchParams.toString()
-    }
 
-    function toggleFavoriteFilter() {
-        let url = window.location
-        let searchParams = new URLSearchParams(url.search)
 
-        let isFavorite = {{.FavoriteOnly}}
-            searchParams.set('favorite', (!isFavorite).toString())
-
-        url.search = searchParams.toString()
-    }
-
-    function onSearchClick() {
-        let searchText = $('#search-text').val()
-        let url = window.location
-        let searchParams = new URLSearchParams(url.search)
-        searchParams.set('search', searchText)
-
-        url.search = searchParams.toString()
-    }
-
-    function rescanLibrary() {
-        const url = '{{CreateRescanURL}}'
-
-        $.ajax({
-            url: url.toString(),
-            dataType: 'json',
-        }).done(function (data) {
-            showToast('Re-scan Library', 'Library re-scanning in progress. Please refresh after a few minutes.')
-        })
-    }
 
     function updateFavoriteButton(favorite) {
         const btn = $('#favorite-btn')
@@ -81,35 +35,9 @@
         }
     }
 
-    function toggleFavorite() {
-        const params = new URLSearchParams()
-        params.set('favorite', (!favorite).toString())
 
-        const url = new URL({{ CreateSetTagFavoriteURL .Tag}}, window.location.origin)
-        url.search = params.toString()
 
-        $.ajax({
-            url: url.toString(),
-            dataType: 'json',
-        }).done(function (data) {
-            favorite = data.favorite
-            updateFavoriteButton(favorite);
-            if (favorite) {
-                showToast('Favorite', 'The tag "{{.Tag}}" is now your favorite.')
-            } else {
-                showToast('Favorite', 'The tag "{{.Tag}}" is no longer your favorite.')
-            }
-        })
-    }
 
-    function showToast(header, content) {
-        $('#toast-header').text(header)
-        $('#toast-content').text(content)
-
-        let toast = new bootstrap.Toast($('#toast'))
-
-        toast.show()
-    }
 
 </script>
 </body>

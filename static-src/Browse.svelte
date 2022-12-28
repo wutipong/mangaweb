@@ -1,46 +1,88 @@
 <script>
     import Toolbar from "./Browse/Toolbar.svelte";
-    import {onMount} from "svelte";
     import ModalDialog from "./Common/ModalDialog.svelte";
     import Item from "./Browse/Item.svelte";
     import Pagination from "./Common/Pagination.svelte";
     import PageItem from "./Common/PageItem.svelte";
+    import Toast from "./Common/Toast.svelte";
 
     export let params
 
-    let searchText = ""
+    let toast
     console.log(params)
 
-    function changeSort(s) {
-        console.log(s)
+    function changeSort(sortBy) {
+        let url = window.location
+        let searchParams = new URLSearchParams(url.search)
+        searchParams.set('sort', sortBy)
+
+        if (sortBy === 'name') {
+            searchParams.set('order', 'ascending')
+        } else if (sortBy === 'createTime') {
+            searchParams.set('order', 'descending')
+        }
+
+        searchParams.delete('page')
+
+        url.search = searchParams.toString()
     }
 
-    function changeOrder(o) {
-        console.log(o)
-    }
-
-    function toggleFavoriteFilter() {
-
-    }
-
-    function rescanLibrary() {
-
-    }
-
-    function toggleFavorite() {
-
-    }
-
-    function onSearchClick(t) {
-
-    }
-
-    onMount(async () => {
+    function changeOrder(order) {
         let url = window.location
         let searchParams = new URLSearchParams(url.search)
 
-        searchText = searchParams.get('search')
-    })
+        searchParams.set('order', order)
+
+        url.search = searchParams.toString()
+    }
+
+    function onFilterFavorite() {
+        let url = window.location
+        let searchParams = new URLSearchParams(url.search)
+
+        let isFavorite = params.FavoriteOnly
+        searchParams.set('favorite', (!isFavorite).toString())
+
+        url.search = searchParams.toString()
+    }
+
+    async function rescanLibrary() {
+        const url = params.RescanURL
+        await fetch(url)
+        toast.show(
+            'Re-scan Library',
+            'Library re-scanning in progress. Please refresh after a few minutes.'
+        )
+    }
+
+    async function onTagFavorite() {
+        const params = new URLSearchParams()
+        params.set('favorite', (!favorite).toString())
+
+        const url = new URL(params.SetTagFavoriteURL, window.location.origin)
+        url.search = params.toString()
+
+        const resp = await fetch(url)
+        const json = await resp.json()
+        const obj = JSON.parse(json)
+
+        console.log(json)
+        if(obj.favorite) {
+            toast.show('Favorite', `The tag "${params.Tag}" is now your favorite.`)
+        }
+        else {
+            toast.show('Favorite', `The tag "${params.Tag}" is no longer your favorite.`)
+        }
+    }
+
+    function onSearchClick(t) {
+        let searchText = t
+        let url = window.location
+        let searchParams = new URLSearchParams(url.search)
+        searchParams.set('search', searchText)
+
+        url.search = searchParams.toString()
+    }
 </script>
 
 <Toolbar Title={params.Title}
@@ -53,11 +95,11 @@
          TagFavorite={params.TagFavorite}
          changeSort={changeSort}
          changeOrder={changeOrder}
-         toggleFavoriteFilter="{toggleFavoriteFilter}"
-         rescanLibrary="{rescanLibrary}"
-         toggleFavorite="{toggleFavorite}"
-         onSearchClick="{onSearchClick}"
-         SearchText={searchText}/>
+         onFilterFavorite={onFilterFavorite}
+         rescanLibrary={rescanLibrary}
+         onTagFavorite={onTagFavorite}
+         onSearchClick={onSearchClick}
+         SearchText={params.SearchText}/>
 
 <div class='container-fluid' style='padding-top:100px;'>
     <div class='grid-container'>
@@ -90,6 +132,8 @@
     <p>Licensed under MIT License</p>
     <p><a href='https://github.com/wutipong/mangaweb'>Homepage</a></p>
 </ModalDialog>
+
+<Toast bind:this={toast} />
 
 <nav aria-label='Move to top navigation' class='position-fixed bottom-0 end-0 p-3'>
     <a class='btn btn-secondary' href='#'>

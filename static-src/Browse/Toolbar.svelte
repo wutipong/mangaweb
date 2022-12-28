@@ -10,9 +10,9 @@
 
     export let changeSort
     export let changeOrder
-    export let toggleFavoriteFilter
+    export let onFilterFavorite
     export let rescanLibrary
-    export let toggleFavorite
+    export let onTagFavorite
     export let onSearchClick
 
     export let SearchText = ""
@@ -91,7 +91,7 @@
                     <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
                         <button class='dropdown-item' type='button'
                                 class:active={FavoriteOnly}
-                                id='filter-favorite' on:click={toggleFavoriteFilter}>
+                                id='filter-favorite' on:click={onFilterFavorite}>
                             <i class='bi bi-star-fill'></i> Favorite
                         </button>
                     </div>
@@ -119,7 +119,7 @@
                        class:btn-pink={TagFavorite}
                        class:active={TagFavorite}
                        class:btn-outline-pink={!TagFavorite}
-                       on:click={toggleFavorite}>
+                       on:click={onTagFavorite}>
                         <i class='bi bi-star-fill'></i> Favorite tag
                     </button>
                 </li>
