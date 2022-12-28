@@ -1,13 +1,14 @@
 <script>
     import Toolbar from "./Browse/Toolbar.svelte";
     import {onMount} from "svelte";
+    import ModalDialog from "./Common/ModalDialog.svelte";
 
     export let params
 
     let searchText = ""
     console.log(params)
 
-    function changeSort(s){
+    function changeSort(s) {
         console.log(s)
     }
 
@@ -31,7 +32,7 @@
 
     }
 
-    onMount(async() =>{
+    onMount(async () => {
         let url = window.location
         let searchParams = new URLSearchParams(url.search)
 
@@ -54,3 +55,11 @@
          toggleFavorite="{toggleFavorite}"
          onSearchClick="{onSearchClick}"
          SearchText={searchText}/>
+
+<ModalDialog Id="aboutModal" Tittle="About">
+    <h5>MangaWeb</h5>
+    <h6>Version {params.Version} </h6>
+    <p>&copy; 2021-2022 Wutipong Wongsakuldej. All Right Reserved</p>
+    <p>Licensed under MIT License</p>
+    <p><a href='https://github.com/wutipong/mangaweb'>Homepage</a></p>
+</ModalDialog>
