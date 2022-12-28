@@ -8,36 +8,4 @@
 <body>
 <div id="app"></div>
 <script src='{{CreateURL "/static/browse.js"}}' data-params='{{Marshal .}}'></script>
-
-<script src='{{CreateURL "/static/index.js"}}'></script>
-<script>
-
-    const checkedClass = 'dropdown-item-checked'
-    let favorite = {{.TagFavorite}};
-
-
-
-
-
-
-
-
-
-
-    function updateFavoriteButton(favorite) {
-        const btn = $('#favorite-btn')
-        if (favorite) {
-            btn.removeClass()
-            btn.addClass('btn btn-pink active')
-        } else {
-            btn.removeClass()
-            btn.addClass('btn btn-outline-pink')
-        }
-    }
-
-
-
-
-
-</script>
 </body>
