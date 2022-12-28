@@ -2,12 +2,8 @@
     export let title = ""
     export let browseURL = ""
     export let tagListURL = ""
-    export let onToggleFavoriteFilter
+    export let onFilterFavorite
     export let favoriteOnly = false
-
-    function toggleFavoriteFilter() {
-        (onToggleFavoriteFilter !== undefined)? onToggleFavoriteFilter():null
-    }
 </script>
 
 <nav class='navbar navbar-dark bg-dark fixed-top navbar-expand-lg'>
@@ -24,11 +20,16 @@
         <div class='collapse navbar-collapse' id='navbarSupportedContent'>
             <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
                 <li class='nav-item dropdown'>
-                    <a class='nav-link dropdown-toggle' href='#' id='navbarBrowseDropdown'
-                       role='button' data-bs-toggle='dropdown' aria-expanded='false'>
+                    <a class='nav-link dropdown-toggle'
+                       href='#'
+                       id='navbarBrowseDropdown'
+                       role='button'
+                       data-bs-toggle='dropdown'
+                       aria-expanded='false'
+                    >
                         Browse
                     </a>
-                    <ul class='dropdown-menu' aria-labelledby='navbarBrowseDropdown'>
+                    <ul class='dropdown-menu'>
                         <li>
                             <a class='dropdown-item' href='{browseURL}'>
                                 <i class='bi bi-list-ul'></i> All items
@@ -43,20 +44,28 @@
                     </ul>
                 </li>
                 <li class='nav-item dropdown'>
-                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button'
-                       data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                    <a class='nav-link dropdown-toggle'
+                       href='#'
+                       id='navbarDropdown'
+                       role='button'
+                       data-bs-toggle='dropdown'
+                       aria-expanded='false'
+                    >
                         Filter
                     </a>
-                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
+                    <div class='dropdown-menu'>
                         <button class='dropdown-item'
                                 type='button'
                                 id='filter-favorite'
-                                on:click={toggleFavoriteFilter}
+                                on:click={onFilterFavorite}
                                 class:active={favoriteOnly}
                         >
                             <i class='bi bi-star-fill'></i> Favorite
                         </button>
                     </div>
+                </li>
+                <li class='nav-item'>
+                    <a class='nav-link' href='#' data-bs-toggle='modal' data-bs-target='#aboutModal'>About</a>
                 </li>
             </ul>
         </div>
