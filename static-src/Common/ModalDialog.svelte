@@ -4,7 +4,7 @@
     export let Title=""
     export let Id =""
 
-    function show(){
+    export function show(){
         const dialog = new Modal(`#${Id}`);
         dialog.show()
     }

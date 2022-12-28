@@ -38,6 +38,7 @@ var viewTemplate *template.Template
 type viewData struct {
 	Name             string
 	Title            string
+	Version          string
 	BrowseURL        string
 	Favorite         bool
 	ImageURLs        []string
@@ -133,6 +134,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	data := viewData{
 		Name:             item,
 		Title:            fmt.Sprintf("Manga - Viewing [%s]", item),
+		Version:          handler.CreateVersionString(),
 		BrowseURL:        browseUrl,
 		ImageURLs:        createImageURLs(item, pages),
 		UpdateCoverURLs:  createUpdateCoverURLs(item, pages),

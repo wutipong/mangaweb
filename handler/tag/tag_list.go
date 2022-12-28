@@ -34,6 +34,7 @@ var templateObj *template.Template
 
 type PageData struct {
 	Title      string
+	Version    string
 	BrowseURL  string
 	TagListURL string
 	Tags       []ItemData
@@ -103,6 +104,7 @@ func TagListHandler(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 
 	data := PageData{
 		Title:      "Tag list",
+		Version:    handler.CreateVersionString(),
 		Tags:       tagData,
 		TagListURL: handler.CreateTagListURL(),
 		BrowseURL:  handler.CreateBrowseURL(""),

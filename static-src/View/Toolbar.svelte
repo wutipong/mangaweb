@@ -8,6 +8,7 @@
     export let onDownloadPage
     export let toggleFavorite
     export let updateCover
+    export let onAboutClick
 </script>
 
 <nav class='navbar navbar-dark bg-dark fixed-top navbar-expand-lg'>
@@ -59,7 +60,7 @@
                     </div>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='#' data-bs-toggle='modal' data-bs-target='#aboutModal'>About</a>
+                    <a class='nav-link' href='#' on:click={onAboutClick}>About</a>
                 </li>
             </ul>
             <ul class='navbar-nav'>
