@@ -9,6 +9,8 @@
     export let params
 
     let toast
+    let tagFavorite = params.TagFavorite
+
     console.log(params)
 
     function changeSort(sortBy) {
@@ -56,18 +58,18 @@
     }
 
     async function onTagFavorite() {
-        const params = new URLSearchParams()
-        params.set('favorite', (!favorite).toString())
+        tagFavorite = !tagFavorite
+
+        const urlSearchParams = new URLSearchParams()
+        urlSearchParams.set('favorite', tagFavorite.toString())
 
         const url = new URL(params.SetTagFavoriteURL, window.location.origin)
-        url.search = params.toString()
+        url.search = urlSearchParams.toString()
 
         const resp = await fetch(url)
         const json = await resp.json()
-        const obj = JSON.parse(json)
 
-        console.log(json)
-        if(obj.favorite) {
+        if(json.favorite) {
             toast.show('Favorite', `The tag "${params.Tag}" is now your favorite.`)
         }
         else {
@@ -92,7 +94,7 @@
          SortOrder={params.SortOrder}
          FavoriteOnly={params.FavoriteOnly}
          Tag={params.Tag}
-         TagFavorite={params.TagFavorite}
+         TagFavorite={tagFavorite}
          changeSort={changeSort}
          changeOrder={changeOrder}
          onFilterFavorite={onFilterFavorite}
