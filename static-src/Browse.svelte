@@ -3,6 +3,8 @@
     import {onMount} from "svelte";
     import ModalDialog from "./Common/ModalDialog.svelte";
     import Item from "./Browse/Item.svelte";
+    import Pagination from "./Common/Pagination.svelte";
+    import PageItem from "./Common/PageItem.svelte";
 
     export let params
 
@@ -69,6 +71,17 @@
         {/each}
     </div>
 </div>
+<div style='height: 100px;'></div>
+
+<Pagination>
+    {#each params.Pages as page}
+        <PageItem IsActive={page.IsActive}
+                  IsEnabled={page.IsEnabled}
+                  IsHiddenOnSmall={page.IsHiddenOnSmall}
+                  URL={page.LinkURL}
+                  Content={page.Content}/>
+    {/each}
+</Pagination>
 
 <ModalDialog Id="aboutModal" Tittle="About">
     <h5>MangaWeb</h5>
@@ -77,3 +90,10 @@
     <p>Licensed under MIT License</p>
     <p><a href='https://github.com/wutipong/mangaweb'>Homepage</a></p>
 </ModalDialog>
+
+<nav aria-label='Move to top navigation' class='position-fixed bottom-0 end-0 p-3'>
+    <a class='btn btn-secondary' href='#'>
+        <i class='bi bi-chevron-double-up'></i>
+        <span class='d-none d-sm-block'>Top</span>
+    </a>
+</nav>

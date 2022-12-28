@@ -7,69 +7,7 @@
 
 <body>
 <div id="app"></div>
-<script src='{{CreateURL "/static/browse.js"}}' data-params='{{Marshal .}}'>
-</script>
-
-{{define "page-item"}}
-    <li class='page-item
-        {{if .IsActive}} active {{end}}
-        {{if not .IsEnabled}} disabled {{end}}
-        {{if .IsHiddenOnSmall}} d-none d-sm-block {{end}}
-        '>
-        <a class='page-link' href='{{.LinkURL.String}}'>
-            {{.Content}}
-        </a>
-    </li>
-{{end}}
-
-<div style='height: 100px;'></div>
-
-<nav aria-label='Page navigation' class='position-fixed bottom-0 start-50 p-3 translate-middle-x'>
-    <ul class='pagination justify-content-center'>
-        {{range .Pages}}
-            {{template "page-item" .}}
-        {{end}}
-    </ul>
-</nav>
-
-<nav aria-label='Move to top navigation' class='position-fixed bottom-0 end-0 p-3'>
-    <a class='btn btn-secondary' href='#'>
-        <i class='bi bi-chevron-double-up'></i>
-        <span class='d-none d-sm-block'>Top</span>
-    </a>
-</nav>
-
-<div class='position-fixed bottom-0 end-0 p-3' style='z-index: 11'>
-    <div id='toast' class='toast' role='alert' aria-live='assertive' aria-atomic='true'>
-        <div class='toast-header'>
-            <strong class='me-auto' id='toast-header'></strong>
-            <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='Close'></button>
-        </div>
-        <div class='toast-body' id='toast-content'>
-            Hello, world! This is a toast message.
-        </div>
-    </div>
-</div>
-
-<!-- div class='modal fade' id='aboutModal' tabindex='-1'>
-    <div class='modal-dialog'>
-        <div class='modal-content'>
-            <div class='modal-header'>
-                <h5 class='modal-title'>MangaWeb</h5>
-                <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
-            </div>
-            <div class='modal-body'>
-                <h6>Version {{.Version}} </h6>
-                <p>&copy; 2021-2022 Wutipong Wongsakuldej. All rights reserved</p>
-                <p>Licensed under MIT License</p>
-                <p><a href='https://github.com/wutipong/mangaweb'>Homepage</a></p>
-            </div>
-            <div class='modal-footer'>
-                <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>Close</button>
-            </div>
-        </div>
-    </div>
-</div -->
+<script src='{{CreateURL "/static/browse.js"}}' data-params='{{Marshal .}}'></script>
 
 <script src='{{CreateURL "/static/index.js"}}'></script>
 <script>
@@ -107,7 +45,7 @@
         let searchParams = new URLSearchParams(url.search)
 
         let isFavorite = {{.FavoriteOnly}}
-        searchParams.set('favorite', (!isFavorite).toString())
+            searchParams.set('favorite', (!isFavorite).toString())
 
         url.search = searchParams.toString()
     }
