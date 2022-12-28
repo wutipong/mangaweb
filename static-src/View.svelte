@@ -3,6 +3,7 @@
     import ImageViewer from "./View/ImageViewer.svelte";
     import Toast from "./Common/Toast.svelte";
     import ModalDialog from "./Common/ModalDialog.svelte";
+    import PageScroll from "./View/PageScroll.svelte";
 
     export let params
 
@@ -14,6 +15,7 @@
     let current = 0
     let toast
     let aboutDialog
+    let viewer
 
     function downloadManga() {
         download(params.DownloadURL)
@@ -65,11 +67,23 @@
         aboutDialog.show()
     }
 
+    function onValueChange(n) {
+        viewer.advance(n)
+    }
+
 </script>
+
+<PageScroll
+        PageCount={params.ImageURLs.length}
+        onValueChange={onValueChange}
+        Current={current}
+/>
 
 <div class='fullscreen' style='padding-top:80px;'>
     <ImageViewer ImageURLs={params.ImageURLs}
-                 onIndexChange={onIndexChange}/>
+                 onIndexChange={onIndexChange}
+                 bind:this={viewer}
+    />
 </div>
 
 <Toolbar Tags={tags}
