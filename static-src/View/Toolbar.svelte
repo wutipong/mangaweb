@@ -58,6 +58,9 @@
                         </button>
                     </div>
                 </li>
+                <li class='nav-item'>
+                    <a class='nav-link' href='#' data-bs-toggle='modal' data-bs-target='#aboutModal'>About</a>
+                </li>
             </ul>
             <ul class='navbar-nav'>
                 <li class='nav-item mb-2 mb-lg-0 ms-lg-2'>

@@ -33,8 +33,10 @@ func init() {
 var templateObj *template.Template
 
 type PageData struct {
-	Title string
-	Tags  []ItemData
+	Title      string
+	BrowseURL  string
+	TagListURL string
+	Tags       []ItemData
 }
 
 type ItemData struct {
@@ -100,8 +102,10 @@ func TagListHandler(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 	tagData := createItems(allTags, favOnly)
 
 	data := PageData{
-		Title: "Tag list",
-		Tags:  tagData,
+		Title:      "Tag list",
+		Tags:       tagData,
+		TagListURL: handler.CreateTagListURL(),
+		BrowseURL:  handler.CreateBrowseURL(""),
 	}
 
 	builder := strings.Builder{}

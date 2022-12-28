@@ -11,8 +11,6 @@
     let toast
     let tagFavorite = params.TagFavorite
 
-    console.log(params)
-
     function changeSort(sortBy) {
         let url = window.location
         let searchParams = new URLSearchParams(url.search)
@@ -127,7 +125,7 @@
     {/each}
 </Pagination>
 
-<ModalDialog Id="aboutModal" Tittle="About">
+<ModalDialog Id="aboutModal" Title="About">
     <h5>MangaWeb</h5>
     <h6>Version {params.Version} </h6>
     <p>&copy; 2021-2022 Wutipong Wongsakuldej. All Right Reserved</p>
