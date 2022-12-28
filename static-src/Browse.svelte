@@ -2,6 +2,7 @@
     import Toolbar from "./Browse/Toolbar.svelte";
     import {onMount} from "svelte";
     import ModalDialog from "./Common/ModalDialog.svelte";
+    import Item from "./Browse/Item.svelte";
 
     export let params
 
@@ -55,6 +56,19 @@
          toggleFavorite="{toggleFavorite}"
          onSearchClick="{onSearchClick}"
          SearchText={searchText}/>
+
+<div class='container-fluid' style='padding-top:100px;'>
+    <div class='grid-container'>
+        {#each params.Items as item}
+            <Item Favorite={item.Favorite}
+                  IsRead={item.IsRead}
+                  ID={item.ID}
+                  ViewURL={item.ViewURL}
+                  ThumbnailURL={item.ThumbnailURL}
+                  Name={item.Name}/>
+        {/each}
+    </div>
+</div>
 
 <ModalDialog Id="aboutModal" Tittle="About">
     <h5>MangaWeb</h5>
