@@ -3,14 +3,19 @@
     import Item from "./TagList/Item.svelte";
     import ModalDialog from "./Common/ModalDialog.svelte";
 
-
     export let params
 
     let favoriteOnly = false
+    let aboutDialog
 
     function toggleFavoriteOnly() {
         favoriteOnly = !favoriteOnly
     }
+
+    function onAboutClick() {
+        aboutDialog.show()
+    }
+
 </script>
 
 <Toolbar
@@ -18,8 +23,9 @@
         browseURL={params.BrowseURL}
         tagListURL={params.TagListURL}
         onFilterFavorite={toggleFavoriteOnly}
-        favoriteOnly={favoriteOnly}>
-</Toolbar>
+        favoriteOnly={favoriteOnly}
+        onAboutClick={onAboutClick}
+/>
 
 <div class='container-fluid' style='padding-top:100px;'>
     <div class='grid-container'>
@@ -37,7 +43,7 @@
     </div>
 </div>
 
-<ModalDialog Id="aboutModal" Title="About">
+<ModalDialog Id="aboutModal" Title="About" bind:this={aboutDialog}>
     <h5>MangaWeb</h5>
     <h6>Version {params.Version} </h6>
     <p>&copy; 2021-2022 Wutipong Wongsakuldej. All Right Reserved</p>

@@ -13,6 +13,7 @@
 
     let current = 0
     let toast
+    let aboutDialog
 
     function downloadManga() {
         download(params.DownloadURL)
@@ -60,6 +61,10 @@
         link.remove();
     }
 
+    function onAboutClick() {
+        aboutDialog.show()
+    }
+
 </script>
 
 <div class='fullscreen' style='padding-top:80px;'>
@@ -74,11 +79,13 @@
          onDownloadManga={downloadManga}
          onDownloadPage={downloadPage}
          toggleFavorite={toggleFavorite}
-         updateCover={updateCover}/>
+         updateCover={updateCover}
+         onAboutClick={onAboutClick}
+/>
 
 <Toast bind:this={toast}/>
 
-<ModalDialog Id="aboutModal" Title="About">
+<ModalDialog Id="aboutModal" Title="About" bind:this={aboutDialog}>
     <h5>MangaWeb</h5>
     <h6>Version {params.Version} </h6>
     <p>&copy; 2021-2022 Wutipong Wongsakuldej. All Right Reserved</p>

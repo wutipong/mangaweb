@@ -14,6 +14,7 @@
     export let rescanLibrary
     export let onTagFavorite
     export let onSearchClick
+    export let onAboutClick
 
     export let SearchText = ""
 </script>
@@ -108,7 +109,7 @@
                     </div>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href='#' data-bs-toggle='modal' data-bs-target='#aboutModal'>About</a>
+                    <a class='nav-link' href="#" on:click={onAboutClick}>About</a>
                 </li>
             </ul>
             <ul class='navbar-nav ms-lg-2 mb-2 mb-lg-0'
