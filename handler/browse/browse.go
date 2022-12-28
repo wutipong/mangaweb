@@ -36,18 +36,20 @@ func init() {
 var broseTemplate *template.Template
 
 type browseData struct {
-	Title        string
-	Version      string
-	FavoriteOnly bool
-	SortBy       string
-	SortOrder    string
-	Tag          string
-	TagFavorite  bool
-	BrowseURL    string
-	TagListURL   string
-
-	Items []item
-	Pages []pageItem
+	Title             string
+	Version           string
+	FavoriteOnly      bool
+	SortBy            string
+	SortOrder         string
+	Tag               string
+	TagFavorite       bool
+	SetTagFavoriteURL string
+	BrowseURL         string
+	TagListURL        string
+	SearchText        string
+	RescanURL         string
+	Items             []item
+	Pages             []pageItem
 }
 
 type item struct {
@@ -62,7 +64,7 @@ type item struct {
 
 type pageItem struct {
 	Content         string
-	LinkURL         url.URL
+	LinkURL         string
 	IsActive        bool
 	IsEnabled       bool
 	IsHiddenOnSmall bool
@@ -179,9 +181,11 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		SortBy:       string(sort),
 		SortOrder:    string(order),
 		Items:        items,
-		Pages:        createPageItems(page, pageCount, *r.URL),
+		Pages:        createPageItems(page, pageCount, r.URL),
 		BrowseURL:    handler.CreateBrowseURL(""),
 		TagListURL:   handler.CreateTagListURL(),
+		SearchText:   search,
+		RescanURL:    handler.CreateRescanURL(),
 	}
 
 	if tagStr != "" {
@@ -201,6 +205,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		}
 
 		data.TagFavorite = tagObj.Favorite
+		data.SetTagFavoriteURL = handler.CreateSetTagFavoriteURL(tagStr)
 	}
 
 	builder := strings.Builder{}
@@ -240,7 +245,7 @@ func parseSortField(sortBy string) meta.SortField {
 	}
 }
 
-func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
+func createPageItems(current int, count int, baseUrl *url.URL) []pageItem {
 	const (
 		First    = "First"
 		Previous = "Previous"
@@ -256,7 +261,7 @@ func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
 	previousPage := current - 1
 	nextPage := current + 1
 
-	changePageParam := func(baseUrl url.URL, page int) url.URL {
+	changePageParam := func(baseUrl *url.URL, page int) *url.URL {
 		query := baseUrl.Query()
 
 		if query.Has("page") {
@@ -272,7 +277,7 @@ func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
 	output := make([]pageItem, 0)
 	output = append(output, pageItem{
 		Content:         First,
-		LinkURL:         changePageParam(baseUrl, firstPage),
+		LinkURL:         changePageParam(baseUrl, firstPage).String(),
 		IsActive:        false,
 		IsEnabled:       true,
 		IsHiddenOnSmall: false,
@@ -281,7 +286,7 @@ func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
 	enablePrevious := previousPage >= firstPage
 	output = append(output, pageItem{
 		Content:         Previous,
-		LinkURL:         changePageParam(baseUrl, previousPage),
+		LinkURL:         changePageParam(baseUrl, previousPage).String(),
 		IsActive:        false,
 		IsEnabled:       enablePrevious,
 		IsHiddenOnSmall: false,
@@ -297,7 +302,7 @@ func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
 
 		output = append(output, pageItem{
 			Content:         strconv.Itoa(i),
-			LinkURL:         changePageParam(baseUrl, i),
+			LinkURL:         changePageParam(baseUrl, i).String(),
 			IsActive:        i == current,
 			IsEnabled:       true,
 			IsHiddenOnSmall: !(i == current),
@@ -307,7 +312,7 @@ func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
 	enableNext := nextPage < count
 	output = append(output, pageItem{
 		Content:         Next,
-		LinkURL:         changePageParam(baseUrl, nextPage),
+		LinkURL:         changePageParam(baseUrl, nextPage).String(),
 		IsActive:        false,
 		IsEnabled:       enableNext,
 		IsHiddenOnSmall: false,
@@ -315,7 +320,7 @@ func createPageItems(current int, count int, baseUrl url.URL) []pageItem {
 
 	output = append(output, pageItem{
 		Content:         Last,
-		LinkURL:         changePageParam(baseUrl, lastPage),
+		LinkURL:         changePageParam(baseUrl, lastPage).String(),
 		IsActive:        false,
 		IsEnabled:       true,
 		IsHiddenOnSmall: false,
