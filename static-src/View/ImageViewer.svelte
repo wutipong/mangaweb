@@ -12,11 +12,15 @@
             interval: false
         })
 
-        carouselControl.addEventListener('slide.bs.carousel', e=>{
-            if(onIndexChange) onIndexChange(e.to)
+        carouselControl.addEventListener('slide.bs.carousel', e => {
+            if (onIndexChange) onIndexChange(e.to)
         })
 
     })
+
+    export function advance(n) {
+        carousel.to(n)
+    }
 </script>
 
 <div class='carousel slide w-100 h-100' id='carouselControl'>
