@@ -4,16 +4,15 @@ import (
 	"archive/zip"
 	"bytes"
 	"image"
-	"image/jpeg"
 	"io"
 
 	_ "golang.org/x/image/webp"
 
-	"github.com/nfnt/resize"
+	"github.com/disintegration/imaging"
 )
 
 func Create(reader io.Reader) (output image.Image, err error) {
-	output, _, err = image.Decode(reader)
+	output, err = imaging.Decode(reader, imaging.AutoOrientation(true))
 	return
 }
 
@@ -26,22 +25,21 @@ func CreateCover(fileIndex int, r *zip.ReadCloser) (output image.Image, err erro
 	return
 }
 
+// TODO: Add resize function that preserve aspect ratio.
 func Resize(img image.Image, width uint, height uint) image.Image {
-	return resize.Thumbnail(width, height, img, resize.MitchellNetravali)
+	return imaging.Resize(img, int(width), int(height), imaging.MitchellNetravali)
 }
 
 func CreateThumbnail(img image.Image) image.Image {
 	const thumbnailHeight = 200
-	return resize.Resize(0, thumbnailHeight, img, resize.MitchellNetravali)
+	return imaging.Resize(img, 0, thumbnailHeight, imaging.MitchellNetravali)
 }
 
 func ToJPEG(img image.Image) (output []byte, err error) {
 	buffer := bytes.Buffer{}
 
-	err = jpeg.Encode(&buffer, img, nil)
-	if err != nil {
-		return
-	}
+	err = imaging.Encode(&buffer, img, imaging.JPEG, imaging.JPEGQuality(60))
 	output = buffer.Bytes()
+
 	return
 }
