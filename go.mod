@@ -3,7 +3,6 @@ module github.com/wutipong/mangaweb
 go 1.18
 
 require (
-	bitbucket.org/zombiezen/cardcpx v0.0.0-20150417151802-902f68ff43ef
 	github.com/go-co-op/gocron v1.28.3
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	go.mongodb.org/mongo-driver v1.11.7
@@ -12,6 +11,7 @@ require (
 require github.com/joho/godotenv v1.5.1
 
 require (
+	github.com/facette/natsort v0.0.0-20181210072756-2cd4dd1e2dcb
 	github.com/julienschmidt/httprouter v1.3.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1

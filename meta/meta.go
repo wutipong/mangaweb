@@ -3,7 +3,6 @@ package meta
 import (
 	"archive/zip"
 	"fmt"
-	"github.com/wutipong/mangaweb/tag"
 	"io"
 	"io/fs"
 	"os"
@@ -12,7 +11,9 @@ import (
 	"sync"
 	"time"
 
-	"bitbucket.org/zombiezen/cardcpx/natsort"
+	"github.com/wutipong/mangaweb/tag"
+
+	"github.com/facette/natsort"
 	"github.com/wutipong/mangaweb/image"
 )
 
@@ -34,7 +35,7 @@ type Meta struct {
 
 type ProviderFactory func() (p Provider, err error)
 
-//CurrentVersion the current version of `Meta` structure.
+// CurrentVersion the current version of `Meta` structure.
 const CurrentVersion = 1
 
 func NewItem(name string) (i Meta, err error) {
@@ -131,7 +132,7 @@ func (m *Meta) GenerateImageIndices() error {
 	}
 
 	sort.Slice(fileNames, func(i, j int) bool {
-		return natsort.Less(fileNames[i].FileName, fileNames[j].FileName)
+		return natsort.Compare(fileNames[i].FileName, fileNames[j].FileName)
 	})
 
 	m.FileIndices = make([]int, len(fileNames))
