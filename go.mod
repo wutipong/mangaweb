@@ -4,13 +4,13 @@ go 1.18
 
 require (
 	github.com/go-co-op/gocron v1.28.3
-	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	go.mongodb.org/mongo-driver v1.11.7
 )
 
 require github.com/joho/godotenv v1.5.1
 
 require (
+	github.com/disintegration/imaging v1.6.2
 	github.com/facette/natsort v0.0.0-20181210072756-2cd4dd1e2dcb
 	github.com/julienschmidt/httprouter v1.3.0
 	go.uber.org/zap v1.24.0
