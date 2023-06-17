@@ -1,10 +1,10 @@
-@import "~bootswatch/dist/darkly/variables";
+@import "~bootswatch/dist/darkly/_variables";
 @import "~bootstrap/scss/bootstrap";
-@import "~bootswatch/dist/darkly/bootswatch";
+@import "~bootswatch/dist/darkly/_bootswatch";
 
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
-@import "~bootswatch/dist/darkly/variables";
+@import "~bootswatch/dist/darkly/_variables";
 
 .fullscreen {
     position: absolute;
