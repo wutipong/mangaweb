@@ -2,6 +2,7 @@ package meta
 
 import (
 	"archive/zip"
+	"bytes"
 	"fmt"
 	"io"
 	"io/fs"
@@ -11,10 +12,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/disintegration/imaging"
+	"github.com/facette/natsort"
 	"github.com/wutipong/mangaweb/tag"
 
-	"github.com/facette/natsort"
-	"github.com/wutipong/mangaweb/image"
+	_ "golang.org/x/image/webp"
 )
 
 // Meta the metadata for each manga item.
@@ -87,18 +89,28 @@ func (m *Meta) GenerateThumbnail(fileIndex int) error {
 		return fmt.Errorf("file list is empty")
 	}
 
-	img, err := image.CreateCover(m.FileIndices[fileIndex], r)
+	stream, err := r.File[m.FileIndices[fileIndex]].Open()
 	if err != nil {
 		return err
 	}
 
-	resized := image.CreateThumbnail(img)
-	jpeg, err := image.ToJPEG(resized)
+	defer stream.Close()
+
+	img, err := imaging.Decode(stream, imaging.AutoOrientation(true))
 	if err != nil {
 		return err
 	}
 
-	m.Thumbnail = jpeg
+	const thumbnailSize = 200
+	if img.Bounds().Dx() > thumbnailSize || img.Bounds().Dy() > thumbnailSize {
+		resized := imaging.Fit(img, thumbnailSize, thumbnailSize, imaging.MitchellNetravali)
+		img = resized
+	}
+
+	buffer := bytes.Buffer{}
+	imaging.Encode(&buffer, img, imaging.JPEG, imaging.JPEGQuality(75))
+
+	m.Thumbnail = buffer.Bytes()
 
 	return nil
 }
