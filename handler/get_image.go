@@ -4,18 +4,20 @@ import (
 	"archive/zip"
 	"bytes"
 	"fmt"
-	"github.com/julienschmidt/httprouter"
-	"github.com/wutipong/mangaweb/log"
-	"go.uber.org/zap"
-	_ "image/png"
+
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"strconv"
 	"strings"
 
-	"github.com/wutipong/mangaweb/image"
+	"github.com/disintegration/imaging"
+	"github.com/julienschmidt/httprouter"
+	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
+	"go.uber.org/zap"
+
+	_ "golang.org/x/image/webp"
 )
 
 // GetImage returns an image with specific width/height while retains aspect ratio.
@@ -60,7 +62,7 @@ func GetImage(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 		return
 	}
 
-	if width == 0 || height == 0 {
+	if width == 0 && height == 0 {
 		var contentType string
 		switch filepath.Ext(strings.ToLower(f)) {
 		case ".jpg", ".jpeg":
@@ -80,20 +82,25 @@ func GetImage(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 
 	reader := bytes.NewBuffer(data)
 
-	img, err := image.Create(reader)
+	img, err := imaging.Decode(reader, imaging.AutoOrientation(true))
 	if err != nil {
 		WriteError(w, err)
 		return
 	}
 
-	resized := image.Resize(img, uint(width), uint(height))
-	output, err := image.ToJPEG(resized)
+	if img.Bounds().Dx() > int(width) || img.Bounds().Dy() > int(height) {
+		resized := imaging.Fit(img, int(width), int(height), imaging.MitchellNetravali)
+		img = resized
+	}
+
+	w.WriteHeader(http.StatusOK)
+	err = imaging.Encode(w, img, imaging.JPEG)
+
 	if err != nil {
 		WriteError(w, err)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(output)
+
 	w.Header().Set("Content-Type", "image/jpeg")
 }
 
