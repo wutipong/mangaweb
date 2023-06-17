@@ -1,6 +1,6 @@
 module github.com/wutipong/mangaweb
 
-go 1.18
+go 1.20
 
 require (
 	github.com/go-co-op/gocron v1.28.3
