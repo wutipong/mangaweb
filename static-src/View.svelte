@@ -80,7 +80,7 @@
 />
 
 <div class='fullscreen' style='padding-top:80px;'>
-    <ImageViewer ImageURLs={params.ImageURLs}
+    <ImageViewer imageURLs={params.ImageURLs}
                  onIndexChange={onIndexChange}
                  bind:this={viewer}
     />
