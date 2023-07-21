@@ -3433,7 +3433,7 @@ function get_each_context(ctx, list, i) {
     child_ctx[9] = list[i];
     return child_ctx;
 }
-// (32:24) {#each Tags as tag}
+// (50:24) {#each Tags as tag}
 function create_each_block(ctx) {
     let a;
     let i;
@@ -3447,11 +3447,11 @@ function create_each_block(ctx) {
             i = (0, _internal.element)("i");
             t0 = (0, _internal.text)(t0_value);
             t1 = (0, _internal.space)();
-            (0, _internal.attr_dev)(i, "class", "bi bi-tag");
-            (0, _internal.add_location)(i, file, 33, 32, 1613);
+            (0, _internal.attr_dev)(i, "class", "bi bi-tag me-3");
+            (0, _internal.add_location)(i, file, 51, 32, 1919);
             (0, _internal.attr_dev)(a, "class", "dropdown-item");
             (0, _internal.attr_dev)(a, "href", a_href_value = /*tag*/ ctx[9].URL);
-            (0, _internal.add_location)(a, file, 32, 28, 1537);
+            (0, _internal.add_location)(a, file, 50, 28, 1845);
         },
         m: function mount(target, anchor) {
             (0, _internal.insert_dev)(target, a, anchor);
@@ -3471,7 +3471,7 @@ function create_each_block(ctx) {
         block,
         id: create_each_block.name,
         type: "each",
-        source: "(32:24) {#each Tags as tag}",
+        source: "(50:24) {#each Tags as tag}",
         ctx
     });
     return block;
@@ -3597,9 +3597,9 @@ function create_fragment(ctx) {
             (0, _internal.add_location)(span0, file, 13, 8, 374);
             (0, _internal.attr_dev)(span1, "class", "navbar-brand mr-auto text-truncate h1 d-block d-sm-none");
             (0, _internal.set_style)(span1, "max-width", "50%");
-            (0, _internal.add_location)(span1, file, 14, 8, 491);
+            (0, _internal.add_location)(span1, file, 17, 8, 527);
             (0, _internal.attr_dev)(span2, "class", "navbar-toggler-icon");
-            (0, _internal.add_location)(span2, file, 20, 12, 862);
+            (0, _internal.add_location)(span2, file, 31, 12, 999);
             (0, _internal.attr_dev)(button0, "class", "navbar-toggler");
             (0, _internal.attr_dev)(button0, "type", "button");
             (0, _internal.attr_dev)(button0, "data-bs-toggle", "collapse");
@@ -3607,9 +3607,9 @@ function create_fragment(ctx) {
             (0, _internal.attr_dev)(button0, "aria-controls", "navbarSupportedContent");
             (0, _internal.attr_dev)(button0, "aria-expanded", "false");
             (0, _internal.attr_dev)(button0, "aria-label", "Toggle navigation");
-            (0, _internal.add_location)(button0, file, 16, 8, 608);
-            (0, _internal.attr_dev)(i0, "class", "bi bi-tags-fill");
-            (0, _internal.add_location)(i0, file, 28, 24, 1318);
+            (0, _internal.add_location)(button0, file, 22, 8, 680);
+            (0, _internal.attr_dev)(i0, "class", "bi bi-tags-fill me-3");
+            (0, _internal.add_location)(i0, file, 46, 24, 1623);
             (0, _internal.attr_dev)(a0, "class", "nav-link dropdown-toggle");
             (0, _internal.attr_dev)(a0, "href", "#");
             (0, _internal.attr_dev)(a0, "id", "navbarDropdown");
@@ -3617,74 +3617,74 @@ function create_fragment(ctx) {
             (0, _internal.attr_dev)(a0, "data-bs-toggle", "dropdown");
             (0, _internal.attr_dev)(a0, "aria-haspopup", "true");
             (0, _internal.attr_dev)(a0, "aria-expanded", "false");
-            (0, _internal.add_location)(a0, file, 26, 20, 1120);
+            (0, _internal.add_location)(a0, file, 37, 20, 1252);
             (0, _internal.attr_dev)(div0, "class", "dropdown-menu");
             (0, _internal.attr_dev)(div0, "aria-labelledby", "navbarDropdown");
-            (0, _internal.add_location)(div0, file, 30, 20, 1402);
+            (0, _internal.add_location)(div0, file, 48, 20, 1710);
             (0, _internal.attr_dev)(li0, "class", "nav-item dropdown");
-            (0, _internal.add_location)(li0, file, 25, 16, 1068);
-            (0, _internal.attr_dev)(i1, "class", "bi bi-list");
-            (0, _internal.add_location)(i1, file, 41, 24, 2025);
+            (0, _internal.add_location)(li0, file, 36, 16, 1200);
+            (0, _internal.attr_dev)(i1, "class", "bi bi-list me-3");
+            (0, _internal.add_location)(i1, file, 65, 24, 2477);
             (0, _internal.attr_dev)(a1, "class", "nav-link dropdown-toggle");
             (0, _internal.attr_dev)(a1, "href", "#");
             (0, _internal.attr_dev)(a1, "id", "navbarDropdown");
             (0, _internal.attr_dev)(a1, "data-bs-toggle", "dropdown");
             (0, _internal.attr_dev)(a1, "aria-haspopup", "true");
             (0, _internal.attr_dev)(a1, "aria-expanded", "false");
-            (0, _internal.add_location)(a1, file, 39, 20, 1836);
-            (0, _internal.attr_dev)(i2, "class", "bi bi-download");
-            (0, _internal.add_location)(i2, file, 45, 28, 2303);
+            (0, _internal.add_location)(a1, file, 57, 20, 2145);
+            (0, _internal.attr_dev)(i2, "class", "bi bi-download me-3");
+            (0, _internal.add_location)(i2, file, 74, 28, 2900);
             (0, _internal.attr_dev)(button1, "class", "dropdown-item");
             (0, _internal.attr_dev)(button1, "id", "download-btn");
             (0, _internal.attr_dev)(button1, "download", "");
-            (0, _internal.add_location)(button1, file, 44, 24, 2190);
-            (0, _internal.attr_dev)(i3, "class", "bi bi-download");
-            (0, _internal.add_location)(i3, file, 49, 28, 2541);
+            (0, _internal.add_location)(button1, file, 68, 24, 2645);
+            (0, _internal.attr_dev)(i3, "class", "bi bi-download me-3");
+            (0, _internal.add_location)(i3, file, 82, 28, 3254);
             (0, _internal.attr_dev)(button2, "class", "dropdown-item");
             (0, _internal.attr_dev)(button2, "download", "");
-            (0, _internal.add_location)(button2, file, 48, 24, 2445);
+            (0, _internal.add_location)(button2, file, 77, 24, 3045);
             (0, _internal.attr_dev)(div1, "class", "dropdown-divider");
-            (0, _internal.add_location)(div1, file, 52, 24, 2676);
-            (0, _internal.attr_dev)(i4, "class", "bi bi-journal-arrow-up");
-            (0, _internal.add_location)(i4, file, 54, 28, 2843);
+            (0, _internal.add_location)(div1, file, 85, 24, 3392);
+            (0, _internal.attr_dev)(i4, "class", "bi bi-journal-arrow-up me-3");
+            (0, _internal.add_location)(i4, file, 91, 28, 3668);
             (0, _internal.attr_dev)(button3, "class", "dropdown-item");
             (0, _internal.attr_dev)(button3, "id", "update-cover-btn");
-            (0, _internal.add_location)(button3, file, 53, 24, 2738);
+            (0, _internal.add_location)(button3, file, 86, 24, 3450);
             (0, _internal.attr_dev)(div2, "class", "dropdown-menu");
             (0, _internal.attr_dev)(div2, "aria-labelledby", "navbarDropdown");
-            (0, _internal.add_location)(div2, file, 43, 20, 2104);
+            (0, _internal.add_location)(div2, file, 67, 20, 2559);
             (0, _internal.attr_dev)(li1, "class", "nav-item dropdown");
-            (0, _internal.add_location)(li1, file, 38, 16, 1784);
+            (0, _internal.add_location)(li1, file, 56, 16, 2093);
             (0, _internal.attr_dev)(a2, "class", "nav-link");
             (0, _internal.attr_dev)(a2, "href", "#");
-            (0, _internal.add_location)(a2, file, 60, 20, 3070);
+            (0, _internal.add_location)(a2, file, 97, 20, 3898);
             (0, _internal.attr_dev)(li2, "class", "nav-item");
-            (0, _internal.add_location)(li2, file, 59, 16, 3027);
+            (0, _internal.add_location)(li2, file, 96, 16, 3855);
             (0, _internal.attr_dev)(ul0, "class", "navbar-nav mb-2 me-auto");
-            (0, _internal.add_location)(ul0, file, 24, 12, 1014);
-            (0, _internal.attr_dev)(i5, "class", "bi bi-star-fill");
-            (0, _internal.add_location)(i5, file, 72, 24, 3635);
+            (0, _internal.add_location)(ul0, file, 35, 12, 1146);
+            (0, _internal.attr_dev)(i5, "class", "bi bi-star-fill me-3");
+            (0, _internal.add_location)(i5, file, 112, 24, 4516);
             (0, _internal.attr_dev)(button4, "id", "favorite-btn");
             (0, _internal.attr_dev)(button4, "class", "btn");
             (0, _internal.toggle_class)(button4, "btn-pink", /*Favorite*/ ctx[2]);
             (0, _internal.toggle_class)(button4, "active", /*Favorite*/ ctx[2]);
             (0, _internal.toggle_class)(button4, "btn-outline-pink", !/*Favorite*/ ctx[2]);
-            (0, _internal.add_location)(button4, file, 65, 20, 3293);
+            (0, _internal.add_location)(button4, file, 104, 20, 4169);
             (0, _internal.attr_dev)(li3, "class", "nav-item mb-2 mb-lg-0 ms-lg-2");
-            (0, _internal.add_location)(li3, file, 64, 16, 3229);
-            (0, _internal.attr_dev)(i6, "class", "bi bi-x-circle-fill");
-            (0, _internal.add_location)(i6, file, 77, 24, 3897);
+            (0, _internal.add_location)(li3, file, 103, 16, 4105);
+            (0, _internal.attr_dev)(i6, "class", "bi bi-x-circle-fill me-3");
+            (0, _internal.add_location)(i6, file, 117, 24, 4779);
             (0, _internal.attr_dev)(a3, "id", "close-btn");
             (0, _internal.attr_dev)(a3, "class", "btn btn-danger");
             (0, _internal.attr_dev)(a3, "href", /*BrowseURL*/ ctx[3]);
-            (0, _internal.add_location)(a3, file, 76, 20, 3811);
+            (0, _internal.add_location)(a3, file, 116, 20, 4695);
             (0, _internal.attr_dev)(li4, "class", "nav-item mb-2 mb-lg-0 ms-lg-2");
-            (0, _internal.add_location)(li4, file, 75, 16, 3747);
+            (0, _internal.add_location)(li4, file, 115, 16, 4631);
             (0, _internal.attr_dev)(ul1, "class", "navbar-nav");
-            (0, _internal.add_location)(ul1, file, 63, 12, 3188);
+            (0, _internal.add_location)(ul1, file, 102, 12, 4064);
             (0, _internal.attr_dev)(div3, "class", "collapse navbar-collapse");
             (0, _internal.attr_dev)(div3, "id", "navbarSupportedContent");
-            (0, _internal.add_location)(div3, file, 23, 8, 934);
+            (0, _internal.add_location)(div3, file, 34, 8, 1066);
             (0, _internal.attr_dev)(div4, "class", "container-fluid");
             (0, _internal.add_location)(div4, file, 12, 4, 335);
             (0, _internal.attr_dev)(nav, "class", "navbar navbar-dark bg-dark fixed-top navbar-expand-lg");
