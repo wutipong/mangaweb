@@ -46,7 +46,7 @@
                         aria-haspopup="true"
                         aria-expanded="false"
                     >
-                        <i class="bi bi-tags-fill me-3" /> Tags
+                        Tags
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         {#each Tags as tag}
@@ -65,7 +65,7 @@
                         aria-haspopup="true"
                         aria-expanded="false"
                     >
-                        <i class="bi bi-list me-3" /> Menu
+                        Tools
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <button
