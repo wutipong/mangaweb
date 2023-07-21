@@ -33,13 +33,13 @@
                     <ul class='dropdown-menu'>
                         <li>
                             <a class='dropdown-item' href='{browseURL}'>
-                                <i class='bi bi-list-ul'></i> All items
+                                <i class='bi bi-list-ul me-3'></i> All items
                             </a>
                         </li>
 
                         <li>
                             <a class='dropdown-item' href='{tagListURL}'>
-                                <i class="bi bi-tags-fill"></i> Tag list
+                                <i class="bi bi-tags-fill me-3"></i> Tag list
                             </a>
                         </li>
                     </ul>
@@ -61,7 +61,7 @@
                                 on:click={onFilterFavorite}
                                 class:active={favoriteOnly}
                         >
-                            <i class='bi bi-star-fill'></i> Favorite
+                            <i class='bi bi-star-fill me-3'></i> Favorite
                         </button>
                     </div>
                 </li>

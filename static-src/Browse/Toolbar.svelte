@@ -54,7 +54,7 @@
                         aria-labelledby="navbarBrowseDropdown"
                     >
                         <a class="dropdown-item" type="button" href={BrowseURL}>
-                            <i class="bi bi-list-ul" /> All items
+                            <i class="bi bi-list-ul me-3" /> All items
                         </a>
 
                         <a
@@ -62,7 +62,7 @@
                             type="button"
                             href={TagListURL}
                         >
-                            <i class="bi bi-tags-fill" /> Tag list
+                            <i class="bi bi-tags-fill me-3" /> Tag list
                         </a>
                     </div>
                 </li>
@@ -85,7 +85,7 @@
                             type="button"
                             on:click={(e) => changeSort("name")}
                         >
-                            <i class="bi bi-type" /> Name
+                            <i class="bi bi-type me-3" /> Name
                         </button>
 
                         <button
@@ -94,7 +94,7 @@
                             type="button"
                             on:click={(e) => changeSort("createTime")}
                         >
-                            <i class="bi bi-clock" /> Added date
+                            <i class="bi bi-clock me-3" /> Added date
                         </button>
 
                         <div class="dropdown-divider" />
@@ -105,7 +105,7 @@
                             type="button"
                             on:click={(e) => changeOrder("ascending")}
                         >
-                            <i class="bi bi-sort-down-alt" />
+                            <i class="bi bi-sort-down-alt me-3" />
                             Ascending
                         </button>
 
@@ -115,7 +115,7 @@
                             type="button"
                             on:click={(e) => changeOrder("descending")}
                         >
-                            <i class="bi bi-sort-down" />
+                            <i class="bi bi-sort-down me-3" />
                             Descending
                         </button>
                     </div>
@@ -140,7 +140,7 @@
                             id="filter-favorite"
                             on:click={onFilterFavorite}
                         >
-                            <i class="bi bi-star-fill" /> Favorite
+                            <i class="bi bi-star-fill me-3" /> Favorite
                         </button>
                     </div>
                 </li>
@@ -162,7 +162,7 @@
                             type="button"
                             on:click={rescanLibrary}
                         >
-                            <i class="bi bi-arrow-clockwise" /> Re-scan library
+                            <i class="bi bi-arrow-clockwise me-3" /> Re-scan library
                         </button>
                     </div>
                 </li>
@@ -185,7 +185,7 @@
                         class:btn-outline-pink={!TagFavorite}
                         on:click={onTagFavorite}
                     >
-                        <i class="bi bi-star-fill" /> Favorite tag
+                        <i class="bi bi-star-fill me-3" /> Favorite tag
                     </button>
                 </li>
             </ul>
