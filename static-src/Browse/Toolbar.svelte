@@ -1,140 +1,217 @@
 <script lang="ts">
-    export let Title = ""
-    export let BrowseURL = ""
-    export let TagListURL = ""
-    export let SortBy = ""
-    export let SortOrder = ""
-    export let FavoriteOnly = false
-    export let Tag = ""
-    export let TagFavorite = false
+    export let Title = "";
+    export let BrowseURL = "";
+    export let TagListURL = "";
+    export let SortBy = "";
+    export let SortOrder = "";
+    export let FavoriteOnly = false;
+    export let Tag = "";
+    export let TagFavorite = false;
 
-    export let changeSort
-    export let changeOrder
-    export let onFilterFavorite
-    export let rescanLibrary
-    export let onTagFavorite
-    export let onSearchClick
-    export let onAboutClick
+    export let changeSort;
+    export let changeOrder;
+    export let onFilterFavorite;
+    export let rescanLibrary;
+    export let onTagFavorite;
+    export let onSearchClick;
+    export let onAboutClick;
 
-    export let SearchText = ""
+    export let SearchText = "";
 </script>
 
+<nav class="navbar navbar-dark bg-dark fixed-top navbar-expand-lg">
+    <div class="container-fluid">
+        <span class="navbar-brand text-truncate">{Title}</span>
 
-<nav class='navbar navbar-dark bg-dark fixed-top navbar-expand-lg'>
-    <div class='container-fluid'>
-        <span class='navbar-brand text-truncate'>{Title}</span>
-
-        <button class='navbar-toggler' type='button' data-bs-toggle='collapse'
-                data-bs-target='#navbarSupportedContent' aria-controls='navbarSupportedContent'
-                aria-expanded='false' aria-label='Toggle navigation'>
-
-            <span class='navbar-toggler-icon'></span>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon" />
         </button>
 
-        <div class='collapse navbar-collapse' id='navbarSupportedContent'>
-            <ul class='navbar-nav me-auto mb-2 mb-lg-0'>
-                <li class='nav-item dropdown'>
-                    <a class='nav-link dropdown-toggle' href='#' id='navbarBrowseDropdown'
-                       role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="navbarBrowseDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
                         Browse
                     </a>
-                    <div class='dropdown-menu' aria-labelledby='navbarBrowseDropdown'>
-                        <a class='dropdown-item' type='button' href='{BrowseURL}'>
-                            <i class='bi bi-list-ul'></i> All items
+                    <div
+                        class="dropdown-menu"
+                        aria-labelledby="navbarBrowseDropdown"
+                    >
+                        <a class="dropdown-item" type="button" href={BrowseURL}>
+                            <i class="bi bi-list-ul" /> All items
                         </a>
 
-                        <a class='dropdown-item' type='button' href='{TagListURL}'>
-                            <i class="bi bi-tags-fill"></i> Tag list
+                        <a
+                            class="dropdown-item"
+                            type="button"
+                            href={TagListURL}
+                        >
+                            <i class="bi bi-tags-fill" /> Tag list
                         </a>
                     </div>
                 </li>
-                <li class='nav-item dropdown'>
-                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown'
-                       role='button' data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="navbarDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
                         Sort by
                     </a>
-                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
-                        <button class='dropdown-item'
-                                class:active={SortBy==='name'}
-                                type='button' on:click='{e => changeSort("name")}'>
-                            <i class='bi bi-type'></i> Name
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <button
+                            class="dropdown-item"
+                            class:active={SortBy === "name"}
+                            type="button"
+                            on:click={(e) => changeSort("name")}
+                        >
+                            <i class="bi bi-type" /> Name
                         </button>
 
-                        <button class='dropdown-item'
-                                class:active={SortBy==='createTime'}
-                                type='button' on:click='{e=> changeSort("createTime")}'>
-                            <i class='bi bi-clock'></i> Added date
+                        <button
+                            class="dropdown-item"
+                            class:active={SortBy === "createTime"}
+                            type="button"
+                            on:click={(e) => changeSort("createTime")}
+                        >
+                            <i class="bi bi-clock" /> Added date
                         </button>
 
-                        <div class='dropdown-divider'></div>
+                        <div class="dropdown-divider" />
 
-                        <button class='dropdown-item'
-                                class:active={SortOrder==='ascending'}
-                                type='button' on:click='{e=>changeOrder("ascending")}'>
-                            <i class='bi bi-sort-down-alt'></i>
+                        <button
+                            class="dropdown-item"
+                            class:active={SortOrder === "ascending"}
+                            type="button"
+                            on:click={(e) => changeOrder("ascending")}
+                        >
+                            <i class="bi bi-sort-down-alt" />
                             Ascending
                         </button>
 
-                        <button class='dropdown-item'
-                                class:active={SortOrder==='descending'}
-                                type='button' on:click={e=>changeOrder("descending")}>
-                            <i class='bi bi-sort-down'></i>
+                        <button
+                            class="dropdown-item"
+                            class:active={SortOrder === "descending"}
+                            type="button"
+                            on:click={(e) => changeOrder("descending")}
+                        >
+                            <i class="bi bi-sort-down" />
                             Descending
                         </button>
-
                     </div>
                 </li>
-                <li class='nav-item dropdown'>
-                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button'
-                       data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="navbarDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
                         Filter
                     </a>
-                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
-                        <button class='dropdown-item' type='button'
-                                class:active={FavoriteOnly}
-                                id='filter-favorite' on:click={onFilterFavorite}>
-                            <i class='bi bi-star-fill'></i> Favorite
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <button
+                            class="dropdown-item"
+                            type="button"
+                            class:active={FavoriteOnly}
+                            id="filter-favorite"
+                            on:click={onFilterFavorite}
+                        >
+                            <i class="bi bi-star-fill" /> Favorite
                         </button>
                     </div>
                 </li>
-                <li class='nav-item dropdown'>
-                    <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button'
-                       data-bs-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                <li class="nav-item dropdown">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="navbarDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                    >
                         Tools
                     </a>
-                    <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
-                        <button class='dropdown-item' type='button' on:click={rescanLibrary}>
-                            <i class='bi bi-arrow-clockwise'></i> Re-scan library
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <button
+                            class="dropdown-item"
+                            type="button"
+                            on:click={rescanLibrary}
+                        >
+                            <i class="bi bi-arrow-clockwise" /> Re-scan library
                         </button>
                     </div>
                 </li>
-                <li class='nav-item'>
-                    <a class='nav-link' href="#" on:click={onAboutClick}>About</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" on:click={onAboutClick}
+                        >About</a
+                    >
                 </li>
             </ul>
-            <ul class='navbar-nav ms-lg-2 mb-2 mb-lg-0'
-                class:d-none={Tag===""}
+            <ul
+                class="navbar-nav ms-lg-2 mb-2 mb-lg-0"
+                class:d-none={Tag === ""}
             >
-                <li class='nav-item'>
-                    <button id='favorite-btn' class='btn'
-                       class:btn-pink={TagFavorite}
-                       class:active={TagFavorite}
-                       class:btn-outline-pink={!TagFavorite}
-                       on:click={onTagFavorite}>
-                        <i class='bi bi-star-fill'></i> Favorite tag
+                <li class="nav-item">
+                    <button
+                        id="favorite-btn"
+                        class="btn"
+                        class:btn-pink={TagFavorite}
+                        class:active={TagFavorite}
+                        class:btn-outline-pink={!TagFavorite}
+                        on:click={onTagFavorite}
+                    >
+                        <i class="bi bi-star-fill" /> Favorite tag
                     </button>
                 </li>
             </ul>
-            <form class='d-flex ms-lg-2'>
-                <div class='input-group'>
-                    <input class='form-control' type='search' placeholder='Search' aria-label='Search' id='search-text'
-                           bind:value={SearchText}>
-                    <button class='btn btn-outline-success' type='button' id='search-button'
-                            on:click={e=>onSearchClick(SearchText)}>
-                        <i class='bi bi-search'></i>
+            <div class="d-flex ms-lg-2">
+                <div class="input-group">
+                    <input
+                        class="form-control"
+                        type="search"
+                        placeholder="Search"
+                        aria-label="Search"
+                        id="search-text"
+                        bind:value={SearchText}
+                        on:keydown={(e) => {
+                            if (e.key === "Enter") onSearchClick(SearchText);
+                        }}
+                    />
+                    <button
+                        class="btn btn-outline-success"
+                        type="button"
+                        id="search-button"
+                        on:click={(e) => onSearchClick(SearchText)}
+                    >
+                        <i class="bi bi-search" />
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </nav>
