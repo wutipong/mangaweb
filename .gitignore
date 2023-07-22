@@ -1,9 +1,10 @@
 mangaweb.exe
 .vscode/launch.json
-/mangaweb
+mangaweb
 __debug_bin
 node_modules
 .parcel-cache
 data-private
 .env
 .idea
+static
