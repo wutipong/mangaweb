@@ -68,7 +68,6 @@
                         <button
                             class="dropdown-item"
                             id="download-btn"
-                            download
                             on:click={onDownloadPage}
                         >
                             <i class="bi bi-download me-3" />
@@ -76,7 +75,6 @@
                         </button>
                         <button
                             class="dropdown-item"
-                            download
                             on:click={onDownloadManga}
                         >
                             <i class="bi bi-download me-3" />
