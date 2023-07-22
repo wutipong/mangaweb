@@ -29,7 +29,7 @@
 
         imgs[0]?.forceLoad();
         imgs[1]?.forceLoad();
-        imgs[imgs.length -1]?.forceLoad();
+        imgs[imgs.length - 1]?.forceLoad();
     });
 
     export function advance(n) {
