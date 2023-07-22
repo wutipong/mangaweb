@@ -6,145 +6,158 @@
     import PageItem from "./Common/PageItem.svelte";
     import Toast from "./Common/Toast.svelte";
 
-    export let params
+    export let params;
 
-    let toast
-    let tagFavorite = params.TagFavorite
-    let aboutDialog
+    let toast;
+    let tagFavorite = params.TagFavorite;
+    let aboutDialog;
 
     function changeSort(sortBy) {
-        let url = window.location
-        let searchParams = new URLSearchParams(url.search)
-        searchParams.set('sort', sortBy)
+        let url = window.location;
+        let searchParams = new URLSearchParams(url.search);
+        searchParams.set("sort", sortBy);
 
-        if (sortBy === 'name') {
-            searchParams.set('order', 'ascending')
-        } else if (sortBy === 'createTime') {
-            searchParams.set('order', 'descending')
+        if (sortBy === "name") {
+            searchParams.set("order", "ascending");
+        } else if (sortBy === "createTime") {
+            searchParams.set("order", "descending");
         }
 
-        searchParams.delete('page')
+        searchParams.delete("page");
 
-        url.search = searchParams.toString()
+        url.search = searchParams.toString();
     }
 
     function changeOrder(order) {
-        let url = window.location
-        let searchParams = new URLSearchParams(url.search)
+        let url = window.location;
+        let searchParams = new URLSearchParams(url.search);
 
-        searchParams.set('order', order)
+        searchParams.set("order", order);
 
-        url.search = searchParams.toString()
+        url.search = searchParams.toString();
     }
 
     function onFilterFavorite() {
-        let url = window.location
-        let searchParams = new URLSearchParams(url.search)
+        let url = window.location;
+        let searchParams = new URLSearchParams(url.search);
 
-        let isFavorite = params.FavoriteOnly
-        searchParams.set('favorite', (!isFavorite).toString())
+        let isFavorite = params.FavoriteOnly;
+        searchParams.set("favorite", (!isFavorite).toString());
 
-        url.search = searchParams.toString()
+        url.search = searchParams.toString();
     }
 
     async function rescanLibrary() {
-        const url = params.RescanURL
-        await fetch(url)
+        const url = params.RescanURL;
+        await fetch(url);
         toast.show(
-            'Re-scan Library',
-            'Library re-scanning in progress. Please refresh after a few minutes.'
-        )
+            "Re-scan Library",
+            "Library re-scanning in progress. Please refresh after a few minutes."
+        );
     }
 
     async function onTagFavorite() {
-        tagFavorite = !tagFavorite
+        tagFavorite = !tagFavorite;
 
-        const urlSearchParams = new URLSearchParams()
-        urlSearchParams.set('favorite', tagFavorite.toString())
+        const urlSearchParams = new URLSearchParams();
+        urlSearchParams.set("favorite", tagFavorite.toString());
 
-        const url = new URL(params.SetTagFavoriteURL, window.location.origin)
-        url.search = urlSearchParams.toString()
+        const url = new URL(params.SetTagFavoriteURL, window.location.origin);
+        url.search = urlSearchParams.toString();
 
-        const resp = await fetch(url)
-        const json = await resp.json()
+        const resp = await fetch(url);
+        const json = await resp.json();
 
-        if(json.favorite) {
-            toast.show('Favorite', `The tag "${params.Tag}" is now your favorite.`)
-        }
-        else {
-            toast.show('Favorite', `The tag "${params.Tag}" is no longer your favorite.`)
+        if (json.favorite) {
+            toast.show(
+                "Favorite",
+                `The tag "${params.Tag}" is now your favorite.`
+            );
+        } else {
+            toast.show(
+                "Favorite",
+                `The tag "${params.Tag}" is no longer your favorite.`
+            );
         }
     }
 
     function onSearchClick(t) {
-        let searchText = t
-        let url = window.location
-        let searchParams = new URLSearchParams(url.search)
-        searchParams.set('search', searchText)
+        let searchText = t;
+        let url = window.location;
+        let searchParams = new URLSearchParams(url.search);
+        searchParams.set("search", searchText);
 
-        url.search = searchParams.toString()
+        url.search = searchParams.toString();
     }
 
     function onAboutClick() {
-        aboutDialog.show()
+        aboutDialog.show();
     }
 </script>
 
-<Toolbar Title={params.Title}
-         BrowseURL={params.BrowseURL}
-         TagListURL={params.TagListURL}
-         SortBy={params.SortBy}
-         SortOrder={params.SortOrder}
-         FavoriteOnly={params.FavoriteOnly}
-         Tag={params.Tag}
-         TagFavorite={tagFavorite}
-         changeSort={changeSort}
-         changeOrder={changeOrder}
-         onFilterFavorite={onFilterFavorite}
-         rescanLibrary={rescanLibrary}
-         onTagFavorite={onTagFavorite}
-         onSearchClick={onSearchClick}
-         SearchText={params.SearchText}
-         onAboutClick={onAboutClick}
+<Toolbar
+    Title={params.Title}
+    BrowseURL={params.BrowseURL}
+    TagListURL={params.TagListURL}
+    SortBy={params.SortBy}
+    SortOrder={params.SortOrder}
+    FavoriteOnly={params.FavoriteOnly}
+    Tag={params.Tag}
+    TagFavorite={tagFavorite}
+    {changeSort}
+    {changeOrder}
+    {onFilterFavorite}
+    {rescanLibrary}
+    {onTagFavorite}
+    {onSearchClick}
+    SearchText={params.SearchText}
+    {onAboutClick}
 />
 
-<div class='container-fluid' style='padding-top:100px;'>
-    <div class='grid-container'>
+<div class="container-fluid" style="padding-top:100px;">
+    <div class="grid-container">
         {#each params.Items as item}
-            <Item Favorite={item.Favorite}
-                  IsRead={item.IsRead}
-                  ID={item.ID}
-                  ViewURL={item.ViewURL}
-                  ThumbnailURL={item.ThumbnailURL}
-                  Name={item.Name}/>
+            <Item
+                Favorite={item.Favorite}
+                IsRead={item.IsRead}
+                ID={item.ID}
+                ViewURL={item.ViewURL}
+                ThumbnailURL={item.ThumbnailURL}
+                Name={item.Name}
+            />
         {/each}
     </div>
 </div>
-<div style='height: 100px;'></div>
+<div style="height: 100px;" />
 
 <Pagination>
     {#each params.Pages as page}
-        <PageItem IsActive={page.IsActive}
-                  IsEnabled={page.IsEnabled}
-                  IsHiddenOnSmall={page.IsHiddenOnSmall}
-                  URL={page.LinkURL}
-                  Content={page.Content}/>
+        <PageItem
+            IsActive={page.IsActive}
+            IsEnabled={page.IsEnabled}
+            IsHiddenOnSmall={page.IsHiddenOnSmall}
+            URL={page.LinkURL}
+            Content={page.Content}
+        />
     {/each}
 </Pagination>
 
 <ModalDialog Id="aboutModal" Title="About" bind:this={aboutDialog}>
     <h5>MangaWeb</h5>
-    <h6>Version {params.Version} </h6>
+    <h6>Version {params.Version}</h6>
     <p>&copy; 2021-2023 Wutipong Wongsakuldej. All Right Reserved</p>
     <p>Licensed under MIT License</p>
-    <p><a href='https://github.com/wutipong/mangaweb'>Homepage</a></p>
+    <p><a href="https://github.com/wutipong/mangaweb">Homepage</a></p>
 </ModalDialog>
 
 <Toast bind:this={toast} />
 
-<nav aria-label='Move to top navigation' class='position-fixed bottom-0 end-0 p-3'>
-    <a class='btn btn-secondary' href='#'>
-        <i class='bi bi-chevron-double-up'></i>
-        <span class='d-none d-sm-block'>Top</span>
+<nav
+    aria-label="Move to top navigation"
+    class="position-fixed bottom-0 end-0 p-3"
+>
+    <a class="btn btn-secondary" href="#top">
+        <i class="bi bi-chevron-double-up" />
+        <span class="d-none d-sm-block">Top</span>
     </a>
 </nav>
