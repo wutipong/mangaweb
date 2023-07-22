@@ -89,7 +89,6 @@
         aboutDialog.show()
     }
 </script>
-<a id=top>&nbsp;</a>
 
 <Toolbar Title={params.Title}
          BrowseURL={params.BrowseURL}
