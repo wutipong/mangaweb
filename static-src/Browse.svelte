@@ -89,6 +89,7 @@
         aboutDialog.show()
     }
 </script>
+<a id=top>&nbsp;</a>
 
 <Toolbar Title={params.Title}
          BrowseURL={params.BrowseURL}
@@ -143,7 +144,7 @@
 <Toast bind:this={toast} />
 
 <nav aria-label='Move to top navigation' class='position-fixed bottom-0 end-0 p-3'>
-    <a class='btn btn-secondary' href='#'>
+    <a class='btn btn-secondary' href='#top'>
         <i class='bi bi-chevron-double-up'></i>
         <span class='d-none d-sm-block'>Top</span>
     </a>
