@@ -66,7 +66,7 @@
                     </div>
                 </li>
                 <li class='nav-item'>
-                    <a class='nav-link' href="#" on:click={onAboutClick}>About</a>
+                    <button class='nav-link' on:click={onAboutClick}>About</button>
                 </li>
             </ul>
         </div>

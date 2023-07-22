@@ -38,17 +38,15 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
-                    <a
+                    <button
                         class="nav-link dropdown-toggle"
-                        href="#"
                         id="navbarBrowseDropdown"
-                        role="button"
                         data-bs-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false"
                     >
                         Browse
-                    </a>
+                    </button>
                     <div
                         class="dropdown-menu"
                         aria-labelledby="navbarBrowseDropdown"
@@ -67,17 +65,15 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a
+                    <button
                         class="nav-link dropdown-toggle"
-                        href="#"
                         id="navbarDropdown"
-                        role="button"
                         data-bs-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false"
                     >
                         Sort by
-                    </a>
+                    </button>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <button
                             class="dropdown-item"
@@ -121,17 +117,15 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a
+                    <button
                         class="nav-link dropdown-toggle"
-                        href="#"
                         id="navbarDropdown"
-                        role="button"
                         data-bs-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false"
                     >
                         Filter
-                    </a>
+                    </button>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <button
                             class="dropdown-item"
@@ -145,17 +139,15 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a
+                    <button
                         class="nav-link dropdown-toggle"
-                        href="#"
                         id="navbarDropdown"
-                        role="button"
                         data-bs-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false"
                     >
                         Tools
-                    </a>
+                    </button>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <button
                             class="dropdown-item"
@@ -167,8 +159,8 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" on:click={onAboutClick}
-                        >About</a
+                    <button class="nav-link" on:click={onAboutClick}
+                        >About</button
                     >
                 </li>
             </ul>
