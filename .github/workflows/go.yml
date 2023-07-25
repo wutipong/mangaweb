@@ -2,9 +2,6 @@ name: Go build and run test.
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
 
