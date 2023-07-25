@@ -2,7 +2,14 @@
 name: Publish Release Docker image
 on:
   release:
-    types: [ published ]
+    types: [published]
+
+  push:
+    branches: [master]
+
+  pull_request:
+    branches: [ master ]
+
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
@@ -10,13 +17,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: |
-            name/app
+            wutipong/mangaweb
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -24,20 +37,21 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
 
       - name: Find Tag
+        if: ${{ github.event_name == 'release' }}
         id: tagger
         uses: jimschubert/query-tag-action@v2
         with:
-          include: 'v*'
+          include: "v*"
+
+      - uses: haya14busa/action-cond@v1
+        id: condval
+        with:
+          cond: ${{ github.event_name == 'release' }}
+          if_true: ${{steps.tagger.outputs.tag}}
+          if_false: 'Development'
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Login to DockerHub
-        if: ${{ !env.ACT }}
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -47,4 +61,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            VERSION=${{steps.tagger.outputs.tag}}
+            VERSION=${{ steps.condval.outputs.value }}
