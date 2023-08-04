@@ -4,19 +4,15 @@
     export let Current = 0;
 </script>
 
-<nav
-    aria-label="Move to top navigation"
-    class="position-fixed bottom-0 vw-100"
-    style="z-index: 12;"
->
+<nav aria-label="Page Navigation Button Nav" class="position-fixed bottom-0 vw-100" style="z-index: 12;height: 15%;">
     <button
-        class="btn btn-transparent px-5 vw-100"
+        class="btn btn-transparent px-5 vw-100 h-100"
         type="button"
         data-bs-toggle="offcanvas"
         data-bs-target="#offcanvasBottom"
         aria-controls="offcanvasBottom"
     >
-        <i class="bi bi-chevron-double-up" />
+        <i class="bi bi-chevron-double-up" style="opacity: 0.9; color:#fff;"/>
     </button>
 </nav>
 
