@@ -6,14 +6,7 @@ import (
 )
 
 func ScanLibrary() error {
-	provider, err := createMetaProvider()
-
-	if err != nil {
-		return err
-	}
-	defer provider.Close()
-
-	allMeta, err := provider.ReadAll()
+	allMeta, err := meta.ReadAll()
 	if err != nil {
 		return err
 	}
@@ -42,7 +35,7 @@ func ScanLibrary() error {
 			log.Get().Sugar().Errorf("Failed to create meta data : %v", err)
 		}
 
-		err = provider.Write(item)
+		err = meta.Write(item)
 		if err != nil {
 			log.Get().Sugar().Errorf("Failed to write meta data : %v", err)
 		}
@@ -61,7 +54,7 @@ func ScanLibrary() error {
 		}
 
 		log.Get().Sugar().Infof("Deleting metadata for %s", m.Name)
-		if err := provider.Delete(m); err != nil {
+		if err := meta.Delete(m); err != nil {
 			log.Get().Sugar().Infof("Failed to delete meta for %s", m.Name)
 		}
 

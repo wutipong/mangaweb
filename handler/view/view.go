@@ -2,8 +2,6 @@ package view
 
 import (
 	"fmt"
-	"github.com/julienschmidt/httprouter"
-	"go.uber.org/zap"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -13,8 +11,13 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/julienschmidt/httprouter"
+	"go.uber.org/zap"
+
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/log"
+	"github.com/wutipong/mangaweb/meta"
+	"github.com/wutipong/mangaweb/tag"
 )
 
 const (
@@ -60,14 +63,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 
 	query := r.URL.Query()
 
-	db, err := handler.CreateMetaProvider()
-	if err != nil {
-		handler.WriteError(w, err)
-		return
-	}
-	defer db.Close()
-
-	m, err := db.Read(item)
+	m, err := meta.Read(item)
 	if err != nil {
 		handler.WriteError(w, err)
 		return
@@ -86,13 +82,13 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	if fav, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		if fav != m.Favorite {
 			m.Favorite = fav
-			db.Write(m)
+			meta.Write(m)
 		}
 	}
 
 	if !m.IsRead {
 		m.IsRead = true
-		db.Write(m)
+		meta.Write(m)
 	}
 
 	browseUrl := r.Referer()
@@ -104,17 +100,11 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 			browseUrl = u.String()
 		}
 	}
-	tagProvider, err := handler.CreateTagProvider()
-	if err != nil {
-		log.Get().Sugar().Fatal(err)
-		handler.WriteError(w, err)
-		return
-	}
 
 	tags := make([]tagData, 0)
 
 	for _, tagStr := range m.Tags {
-		t, err := tagProvider.Read(tagStr)
+		t, err := tag.Read(tagStr)
 		if err != nil {
 			log.Get().Sugar().Fatal(err)
 			handler.WriteError(w, err)

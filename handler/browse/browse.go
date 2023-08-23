@@ -17,6 +17,7 @@ import (
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
+	"github.com/wutipong/mangaweb/tag"
 )
 
 const (
@@ -96,13 +97,6 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	query := r.URL.Query()
 	tagStr := handler.ParseParam(params, "tag")
 
-	p, err := handler.CreateMetaProvider()
-	if err != nil {
-		handler.WriteError(w, err)
-		return
-	}
-	defer p.Close()
-
 	query.Get("favorite")
 
 	favOnly := false
@@ -141,7 +135,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	sort := parseSortField(query.Get("sort"))
 	order := parseSortOrder(query.Get("order"))
 
-	allMeta, err := p.Search(searchCriteria, sort, order, ItemPerPage, page)
+	allMeta, err := meta.Search(searchCriteria, sort, order, ItemPerPage, page)
 	if err != nil {
 		handler.WriteError(w, err)
 		return
@@ -153,7 +147,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		return
 	}
 
-	count, err := p.Count(searchCriteria)
+	count, err := meta.Count(searchCriteria)
 	if err != nil {
 		handler.WriteError(w, err)
 		return
@@ -193,13 +187,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		data.Title = fmt.Sprintf("Browse - %s", tagStr)
 		data.Tag = tagStr
 
-		tagProvider, err := handler.CreateTagProvider()
-		if err != nil {
-			handler.WriteError(w, err)
-			return
-		}
-
-		tagObj, err := tagProvider.Read(tagStr)
+		tagObj, err := tag.Read(tagStr)
 		if err != nil {
 			handler.WriteError(w, err)
 			return

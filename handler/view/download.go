@@ -1,14 +1,16 @@
 package view
 
 import (
-	"github.com/julienschmidt/httprouter"
-	"github.com/wutipong/mangaweb/handler"
-	"github.com/wutipong/mangaweb/log"
-	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"strconv"
+
+	"github.com/julienschmidt/httprouter"
+	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
+	"github.com/wutipong/mangaweb/meta"
+	"go.uber.org/zap"
 )
 
 func Download(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -17,14 +19,7 @@ func Download(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 
 	log.Get().Info("Download", zap.String("item_name", item))
 
-	db, err := handler.CreateMetaProvider()
-	if err != nil {
-		handler.WriteError(w, err)
-		return
-	}
-	defer db.Close()
-
-	m, err := db.Read(item)
+	m, err := meta.Read(item)
 	if err != nil {
 		handler.WriteError(w, err)
 		return

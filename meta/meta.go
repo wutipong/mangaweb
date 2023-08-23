@@ -35,8 +35,6 @@ type Meta struct {
 	Version int `json:"version" db:"version" bson:"version"`
 }
 
-type ProviderFactory func() (p Provider, err error)
-
 // CurrentVersion the current version of `Meta` structure.
 const CurrentVersion = 1
 

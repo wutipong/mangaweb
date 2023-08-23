@@ -1,16 +1,13 @@
 package scheduler
 
-import "github.com/wutipong/mangaweb/log"
+import (
+	"github.com/wutipong/mangaweb/log"
+	"github.com/wutipong/mangaweb/meta"
+)
 
 func UpdateMissingThumbnail() error {
-	provider, err := createMetaProvider()
 
-	if err != nil {
-		return err
-	}
-	defer provider.Close()
-
-	allMeta, err := provider.ReadAll()
+	allMeta, err := meta.ReadAll()
 	if err != nil {
 		return err
 	}
@@ -26,7 +23,7 @@ func UpdateMissingThumbnail() error {
 			continue
 		}
 
-		provider.Write(m)
+		meta.Write(m)
 	}
 
 	return nil

@@ -6,14 +6,7 @@ import (
 )
 
 func MigrateMeta() error {
-	provider, err := createMetaProvider()
-
-	if err != nil {
-		return err
-	}
-	defer provider.Close()
-
-	allMeta, err := provider.ReadAll()
+	allMeta, err := meta.ReadAll()
 	if err != nil {
 		return err
 	}
@@ -25,7 +18,7 @@ func MigrateMeta() error {
 				return err
 			}
 
-			err = provider.Write(m)
+			err = meta.Write(m)
 			if err != nil {
 				return err
 			}

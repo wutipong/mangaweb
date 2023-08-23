@@ -1,13 +1,15 @@
 package tag
 
 import (
-	"github.com/julienschmidt/httprouter"
-	"github.com/wutipong/mangaweb/handler"
-	"github.com/wutipong/mangaweb/log"
-	"go.uber.org/zap"
 	"net/http"
 	"path/filepath"
 	"strconv"
+
+	"github.com/julienschmidt/httprouter"
+	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
+	"github.com/wutipong/mangaweb/tag"
+	"go.uber.org/zap"
 )
 
 type setTagFavoriteResponse struct {
@@ -15,21 +17,14 @@ type setTagFavoriteResponse struct {
 }
 
 func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	tag := handler.ParseParam(params, "tag")
-	tag = filepath.FromSlash(tag)
+	tagStr := handler.ParseParam(params, "tag")
+	tagStr = filepath.FromSlash(tagStr)
 
-	log.Get().Info("Set favorite tag", zap.String("tag", tag))
+	log.Get().Info("Set favorite tag", zap.String("tag", tagStr))
 
 	query := r.URL.Query()
 
-	db, err := handler.CreateTagProvider()
-	if err != nil {
-		handler.WriteJson(w, err)
-		return
-	}
-	defer db.Close()
-
-	m, err := db.Read(tag)
+	m, err := tag.Read(tagStr)
 	if err != nil {
 		handler.WriteJson(w, err)
 		return
@@ -38,7 +33,7 @@ func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httproute
 	if fav, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		if fav != m.Favorite {
 			m.Favorite = fav
-			db.Write(m)
+			tag.Write(m)
 		}
 	}
 

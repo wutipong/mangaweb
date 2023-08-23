@@ -1,9 +1,6 @@
 package tag
 
 import (
-	"github.com/julienschmidt/httprouter"
-	"github.com/wutipong/mangaweb/handler"
-	"github.com/wutipong/mangaweb/log"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -11,6 +8,10 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/julienschmidt/httprouter"
+	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
 
 	"github.com/wutipong/mangaweb/tag"
 )
@@ -88,13 +89,7 @@ func TagListHandler(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 		favOnly = f
 	}
 
-	tagProvider, err := handler.CreateTagProvider()
-	if err != nil {
-		handler.WriteError(w, err)
-		return
-	}
-
-	allTags, err := tagProvider.ReadAll()
+	allTags, err := tag.ReadAll()
 	if err != nil {
 		handler.WriteError(w, err)
 		return

@@ -1,34 +1,208 @@
 package meta
 
-type SearchField string
-type SortField string
-type SortOrder string
+import (
+	"context"
+	"fmt"
+	"strings"
 
-const (
-	SearchFieldName     = SearchField("name")
-	SearchFieldFavorite = SearchField("favorite")
-	SearchFieldTag      = SearchField("tag")
-
-	SortFieldName       = SortField("name")
-	SortFieldCreateTime = SortField("createTime")
-
-	SortOrderAscending  = SortOrder("ascending")
-	SortOrderDescending = SortOrder("descending")
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/wutipong/mangaweb/errors"
 )
 
-type SearchCriteria struct {
-	Field SearchField
-	Value interface{}
+var pool *pgxpool.Pool
+
+func Init(ctx context.Context, p *pgxpool.Pool) {
+	pool = p
 }
 
-// Provider meta data provider.
-type Provider interface {
-	IsItemExist(name string) bool
-	Write(i Meta) error
-	Delete(i Meta) error
-	Read(name string) (i Meta, err error)
-	ReadAll() (items []Meta, err error)
-	Search(criteria []SearchCriteria, sort SortField, order SortOrder, pageSize int, page int) (items []Meta, err error)
-	Count(criteria []SearchCriteria) (count int64, err error)
-	Close() error
+func IsItemExist(name string) bool {
+	r := pool.QueryRow(
+		context.Background(),
+		`select exists (select 1 from items where name = $1)`,
+		name,
+	)
+
+	exists := false
+	r.Scan(&exists)
+
+	return exists
+}
+func Write(i Meta) error {
+	_, err := pool.Exec(
+		context.Background(),
+		`INSERT INTO manga.items(name, create_time, favorite, file_indices, thumbnail, is_read, tags, version)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+			ON CONFLICT(name) DO UPDATE
+			SET create_time = $2, 
+				favorite = $3, 
+				file_indices = $4, 
+				thumbnail = $5, 
+				is_read = $6, 
+				tags = $7, 
+				version = $8;`,
+		i.Name,
+		i.CreateTime,
+		i.Favorite,
+		i.FileIndices,
+		i.Thumbnail,
+		i.IsRead,
+		i.Tags,
+		i.Version,
+	)
+	return err
+}
+func Delete(i Meta) error {
+	return errors.ErrNotImplemented
+}
+func Read(name string) (i Meta, err error) {
+	r := pool.QueryRow(
+		context.Background(),
+		`SELECT name, create_time, favorite, file_indices, thumbnail, is_read, tags, version
+		FROM manga.items
+		WHERE name = $1`,
+		name,
+	)
+
+	err = r.Scan(
+		&i.Name,
+		&i.CreateTime,
+		&i.Favorite,
+		&i.FileIndices,
+		&i.Thumbnail,
+		&i.IsRead,
+		&i.Tags,
+		&i.Version,
+	)
+
+	return
+}
+
+func ReadAll() (items []Meta, err error) {
+	rows, err := pool.Query(context.Background(),
+		`SELECT name, create_time, favorite, file_indices, thumbnail, is_read, tags, version
+		FROM manga.items;`)
+
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		var i Meta
+		rows.Scan(
+			&i.Name,
+			&i.CreateTime,
+			&i.Favorite,
+			&i.FileIndices,
+			&i.Thumbnail,
+			&i.IsRead,
+			&i.Tags,
+			&i.Version)
+
+		items = append(items, i)
+	}
+
+	return
+}
+func Search(criteria []SearchCriteria, sort SortField, order SortOrder, pageSize int, page int) (items []Meta, err error) {
+	// TODO: sanitize the query.
+	criteriaStr := make([]string, 0)
+	for _, c := range criteria {
+		switch c.Field {
+		case SearchFieldName:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.name LIKE '%%%s%%'`, c.Value.(string)))
+
+		case SearchFieldFavorite:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.favorite = %v`, c.Value.(bool)))
+
+		case SearchFieldTag:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.tags @> ARRAY['%s']`, c.Value.(string)))
+		}
+	}
+
+	where := ""
+	if len(criteria) > 0 {
+		where = fmt.Sprintf(`WHERE %s `, strings.Join(criteriaStr, " AND "))
+	}
+
+	sortBy := ""
+	switch sort {
+	case SortFieldName:
+		sortBy = `ORDER BY name`
+	case SortFieldCreateTime:
+		sortBy = `ORDER BY create_time`
+	}
+
+	sortOrder := ""
+	switch order {
+	case SortOrderAscending:
+		sortOrder = "ASC"
+	case SortOrderDescending:
+		sortOrder = "DESC"
+
+	}
+
+	query := fmt.Sprintf(
+		`SELECT name, create_time, favorite, file_indices, thumbnail, is_read, tags, version
+		FROM manga.items
+		%s 
+		%s %s
+		LIMIT %d OFFSET %d;`,
+		where,
+		sortBy,
+		sortOrder,
+		pageSize,
+		pageSize*page,
+	)
+
+	rows, err := pool.Query(context.Background(), query)
+
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		var i Meta
+		rows.Scan(
+			&i.Name,
+			&i.CreateTime,
+			&i.Favorite,
+			&i.FileIndices,
+			&i.Thumbnail,
+			&i.IsRead,
+			&i.Tags,
+			&i.Version)
+
+		items = append(items, i)
+	}
+
+	return
+}
+func Count(criteria []SearchCriteria) (count int64, err error) {
+	// TODO: sanitize the query.
+	criteriaStr := make([]string, 0)
+	for _, c := range criteria {
+		switch c.Field {
+		case SearchFieldName:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.name LIKE '%%%s%%'`, c.Value.(string)))
+
+		case SearchFieldFavorite:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.favorite = %v`, c.Value.(bool)))
+
+		case SearchFieldTag:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.tags @> ARRAY['%s']`, c.Value.(string)))
+		}
+	}
+
+	where := ""
+	if len(criteria) > 0 {
+		where = fmt.Sprintf(`WHERE %s `, strings.Join(criteriaStr, " AND "))
+	}
+
+	r := pool.QueryRow(
+		context.Background(),
+		fmt.Sprintf(`select count (*) from manga.items %s;`, where),
+	)
+
+	r.Scan(&count)
+	return
 }

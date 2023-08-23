@@ -18,10 +18,8 @@ import (
 	"github.com/wutipong/mangaweb/handler/view"
 	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
-	metapostgres "github.com/wutipong/mangaweb/meta/postgres"
 	"github.com/wutipong/mangaweb/scheduler"
 	"github.com/wutipong/mangaweb/tag"
-	tagpostgres "github.com/wutipong/mangaweb/tag/postgres"
 )
 
 // Recreate the static resource file.
@@ -91,19 +89,10 @@ func main() {
 
 	defer conn.Close()
 
-	tagpostgres.Init(context.Background(), conn)
-	metapostgres.Init(context.Background(), conn)
+	tag.Init(context.Background(), conn)
+	meta.Init(context.Background(), conn)
 
-	scheduler.Init(scheduler.Options{
-		MetaProviderFactory: func() (p meta.Provider, err error) {
-			p = &metapostgres.Provider{}
-			return
-		},
-		TagProviderFactory: func() (p tag.Provider, err error) {
-			p = &tagpostgres.Provider{}
-			return
-		},
-	})
+	scheduler.Init(scheduler.Options{})
 
 	RegisterHandler(router, *prefix)
 	scheduler.Start()
@@ -117,14 +106,6 @@ func main() {
 
 func RegisterHandler(router *httprouter.Router, pathPrefix string) {
 	handler.Init(handler.Options{
-		MetaProviderFactory: func() (p meta.Provider, err error) {
-			p = &metapostgres.Provider{}
-			return
-		},
-		TagProviderFactory: func() (p tag.Provider, err error) {
-			p = &tagpostgres.Provider{}
-			return
-		},
 		VersionString:     versionString,
 		PathPrefix:        pathPrefix,
 		PathRoot:          pathRoot,

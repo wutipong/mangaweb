@@ -1,13 +1,15 @@
 package view
 
 import (
-	"github.com/julienschmidt/httprouter"
-	"github.com/wutipong/mangaweb/handler"
-	"github.com/wutipong/mangaweb/log"
-	"go.uber.org/zap"
 	"net/http"
 	"path/filepath"
 	"strconv"
+
+	"github.com/julienschmidt/httprouter"
+	"github.com/wutipong/mangaweb/handler"
+	"github.com/wutipong/mangaweb/log"
+	"github.com/wutipong/mangaweb/meta"
+	"go.uber.org/zap"
 )
 
 type setFavoriteResponse struct {
@@ -22,14 +24,7 @@ func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httproute
 
 	query := r.URL.Query()
 
-	db, err := handler.CreateMetaProvider()
-	if err != nil {
-		handler.WriteJson(w, err)
-		return
-	}
-	defer db.Close()
-
-	m, err := db.Read(item)
+	m, err := meta.Read(item)
 	if err != nil {
 		handler.WriteJson(w, err)
 		return
@@ -38,7 +33,7 @@ func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httproute
 	if fav, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		if fav != m.Favorite {
 			m.Favorite = fav
-			db.Write(m)
+			meta.Write(m)
 		}
 	}
 

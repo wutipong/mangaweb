@@ -4,8 +4,8 @@ import (
 	"archive/zip"
 	"bytes"
 	"fmt"
+	"io"
 
-	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -27,13 +27,6 @@ func GetImage(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 
 	query := r.URL.Query()
 
-	provider, err := CreateMetaProvider()
-	if err != nil {
-		WriteError(w, err)
-		return
-	}
-	defer provider.Close()
-
 	var width, height int64 = 0, 0
 	if w, e := strconv.ParseInt(query.Get("width"), 10, 64); e == nil {
 		width = w
@@ -51,7 +44,7 @@ func GetImage(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 
 	log.Get().Info("Get image", zap.String("item_name", item), zap.Int("index", index))
 
-	m, err := provider.Read(item)
+	m, err := meta.Read(item)
 	if err != nil {
 		WriteError(w, err)
 		return
@@ -130,7 +123,7 @@ func OpenZipEntry(m meta.Meta, index int) (content []byte, filename string, err 
 		return
 	}
 	defer reader.Close()
-	if content, err = ioutil.ReadAll(reader); err != nil {
+	if content, err = io.ReadAll(reader); err != nil {
 		content = nil
 		return
 	}

@@ -7,14 +7,8 @@ import (
 )
 
 func UpdateTags() error {
-	metaProvider, err := createMetaProvider()
 
-	if err != nil {
-		return err
-	}
-	defer metaProvider.Close()
-
-	allMeta, err := metaProvider.ReadAll()
+	allMeta, err := meta.ReadAll()
 	if err != nil {
 		return err
 	}
@@ -27,14 +21,11 @@ func UpdateTags() error {
 		}
 	}
 
-	tagProvider, err := createTagProvider()
+	allTag, err := tag.ReadAll()
 	if err != nil {
 		return err
 	}
 
-	defer tagProvider.Close()
-
-	allTag, err := tagProvider.ReadAll()
 	allTagSet := make(map[string]bool)
 	for _, t := range allTag {
 		allTagSet[t.Name] = true
@@ -58,7 +49,7 @@ func UpdateTags() error {
 			m := findMetaWithTag(tagStr)
 			t.Thumbnail = m.Thumbnail
 
-			err = tagProvider.Write(t)
+			err = tag.Write(t)
 
 			if err != nil {
 				return err
