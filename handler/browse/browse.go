@@ -187,7 +187,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		data.Title = fmt.Sprintf("Browse - %s", tagStr)
 		data.Tag = tagStr
 
-		tagObj, err := tag.Read(tagStr)
+		tagObj, err := tag.Read(r.Context(), tagStr)
 		if err != nil {
 			handler.WriteError(w, err)
 			return

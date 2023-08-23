@@ -89,7 +89,7 @@ func main() {
 
 	defer conn.Close()
 
-	tag.Init(context.Background(), conn)
+	tag.Init(conn)
 	meta.Init(context.Background(), conn)
 
 	scheduler.Init(scheduler.Options{})

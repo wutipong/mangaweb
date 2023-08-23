@@ -89,7 +89,7 @@ func TagListHandler(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 		favOnly = f
 	}
 
-	allTags, err := tag.ReadAll()
+	allTags, err := tag.ReadAll(r.Context())
 	if err != nil {
 		handler.WriteError(w, err)
 		return

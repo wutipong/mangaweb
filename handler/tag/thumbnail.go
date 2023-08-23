@@ -17,7 +17,7 @@ func ThumbnailHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 
 	log.Get().Info("Tag thumbnail image", zap.String("tag", tagStr))
 
-	m, err := tag.Read(tagStr)
+	m, err := tag.Read(r.Context(), tagStr)
 	if err != nil {
 		handler.WriteError(w, err)
 		return

@@ -104,7 +104,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	tags := make([]tagData, 0)
 
 	for _, tagStr := range m.Tags {
-		t, err := tag.Read(tagStr)
+		t, err := tag.Read(r.Context(), tagStr)
 		if err != nil {
 			log.Get().Sugar().Fatal(err)
 			handler.WriteError(w, err)

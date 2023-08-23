@@ -24,7 +24,7 @@ func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httproute
 
 	query := r.URL.Query()
 
-	m, err := tag.Read(tagStr)
+	m, err := tag.Read(r.Context(), tagStr)
 	if err != nil {
 		handler.WriteJson(w, err)
 		return
@@ -33,7 +33,7 @@ func SetFavoriteHandler(w http.ResponseWriter, r *http.Request, params httproute
 	if fav, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		if fav != m.Favorite {
 			m.Favorite = fav
-			tag.Write(m)
+			tag.Write(r.Context(), m)
 		}
 	}
 

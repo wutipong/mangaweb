@@ -1,6 +1,8 @@
 package scheduler
 
 import (
+	"context"
+
 	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
 	"github.com/wutipong/mangaweb/tag"
@@ -21,7 +23,7 @@ func UpdateTags() error {
 		}
 	}
 
-	allTag, err := tag.ReadAll()
+	allTag, err := tag.ReadAll(context.Background())
 	if err != nil {
 		return err
 	}
@@ -49,7 +51,7 @@ func UpdateTags() error {
 			m := findMetaWithTag(tagStr)
 			t.Thumbnail = m.Thumbnail
 
-			err = tag.Write(t)
+			err = tag.Write(context.Background(), t)
 
 			if err != nil {
 				return err

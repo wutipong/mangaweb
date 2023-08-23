@@ -9,21 +9,17 @@ import (
 
 var pool *pgxpool.Pool = nil
 
-func Init(ctx context.Context, p *pgxpool.Pool) {
+func Init(p *pgxpool.Pool) {
 	pool = p
 }
 
-func Close() error {
-	return nil
-}
-
-func Delete(t Tag) error {
+func Delete(ctx context.Context, t Tag) error {
 	return errors.ErrNotImplemented
 }
 
-func IsTagExist(name string) bool {
+func IsTagExist(ctx context.Context, name string) bool {
 	r := pool.QueryRow(
-		context.Background(),
+		ctx,
 		`select exists (select 1 from tags where name = $1)`,
 		name,
 	)
@@ -34,9 +30,9 @@ func IsTagExist(name string) bool {
 	return exists
 }
 
-func Read(name string) (t Tag, err error) {
+func Read(ctx context.Context, name string) (t Tag, err error) {
 	r := pool.QueryRow(
-		context.Background(),
+		ctx,
 		`SELECT name, favorite, hidden, thumbnail, version
 			FROM manga.tags
 			where name = $1;`,
@@ -54,9 +50,9 @@ func Read(name string) (t Tag, err error) {
 	return
 }
 
-func ReadAll() (tags []Tag, err error) {
+func ReadAll(ctx context.Context) (tags []Tag, err error) {
 	rows, err := pool.Query(
-		context.Background(),
+		ctx,
 		`SELECT name, favorite, hidden, thumbnail, version
 			FROM manga.tags;`,
 	)
@@ -81,9 +77,9 @@ func ReadAll() (tags []Tag, err error) {
 	return
 }
 
-func Write(t Tag) error {
+func Write(ctx context.Context, t Tag) error {
 	_, err := pool.Exec(
-		context.Background(),
+		ctx,
 		`INSERT INTO manga.tags(name, favorite, hidden, thumbnail, version)
 		VALUES ($1, $2, $3, $4, $5)
 		ON CONFLICT(name) DO UPDATE
