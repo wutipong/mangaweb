@@ -19,10 +19,10 @@ func ThumbnailHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 
 	log.Get().Info("Item Thumbnail", zap.String("item_name", item))
 
-	m, err := meta.Read(item)
+	m, err := meta.Read(r.Context(), item)
 	if errors.Is(err, sql.ErrNoRows) {
 		m, _ = meta.NewItem(item)
-		err = meta.Write(m)
+		err = meta.Write(r.Context(), m)
 		if err != nil {
 			handler.WriteError(w, err)
 			return

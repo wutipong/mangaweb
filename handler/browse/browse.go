@@ -135,7 +135,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	sort := parseSortField(query.Get("sort"))
 	order := parseSortOrder(query.Get("order"))
 
-	allMeta, err := meta.Search(searchCriteria, sort, order, ItemPerPage, page)
+	allMeta, err := meta.Search(r.Context(), searchCriteria, sort, order, ItemPerPage, page)
 	if err != nil {
 		handler.WriteError(w, err)
 		return
@@ -147,7 +147,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 		return
 	}
 
-	count, err := meta.Count(searchCriteria)
+	count, err := meta.Count(r.Context(), searchCriteria)
 	if err != nil {
 		handler.WriteError(w, err)
 		return

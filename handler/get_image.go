@@ -44,7 +44,7 @@ func GetImage(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 
 	log.Get().Info("Get image", zap.String("item_name", item), zap.Int("index", index))
 
-	m, err := meta.Read(item)
+	m, err := meta.Read(r.Context(), item)
 	if err != nil {
 		WriteError(w, err)
 		return

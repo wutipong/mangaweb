@@ -1,7 +1,7 @@
 package view
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -19,7 +19,7 @@ func Download(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 
 	log.Get().Info("Download", zap.String("item_name", item))
 
-	m, err := meta.Read(item)
+	m, err := meta.Read(r.Context(), item)
 	if err != nil {
 		handler.WriteError(w, err)
 		return
@@ -32,7 +32,7 @@ func Download(w http.ResponseWriter, r *http.Request, params httprouter.Params) 
 	}
 	defer reader.Close()
 
-	bytes, err := ioutil.ReadAll(reader)
+	bytes, err := io.ReadAll(reader)
 	if err != nil {
 		handler.WriteError(w, err)
 		return

@@ -11,13 +11,13 @@ import (
 
 var pool *pgxpool.Pool
 
-func Init(ctx context.Context, p *pgxpool.Pool) {
+func Init(p *pgxpool.Pool) {
 	pool = p
 }
 
-func IsItemExist(name string) bool {
+func IsItemExist(ctx context.Context, name string) bool {
 	r := pool.QueryRow(
-		context.Background(),
+		ctx,
 		`select exists (select 1 from items where name = $1)`,
 		name,
 	)
@@ -27,9 +27,9 @@ func IsItemExist(name string) bool {
 
 	return exists
 }
-func Write(i Meta) error {
+func Write(ctx context.Context, i Meta) error {
 	_, err := pool.Exec(
-		context.Background(),
+		ctx,
 		`INSERT INTO manga.items(name, create_time, favorite, file_indices, thumbnail, is_read, tags, version)
 			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 			ON CONFLICT(name) DO UPDATE
@@ -51,12 +51,13 @@ func Write(i Meta) error {
 	)
 	return err
 }
-func Delete(i Meta) error {
+func Delete(ctx context.Context, i Meta) error {
 	return errors.ErrNotImplemented
 }
-func Read(name string) (i Meta, err error) {
+
+func Read(ctx context.Context, name string) (i Meta, err error) {
 	r := pool.QueryRow(
-		context.Background(),
+		ctx,
 		`SELECT name, create_time, favorite, file_indices, thumbnail, is_read, tags, version
 		FROM manga.items
 		WHERE name = $1`,
@@ -77,8 +78,8 @@ func Read(name string) (i Meta, err error) {
 	return
 }
 
-func ReadAll() (items []Meta, err error) {
-	rows, err := pool.Query(context.Background(),
+func ReadAll(ctx context.Context) (items []Meta, err error) {
+	rows, err := pool.Query(ctx,
 		`SELECT name, create_time, favorite, file_indices, thumbnail, is_read, tags, version
 		FROM manga.items;`)
 
@@ -103,7 +104,7 @@ func ReadAll() (items []Meta, err error) {
 
 	return
 }
-func Search(criteria []SearchCriteria, sort SortField, order SortOrder, pageSize int, page int) (items []Meta, err error) {
+func Search(ctx context.Context, criteria []SearchCriteria, sort SortField, order SortOrder, pageSize int, page int) (items []Meta, err error) {
 	// TODO: sanitize the query.
 	criteriaStr := make([]string, 0)
 	for _, c := range criteria {
@@ -154,7 +155,7 @@ func Search(criteria []SearchCriteria, sort SortField, order SortOrder, pageSize
 		pageSize*page,
 	)
 
-	rows, err := pool.Query(context.Background(), query)
+	rows, err := pool.Query(ctx, query)
 
 	if err != nil {
 		return
@@ -177,7 +178,7 @@ func Search(criteria []SearchCriteria, sort SortField, order SortOrder, pageSize
 
 	return
 }
-func Count(criteria []SearchCriteria) (count int64, err error) {
+func Count(ctx context.Context, criteria []SearchCriteria) (count int64, err error) {
 	// TODO: sanitize the query.
 	criteriaStr := make([]string, 0)
 	for _, c := range criteria {
@@ -199,7 +200,7 @@ func Count(criteria []SearchCriteria) (count int64, err error) {
 	}
 
 	r := pool.QueryRow(
-		context.Background(),
+		ctx,
 		fmt.Sprintf(`select count (*) from manga.items %s;`, where),
 	)
 

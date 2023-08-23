@@ -1,12 +1,14 @@
 package scheduler
 
 import (
+	"context"
+
 	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
 )
 
 func MigrateMeta() error {
-	allMeta, err := meta.ReadAll()
+	allMeta, err := meta.ReadAll(context.Background())
 	if err != nil {
 		return err
 	}
@@ -18,7 +20,7 @@ func MigrateMeta() error {
 				return err
 			}
 
-			err = meta.Write(m)
+			err = meta.Write(context.Background(), m)
 			if err != nil {
 				return err
 			}

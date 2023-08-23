@@ -63,7 +63,7 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 
 	query := r.URL.Query()
 
-	m, err := meta.Read(item)
+	m, err := meta.Read(r.Context(), item)
 	if err != nil {
 		handler.WriteError(w, err)
 		return
@@ -82,13 +82,13 @@ func Handler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	if fav, e := strconv.ParseBool(query.Get("favorite")); e == nil {
 		if fav != m.Favorite {
 			m.Favorite = fav
-			meta.Write(m)
+			meta.Write(r.Context(), m)
 		}
 	}
 
 	if !m.IsRead {
 		m.IsRead = true
-		meta.Write(m)
+		meta.Write(r.Context(), m)
 	}
 
 	browseUrl := r.Referer()

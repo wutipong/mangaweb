@@ -1,13 +1,15 @@
 package scheduler
 
 import (
+	"context"
+
 	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
 )
 
 func UpdateMissingThumbnail() error {
 
-	allMeta, err := meta.ReadAll()
+	allMeta, err := meta.ReadAll(context.Background())
 	if err != nil {
 		return err
 	}
@@ -23,7 +25,7 @@ func UpdateMissingThumbnail() error {
 			continue
 		}
 
-		meta.Write(m)
+		meta.Write(context.Background(), m)
 	}
 
 	return nil

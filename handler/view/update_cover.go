@@ -27,7 +27,7 @@ func UpdateCover(w http.ResponseWriter, r *http.Request, params httprouter.Param
 
 	log.Get().Info("Update Cover", zap.String("item_name", item), zap.Int("index", index))
 
-	m, err := meta.Read(item)
+	m, err := meta.Read(r.Context(), item)
 	if err != nil {
 		handler.WriteJson(w, err)
 		return
@@ -41,7 +41,7 @@ func UpdateCover(w http.ResponseWriter, r *http.Request, params httprouter.Param
 		return
 	}
 
-	err = meta.Write(m)
+	err = meta.Write(r.Context(), m)
 	if err != nil {
 		handler.WriteJson(w, err)
 		return
