@@ -2,8 +2,6 @@ package browse
 
 import (
 	"fmt"
-	"github.com/julienschmidt/httprouter"
-	"go.uber.org/zap"
 	"hash/fnv"
 	"html/template"
 	"net/http"
@@ -13,13 +11,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/julienschmidt/httprouter"
+	"go.uber.org/zap"
+
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
 )
 
 const (
-	ItemPerPage = 40
+	ItemPerPage = 30
 )
 
 func init() {

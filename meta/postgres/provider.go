@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/wutipong/mangaweb/errors"
@@ -106,10 +108,105 @@ func (p *Provider) ReadAll() (items []meta.Meta, err error) {
 }
 func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, order meta.SortOrder, pageSize int, page int) (items []meta.Meta, err error) {
 
-	return p.ReadAll()
+	criteriaStr := make([]string, 0)
+	for _, c := range criteria {
+		switch c.Field {
+		case meta.SearchFieldName:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.name LIKE '%%%s%%'`, c.Value.(string)))
+
+		case meta.SearchFieldFavorite:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.favorite = %v`, c.Value.(bool)))
+
+		case meta.SearchFieldTag:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.tags @> ARRAY['%s']`, c.Value.(string)))
+		}
+	}
+
+	where := ""
+	if len(criteria) > 0 {
+		where = fmt.Sprintf(`WHERE %s `, strings.Join(criteriaStr, " AND "))
+	}
+
+	sortBy := ""
+	switch sort {
+	case meta.SortFieldName:
+		sortBy = `ORDER BY name`
+	case meta.SortFieldCreateTime:
+		sortBy = `ORDER BY create_time`
+	}
+
+	sortOrder := ""
+	switch order {
+	case meta.SortOrderAscending:
+		sortOrder = "ASC"
+	case meta.SortOrderDescending:
+		sortOrder = "DESC"
+
+	}
+
+	query := fmt.Sprintf(
+		`SELECT name, create_time, favorite, file_indices, thumbnail, is_read, tags, version
+		FROM manga.items
+		%s 
+		%s %s
+		LIMIT %d OFFSET %d;`,
+		where,
+		sortBy,
+		sortOrder,
+		pageSize,
+		pageSize*page,
+	)
+
+	rows, err := pool.Query(context.Background(), query)
+
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		var i meta.Meta
+		rows.Scan(
+			&i.Name,
+			&i.CreateTime,
+			&i.Favorite,
+			&i.FileIndices,
+			&i.Thumbnail,
+			&i.IsRead,
+			&i.Tags,
+			&i.Version)
+
+		items = append(items, i)
+	}
+
+	return
 }
 func (p *Provider) Count(criteria []meta.SearchCriteria) (count int64, err error) {
-	count = 0
+
+	criteriaStr := make([]string, 0)
+	for _, c := range criteria {
+		switch c.Field {
+		case meta.SearchFieldName:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.name LIKE '%%%s%%'`, c.Value.(string)))
+
+		case meta.SearchFieldFavorite:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.favorite = %v`, c.Value.(bool)))
+
+		case meta.SearchFieldTag:
+			criteriaStr = append(criteriaStr, fmt.Sprintf(`items.tags @> ARRAY['%s']`, c.Value.(string)))
+		}
+	}
+
+	where := ""
+	if len(criteria) > 0 {
+		where = fmt.Sprintf(`WHERE %s `, strings.Join(criteriaStr, " AND "))
+	}
+
+	r := pool.QueryRow(
+		context.Background(),
+		fmt.Sprintf(`select count (*) from manga.items %s;`, where),
+	)
+
+	r.Scan(&count)
 	return
 }
 func (p *Provider) Close() error {
