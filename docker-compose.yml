@@ -3,7 +3,7 @@ version: "3.3"
 services:
   manga:
     depends_on:
-      - mongo
+      - postgres
     build:
       context: ./
       dockerfile: Dockerfile
@@ -19,28 +19,26 @@ services:
     networks:
       - backend
 
-  mongo:
-    image: mongo
+  postgres:
+    image: postgres:15.4
     networks:
       - backend
     ports:
-      - "27017:27017"
+      - "5432:5432"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: "root"
-      MONGO_INITDB_ROOT_PASSWORD: "password"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "manga"
 
-  mongo-express:
-    image: mongo-express
-    ports:
-      - "8081:8081"
+  pgadmin:
+    image: dpage/pgadmin4:latest
     networks:
       - backend
+    ports:
+      - "8081:80"
     environment:
-      ME_CONFIG_BASICAUTH_USERNAME: "root"
-      ME_CONFIG_BASICAUTH_PASSWORD: "password"
-      ME_CONFIG_MONGODB_URL: "mongodb://root:password@mongo:27017/"
-    depends_on:
-      - mongo
+      PGADMIN_DEFAULT_EMAIL: "admin@example.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
 
 networks:
   backend:
