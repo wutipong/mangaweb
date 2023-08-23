@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/julienschmidt/httprouter"
 
@@ -69,8 +69,7 @@ func main() {
 
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
 	dataPath := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
-	_ = setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
-	_ = setupFlag("database_name", "manga", "MANGAWEB_DB_NAME", "Specify the database name")
+	connectionStr := setupFlag("database", "postgres://postgres:password@localhost:5432/manga", "MANGAWEB_DB", "Specify the database connection string")
 	prefix := setupFlag("prefix", "", "MANGAWEB_PREFIX", "URL prefix")
 
 	flag.Parse()
@@ -83,18 +82,27 @@ func main() {
 
 	router := httprouter.New()
 
-	conn, err := pgx.Connect(context.Background(), "postgres://postgres:password@localhost:5432/manga")
+	conn, err := pgxpool.New(context.Background(), *connectionStr)
 	if err != nil {
 		log.Get().Sugar().Fatal(err)
 
 		return
 	}
 
-	// defer conn.Close(context.Background())
+	defer conn.Close()
+
+	tagpostgres.Init(context.Background(), conn)
+	metapostgres.Init(context.Background(), conn)
 
 	scheduler.Init(scheduler.Options{
-		MetaProviderFactory: func() (p meta.Provider, err error) { return metapostgres.Init(context.Background(), conn) },
-		TagProviderFactory:  func() (p tag.Provider, err error) { return tagpostgres.Init(context.Background(), conn) },
+		MetaProviderFactory: func() (p meta.Provider, err error) {
+			p = &metapostgres.Provider{}
+			return
+		},
+		TagProviderFactory: func() (p tag.Provider, err error) {
+			p = &tagpostgres.Provider{}
+			return
+		},
 	})
 
 	RegisterHandler(router, *prefix)
@@ -108,33 +116,30 @@ func main() {
 }
 
 func RegisterHandler(router *httprouter.Router, pathPrefix string) {
-	conn, err := pgx.Connect(context.Background(), "postgres://postgres:password@localhost:5432/manga")
-	if err != nil {
-		log.Get().Sugar().Fatal(err)
-
-		return
-	}
-
-	// defer conn.Close(context.Background())
-
 	handler.Init(handler.Options{
-		MetaProviderFactory: func() (p meta.Provider, err error) { return metapostgres.Init(context.Background(), conn) },
-		TagProviderFactory:  func() (p tag.Provider, err error) { return tagpostgres.Init(context.Background(), conn) },
-		VersionString:       versionString,
-		PathPrefix:          pathPrefix,
-		PathRoot:            pathRoot,
-		PathBrowse:          pathBrowse,
-		PathView:            pathView,
-		PathStatic:          pathStatic,
-		PathGetImage:        pathGetImage,
-		PathUpdateCover:     pathUpdateCover,
-		PathThumbnail:       pathThumbnail,
-		PathFavorite:        pathFavorite,
-		PathDownload:        pathDownload,
-		PathRescanLibrary:   pathRescanLibrary,
-		PathTagFavorite:     pathTagFavorite,
-		PathTagList:         pathTagList,
-		PathTagThumbnail:    pathTagThumb,
+		MetaProviderFactory: func() (p meta.Provider, err error) {
+			p = &metapostgres.Provider{}
+			return
+		},
+		TagProviderFactory: func() (p tag.Provider, err error) {
+			p = &tagpostgres.Provider{}
+			return
+		},
+		VersionString:     versionString,
+		PathPrefix:        pathPrefix,
+		PathRoot:          pathRoot,
+		PathBrowse:        pathBrowse,
+		PathView:          pathView,
+		PathStatic:        pathStatic,
+		PathGetImage:      pathGetImage,
+		PathUpdateCover:   pathUpdateCover,
+		PathThumbnail:     pathThumbnail,
+		PathFavorite:      pathFavorite,
+		PathDownload:      pathDownload,
+		PathRescanLibrary: pathRescanLibrary,
+		PathTagFavorite:   pathTagFavorite,
+		PathTagList:       pathTagList,
+		PathTagThumbnail:  pathTagThumb,
 	})
 	// Routes
 	router.GET(handler.CreateURL(pathRoot), root)
