@@ -5,6 +5,7 @@ import (
 )
 
 var ErrUnknown = New(0, "unknown error.")
+var ErrNotImplemented = New(1, "not implemented.")
 
 type Error struct {
 	Code    uint   `json:"code"`

@@ -1,13 +1,16 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 
-	"github.com/joho/godotenv"
-	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"os"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/joho/godotenv"
+	"github.com/julienschmidt/httprouter"
 
 	"github.com/wutipong/mangaweb/handler"
 	"github.com/wutipong/mangaweb/handler/browse"
@@ -15,10 +18,10 @@ import (
 	"github.com/wutipong/mangaweb/handler/view"
 	"github.com/wutipong/mangaweb/log"
 	"github.com/wutipong/mangaweb/meta"
-	metamongo "github.com/wutipong/mangaweb/meta/mongo"
+	metapostgres "github.com/wutipong/mangaweb/meta/postgres"
 	"github.com/wutipong/mangaweb/scheduler"
 	"github.com/wutipong/mangaweb/tag"
-	tagmongo "github.com/wutipong/mangaweb/tag/mongo"
+	tagpostgres "github.com/wutipong/mangaweb/tag/postgres"
 )
 
 // Recreate the static resource file.
@@ -66,8 +69,8 @@ func main() {
 
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
 	dataPath := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
-	database := setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
-	dbName := setupFlag("database_name", "manga", "MANGAWEB_DB_NAME", "Specify the database name")
+	_ = setupFlag("database", "mongodb://root:password@localhost", "MANGAWEB_DB", "Specify the database connection string")
+	_ = setupFlag("database_name", "manga", "MANGAWEB_DB_NAME", "Specify the database name")
 	prefix := setupFlag("prefix", "", "MANGAWEB_PREFIX", "URL prefix")
 
 	flag.Parse()
@@ -77,19 +80,21 @@ func main() {
 	log.Get().Sugar().Infof("MangaWeb version:%s", versionString)
 
 	log.Get().Sugar().Infof("Data source Path: %s", *dataPath)
-	if err := metamongo.Init(*database, *dbName); err != nil {
-		log.Get().Sugar().Fatal(err)
-	}
-
-	if err := tagmongo.Init(*database, *dbName); err != nil {
-		log.Get().Sugar().Fatal(err)
-	}
 
 	router := httprouter.New()
 
+	conn, err := pgx.Connect(context.Background(), "postgres://postgres:password@localhost:5432/manga")
+	if err != nil {
+		log.Get().Sugar().Fatal(err)
+
+		return
+	}
+
+	defer conn.Close(context.Background())
+
 	scheduler.Init(scheduler.Options{
-		MetaProviderFactory: newMetaProvider,
-		TagProviderFactory:  newTagProvider,
+		MetaProviderFactory: func() (p meta.Provider, err error) { return metapostgres.Init(context.Background(), conn) },
+		TagProviderFactory:  func() (p tag.Provider, err error) { return tagpostgres.Init(context.Background(), conn) },
 	})
 
 	RegisterHandler(router, *prefix)
@@ -103,9 +108,18 @@ func main() {
 }
 
 func RegisterHandler(router *httprouter.Router, pathPrefix string) {
+	conn, err := pgx.Connect(context.Background(), "postgres://postgres:password@localhost:5432/manga")
+	if err != nil {
+		log.Get().Sugar().Fatal(err)
+
+		return
+	}
+
+	defer conn.Close(context.Background())
+
 	handler.Init(handler.Options{
-		MetaProviderFactory: newMetaProvider,
-		TagProviderFactory:  newTagProvider,
+		MetaProviderFactory: func() (p meta.Provider, err error) { return metapostgres.Init(context.Background(), conn) },
+		TagProviderFactory:  func() (p tag.Provider, err error) { return tagpostgres.Init(context.Background(), conn) },
 		VersionString:       versionString,
 		PathPrefix:          pathPrefix,
 		PathRoot:            pathRoot,
@@ -141,20 +155,6 @@ func RegisterHandler(router *httprouter.Router, pathPrefix string) {
 
 func root(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	http.Redirect(w, r, handler.CreateBrowseTagURL(""), http.StatusPermanentRedirect)
-}
-
-func newMetaProvider() (p meta.Provider, err error) {
-	mp, e := metamongo.New()
-	p = &mp
-	err = e
-	return
-}
-
-func newTagProvider() (p tag.Provider, err error) {
-	mp, e := tagmongo.New()
-	p = &mp
-	err = e
-	return
 }
 
 func printBanner() {
