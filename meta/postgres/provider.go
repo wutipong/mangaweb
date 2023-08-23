@@ -81,7 +81,6 @@ func (p *Provider) Read(name string) (i meta.Meta, err error) {
 }
 
 func (p *Provider) ReadAll() (items []meta.Meta, err error) {
-
 	rows, err := p.conn.Query(context.Background(),
 		`SELECT name, create_time, favorite, file_indices, thumbnail, is_read, tags, version
 		FROM manga.items;`)
@@ -90,7 +89,7 @@ func (p *Provider) ReadAll() (items []meta.Meta, err error) {
 		return
 	}
 
-	for {
+	for rows.Next() {
 		var i meta.Meta
 		rows.Scan(
 			&i.Name,
@@ -102,17 +101,14 @@ func (p *Provider) ReadAll() (items []meta.Meta, err error) {
 			&i.Tags,
 			&i.Version)
 
-		if !rows.Next() {
-			break
-		}
-
+		items = append(items, i)
 	}
 
 	return
 }
 func (p *Provider) Search(criteria []meta.SearchCriteria, sort meta.SortField, order meta.SortOrder, pageSize int, page int) (items []meta.Meta, err error) {
-	items = make([]meta.Meta, 0)
-	return
+
+	return p.ReadAll()
 }
 func (p *Provider) Count(criteria []meta.SearchCriteria) (count int64, err error) {
 	count = 0

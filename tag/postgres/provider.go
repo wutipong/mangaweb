@@ -56,7 +56,31 @@ func (p *Provider) Read(name string) (t tag.Tag, err error) {
 	return
 }
 func (p *Provider) ReadAll() (tags []tag.Tag, err error) {
-	tags = make([]tag.Tag, 0)
+	rows, err := p.conn.Query(
+		context.Background(),
+		`SELECT name, favorite, hidden, thumbnail, version
+			FROM manga.tags;`,
+	)
+
+	if err != nil {
+		return
+	}
+
+	for {
+		var t tag.Tag
+		rows.Scan(
+			&t.Name,
+			&t.Favorite,
+			&t.Hidden,
+			&t.Version,
+		)
+
+		tags = append(tags, t)
+
+		if !rows.Next() {
+			break
+		}
+	}
 
 	return
 

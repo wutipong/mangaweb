@@ -90,7 +90,7 @@ func main() {
 		return
 	}
 
-	defer conn.Close(context.Background())
+	// defer conn.Close(context.Background())
 
 	scheduler.Init(scheduler.Options{
 		MetaProviderFactory: func() (p meta.Provider, err error) { return metapostgres.Init(context.Background(), conn) },
@@ -115,7 +115,7 @@ func RegisterHandler(router *httprouter.Router, pathPrefix string) {
 		return
 	}
 
-	defer conn.Close(context.Background())
+	// defer conn.Close(context.Background())
 
 	handler.Init(handler.Options{
 		MetaProviderFactory: func() (p meta.Provider, err error) { return metapostgres.Init(context.Background(), conn) },
