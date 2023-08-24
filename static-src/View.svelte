@@ -2,7 +2,8 @@
     import Toolbar from "./View/Toolbar.svelte";
     import ImageViewer from "./View/ImageViewer.svelte";
     import Toast from "./Common/Toast.svelte";
-    import ModalDialog from "./Common/ModalDialog.svelte";
+    import AboutDialog from "./Common/AboutDialog.svelte";
+    
     import PageScroll from "./View/PageScroll.svelte";
 
     export let params;
@@ -106,10 +107,4 @@
 
 <Toast bind:this={toast} />
 
-<ModalDialog Id="aboutModal" Title="About" bind:this={aboutDialog}>
-    <h5>MangaWeb</h5>
-    <h6>Version {params.Version}</h6>
-    <p>&copy; 2021-2023 Wutipong Wongsakuldej. All Right Reserved</p>
-    <p>Licensed under MIT License</p>
-    <p><a href="https://github.com/wutipong/mangaweb">Homepage</a></p>
-</ModalDialog>
+<AboutDialog bind:this={aboutDialog} version={params.Version} />
