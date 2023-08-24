@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { Button, Icon } from "sveltestrap/src";
+
     export let Tags = [];
     export let Name = "";
     export let Favorite = false;
@@ -49,7 +51,7 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         {#each Tags as tag}
                             <a class="dropdown-item" href={tag.URL}>
-                                <i class="bi bi-tag me-3" />{tag.Name}
+                                <Icon name="tag" class="me-3" />{tag.Name}
                             </a>
                         {/each}
                     </div>
@@ -70,14 +72,14 @@
                             id="download-btn"
                             on:click={onDownloadPage}
                         >
-                            <i class="bi bi-download me-3" />
+                            <Icon name="download" class="me-3" />
                             Download Current Page
                         </button>
                         <button
                             class="dropdown-item"
                             on:click={onDownloadManga}
                         >
-                            <i class="bi bi-download me-3" />
+                            <Icon name="download" class="me-3" />
                             Download Manga
                         </button>
                         <div class="dropdown-divider" />
@@ -86,7 +88,7 @@
                             id="update-cover-btn"
                             on:click={updateCover}
                         >
-                            <i class="bi bi-journal-arrow-up me-3" />
+                            <Icon name="journal-arrow-up" class="me-3" />
                             Update Cover
                         </button>
                     </div>
@@ -99,21 +101,20 @@
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item mb-2 mb-lg-0 ms-lg-2">
-                    <button
+                    <Button
                         id="favorite-btn"
-                        class="btn"
-                        class:btn-pink={Favorite}
-                        class:active={Favorite}
-                        class:btn-outline-pink={!Favorite}
+                        color="pink"
+                        active={Favorite}
+                        outline={!Favorite}
                         on:click={toggleFavorite}
                     >
-                        <i class="bi bi-star-fill me-3" /> Favorite
-                    </button>
+                        <Icon name="star-fill" class="me-3" /> Favorite
+                    </Button>
                 </li>
                 <li class="nav-item mb-2 mb-lg-0 ms-lg-2">
-                    <a id="close-btn" class="btn btn-danger" href={BrowseURL}>
-                        <i class="bi bi-x-circle-fill me-3" /> Close
-                    </a>
+                    <Button id="close-btn" color="danger" href={BrowseURL}>
+                        <Icon name="x-circle-fill" class="me-3" /> Close
+                    </Button>
                 </li>
             </ul>
         </div>

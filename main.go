@@ -67,15 +67,20 @@ func main() {
 
 	address := setupFlag("address", ":80", "MANGAWEB_ADDRESS", "The server address")
 	dataPath := setupFlag("data", "./data", "MANGAWEB_DATA_PATH", "Manga source path")
-	connectionStr := setupFlag("database", "postgres://postgres:password@localhost:5432/manga", "MANGAWEB_DB", "Specify the database connection string")
+	connectionStr := setupFlag(
+		"database",
+		"postgres://postgres:password@localhost:5432/manga",
+		"MANGAWEB_DB",
+		"Specify the database connection string",
+	)
 	prefix := setupFlag("prefix", "", "MANGAWEB_PREFIX", "URL prefix")
 
 	flag.Parse()
 
 	meta.BaseDirectory = *dataPath
-	printBanner()
-	log.Get().Sugar().Infof("MangaWeb version:%s", versionString)
 
+	printBanner()
+	log.Get().Sugar().Infof("MangaWeb version: %s", versionString)
 	log.Get().Sugar().Infof("Data source Path: %s", *dataPath)
 
 	router := httprouter.New()
