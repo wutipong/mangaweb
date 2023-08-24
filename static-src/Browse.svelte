@@ -4,7 +4,7 @@
     import Item from "./Browse/Item.svelte";
     import Pagination from "./Common/Pagination.svelte";
     import PageItem from "./Common/PageItem.svelte";
-    import Toast from "./Common/Toast.svelte";
+    import Notification from "./Common/Notification.svelte";
 
     export let params;
 
@@ -144,7 +144,7 @@
 
 <AboutDialog bind:this={aboutDialog} version={params.Version} />
 
-<Toast bind:this={toast} />
+<Notification bind:this={toast} />
 
 <nav
     aria-label="Move to top navigation"

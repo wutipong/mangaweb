@@ -103,7 +103,7 @@
                 <li class="nav-item mb-2 mb-lg-0 ms-lg-2">
                     <Button
                         id="favorite-btn"
-                        color="pink"
+                        class="btn-pink"
                         active={Favorite}
                         outline={!Favorite}
                         on:click={toggleFavorite}

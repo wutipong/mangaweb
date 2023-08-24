@@ -1,7 +1,7 @@
 <script>
     import Toolbar from "./View/Toolbar.svelte";
     import ImageViewer from "./View/ImageViewer.svelte";
-    import Toast from "./Common/Toast.svelte";
+    import Notification from "./Common/Notification.svelte";
     import AboutDialog from "./Common/AboutDialog.svelte";
     
     import PageScroll from "./View/PageScroll.svelte";
@@ -105,6 +105,6 @@
     {onAboutClick}
 />
 
-<Toast bind:this={toast} />
+<Notification bind:this={toast} />
 
 <AboutDialog bind:this={aboutDialog} version={params.Version} />
